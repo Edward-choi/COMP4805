@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Button,Drawer, List, ListItem, ListItemIcon} from '@material-ui/core'
-import { ListItemText } from "@mui/material";
+import {Button,Drawer, List, ListItem, ListItemIcon, Icon} from '@material-ui/core'
+import { ListItemText, Box, Stack} from "@mui/material";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 
 //button colors
@@ -8,8 +8,11 @@ import { styled } from '@mui/material/styles';
 import { purple } from '@mui/material/colors';
 import { green } from '@material-ui/core/colors';
 
-//button icon
+//icon
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
+import metafox from '../images/metafox.png'
+
 
 const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(purple[500]),
@@ -30,6 +33,7 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
+
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     
@@ -46,11 +50,30 @@ const DrawerComponent = () => {
                 anchor='right'
             >
                 <List>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <ListItemText>Connect Wallet</ListItemText>
-                        </ListItemIcon>
+                    <ListItem>
+                        <Box 
+                            sx={{ 
+                                border: 2,
+                                borderRadius: 2,
+                                padding: 1,
+                            }}
+                        >
+                            <Stack direction="row" alignItems="center" gap={2}>
+                                <SettingsEthernetIcon style={{ color: 'black'}}/>
+                                <ListItemText>Connect wallet</ListItemText>
+                            </Stack>
+                        </Box>
                     </ListItem>
+                    
+  
+                    <ListItem>
+                        <Button variant="outlined">
+                            <img src={metafox} style={{ height: 25, width: 25}}/>
+                            Metamask
+                        </Button>
+                    </ListItem> 
+
+                
                 </List>
             </Drawer>
         </div>
