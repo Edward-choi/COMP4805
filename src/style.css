@@ -1,0 +1,28 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: black;
+}
+
+.navbar{
+    height: 78px;
+    opacity: 1;
+    transform: none;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+.buttongp{
+    padding: 0;
+    margin: auto;
+    list-style: none;
+    display: flex;
+}
+
