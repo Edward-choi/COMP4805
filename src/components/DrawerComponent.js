@@ -68,7 +68,7 @@ const DrawerComponent = () => {
   
                     <ListItem>
                         <Button variant="outlined">
-                            <img src={metafox} style={{ height: 25, width: 25}}/>
+                            <img src={metafox} style={{ height: 45, width: 45}}/>
                             Metamask
                         </Button>
                     </ListItem> 
