@@ -26,3 +26,24 @@ body {
     display: flex;
 }
 
+.borrowPage{
+    width: 100%;
+    background-color: lightgray;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    align-items: center;
+}
+
+.borrowPageBanner {
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+
+.borrowPageBanner > * {
+    vertical-align: middle;
+    display: inline-flex;
+}
+
