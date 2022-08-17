@@ -1,13 +1,13 @@
 import './style.css';
 import Navbar from './components/NavBar';
-import BorrowPage from './components/BorrowPage';
+import Banner from './components/Banner';
 import Container from '@mui/material/Container';
 
 function App() {
   return (
     <div>
       <Navbar />
-      <BorrowPage />
+      <Banner type="Deposit"/>
     </div>
   );
 }
