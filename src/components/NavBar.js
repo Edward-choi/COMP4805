@@ -1,5 +1,6 @@
-import {Button, ButtonGroup, IconButton} from '@material-ui/core'
+import { Button, ButtonGroup, IconButton } from '@material-ui/core'
 import DrawerComponent from './DrawerComponent';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 //Button icons
 import PersonIcon from '@mui/icons-material/Person'
@@ -8,20 +9,22 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFFLogo from '../images/logo.svg'
 
-export default function Navbar(){
+export default function Navbar() {
     return (
-    <nav className='navbar'>
-        <img src={NFFLogo} style={{ height: 100, width: 150 } } alt='logo'/>
-        
-        <ButtonGroup variant="text" size="large" className='buttongp'>
-            <Button startIcon={<AccountBalanceIcon/>}>home</Button>
-            <Button startIcon={<PersonIcon/>}>Dashboard</Button>
-            <Button startIcon={<VerticalAlignBottomIcon/>}>Borrow ETH</Button>
-            <Button startIcon={<AddCircleOutlineIcon/>}>Deposit ETH</Button>
-        </ButtonGroup>
+        <div>
+            <nav className='navbar'>
+                <img src={NFFLogo} style={{ height: 100, width: 150 }} alt='logo' />
 
-        <DrawerComponent/>
+                <ButtonGroup variant="text" size="large" className='buttongp'>
+                    <Button startIcon={<AccountBalanceIcon />} component={Link} to="/">home</Button>
+                    <Button startIcon={<PersonIcon />} component={Link} to="/dashboard">Dashboard</Button>
+                    <Button startIcon={<VerticalAlignBottomIcon />} component={Link} to="/borrow">Borrow ETH</Button>
+                    <Button startIcon={<AddCircleOutlineIcon />} component={Link} to="/deposit">Deposit ETH</Button>
+                </ButtonGroup>
 
-    </nav>
+                <DrawerComponent />
+
+            </nav>
+        </div>
     )
 }

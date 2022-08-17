@@ -2,6 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import PersonIcon from '@mui/icons-material/Person'
 
 
 
@@ -10,10 +11,13 @@ function Banner(props) {
     var type = props.type;
     switch (type) {
         case "Borrow":
-            icon = <VerticalAlignBottomIcon />;
+            icon = <VerticalAlignBottomIcon className="icon" />;
             break;
         case "Deposit":
-            icon = <AddCircleOutlineIcon class="icon"/>;
+            icon = <AddCircleOutlineIcon className="icon" />;
+            break;
+        case "Dashboard":
+            icon = <PersonIcon className="icon" />;
             break;
     }
     return (
