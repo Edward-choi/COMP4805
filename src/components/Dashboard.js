@@ -6,7 +6,7 @@ function DashBoard() {
   return (
     <div>
       <Navbar />
-      <Banner type="DashBoard"/>
+      <Banner type="Dashboard"/>
     </div>
   );
 }
