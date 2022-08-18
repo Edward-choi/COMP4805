@@ -33,7 +33,6 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
-
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     
@@ -54,8 +53,11 @@ const DrawerComponent = () => {
                         <Box 
                             sx={{ 
                                 border: 2,
-                                borderRadius: 2,
+                                borderTop: 0,
+                                borderLeft: 0,
+                                borderRight: 0,
                                 padding: 1,
+                                width: 200
                             }}
                         >
                             <Stack direction="row" alignItems="center" gap={2}>
@@ -67,13 +69,12 @@ const DrawerComponent = () => {
                     
   
                     <ListItem>
-                        <Button variant="outlined">
+                        <Button variant="outlined" style={{width: 200}}>
                             <img src={metafox} style={{ height: 45, width: 45}}/>
                             Metamask
                         </Button>
                     </ListItem> 
-
-                
+               
                 </List>
             </Drawer>
         </div>
