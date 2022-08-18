@@ -7,7 +7,7 @@ body {
     background-color: black;
 }
 
-.navbar{
+.navbar {
     height: 78px;
     opacity: 1;
     transform: none;
@@ -19,10 +19,37 @@ body {
     padding: 0 1rem;
 }
 
-.buttongp{
+.buttongp {
     padding: 0;
     margin: auto;
     list-style: none;
     display: flex;
 }
 
+.banner {
+    width: 100%;
+    background: rgb(236, 236, 236);
+    background: linear-gradient(0deg, rgba(236, 236, 236, 1) 0%, rgba(255, 255, 255, 1) 35%, rgba(254, 254, 254, 1) 65%, rgba(236, 236, 236, 1) 100%);
+    padding-top: 24px;
+    padding-bottom: 24px;
+    align-items: center;
+}
+
+.heading {
+    font-size: 25px;
+    line-height: 50px;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+
+.heading>* {
+    vertical-align: middle;
+    display: inline-flex;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.icon {
+    height: 2rem;
+}
