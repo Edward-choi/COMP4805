@@ -33,7 +33,6 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
-
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     
@@ -52,10 +51,16 @@ const DrawerComponent = () => {
                 <List>
                     <ListItem>
                         <Box 
+                            display="flex"
+                            justifyContent="center"
+                            minHeight="9vh"                            
                             sx={{ 
                                 border: 2,
-                                borderRadius: 2,
+                                borderTop: 0,
+                                borderLeft: 0,
+                                borderRight: 0,
                                 padding: 1,
+                                width: 200
                             }}
                         >
                             <Stack direction="row" alignItems="center" gap={2}>
@@ -65,15 +70,31 @@ const DrawerComponent = () => {
                         </Box>
                     </ListItem>
                     
-  
                     <ListItem>
-                        <Button variant="outlined">
+                        <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}}>
                             <img src={metafox} style={{ height: 45, width: 45}}/>
                             Metamask
                         </Button>
-                    </ListItem> 
+                    </ListItem>
 
-                
+                    <ListItem>
+                        <Box 
+                            display="flex"
+                            justifyContent="center"                         
+                            minHeight="30vh"                        
+                            sx={{ 
+                                border: 2,
+                                borderRadius: 5,
+                                padding: 1,
+                                width: 200
+                            }}
+                        >
+                            <Stack direction="row" alignItems="center" gap={2}>
+                                <ListItemText>ETH Balance</ListItemText>
+                            </Stack>
+                        </Box>
+                    </ListItem>  
+
                 </List>
             </Drawer>
         </div>
