@@ -1,5 +1,6 @@
 import Navbar from './NavBar';
 import Banner from './Banner';
+import ConnectWallet from './ConnectWallet';
 import Container from '@mui/material/Container';
 
 function Deposit() {
@@ -7,6 +8,7 @@ function Deposit() {
     <div>
       <Navbar />
       <Banner type="Deposit"/>
+      <ConnectWallet />
     </div>
   );
 }

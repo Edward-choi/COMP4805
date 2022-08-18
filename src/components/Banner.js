@@ -11,13 +11,13 @@ function Banner(props) {
     var type = props.type;
     switch (type) {
         case "Borrow":
-            icon = <VerticalAlignBottomIcon className="icon" />;
+            icon = <VerticalAlignBottomIcon sx={{ fontSize: "2rem" }} />;
             break;
         case "Deposit":
-            icon = <AddCircleOutlineIcon className="icon" />;
+            icon = <AddCircleOutlineIcon sx={{ fontSize: "2rem" }} />;
             break;
         case "Dashboard":
-            icon = <PersonIcon className="icon" />;
+            icon = <PersonIcon sx={{ fontSize: "2rem" }} />;
             break;
     }
     return (
