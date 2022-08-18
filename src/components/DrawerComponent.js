@@ -89,8 +89,11 @@ const DrawerComponent = () => {
                                 width: 200
                             }}
                         >
-                            <Stack direction="row" alignItems="center" gap={2}>
-                                <ListItemText>ETH Balance</ListItemText>
+                            <Stack direction="row" gap={2}>
+                                <ListItemText>
+                                    <p>Not Connected</p>
+                                    <p>ETH Balance: </p>
+                                </ListItemText>
                             </Stack>
                         </Box>
                     </ListItem>  
