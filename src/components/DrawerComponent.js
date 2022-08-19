@@ -15,6 +15,7 @@ import metafox from '../images/metafox.png';
 
 //web3
 import Web3 from "web3";
+import { ethers } from "ethers";
 
 const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(purple[500]),
@@ -41,14 +42,29 @@ const DrawerComponent = () => {
     const [walletAddress, setWalletAddress] = useState(null);
     const [walletBalance, setWalletBalance] = useState(null);
 
-    const connectWallet = async () =>{
-        if (typeof window.ethereum !== 'undefined') {
-            console.log('MetaMask is Fucked');
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            setWalletAddress(accounts[0]);
-
+    const connectWallet = () => {
+        if(window.ethereum){
+            window.ethereum.request({method:'eth_requestAccounts'}).then(result=>{
+                accountChangeHandler(result[0])
+            })
+        }
+        else{
+            alert("Metamask not detected")
         }
     }
+
+    const accountChangeHandler = (newAccount) => {
+        setWalletAddress(newAccount);
+        getUserBalance(newAccount);
+    }
+
+    const getUserBalance = (address) => {
+        window.ethereum.request({method: 'eth_getBalance', params: [address, 'latest']}).then(balance => {
+            setWalletBalance(ethers.utils.formatEther(balance));
+        })
+    }
+    
+
     
     return (
         <div>
