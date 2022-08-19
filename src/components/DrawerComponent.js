@@ -35,15 +35,18 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
-const connectWallet = () =>{
-    if (typeof window.ethereum !== 'undefined') {
-        console.log('MetaMask is Fucked');
-        const account = window.ethereum.request({ method: 'eth_requestAccounts' });
-      }
-}
 
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
+    const [walletAddress, setWalletAddress] = useState(null);
+
+    const connectWallet = async () =>{
+        if (typeof window.ethereum !== 'undefined') {
+            console.log('MetaMask is Fucked');
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            setWalletAddress(accounts[0]);
+        }
+    }
     
     return (
         <div>
@@ -79,6 +82,7 @@ const DrawerComponent = () => {
                         >
                             <Stack direction="row" gap={2}>
                                 <ListItemText>
+                                    <p>Wallet Address: {walletAddress}</p>
                                     <p>Not Connected</p>
                                     <p>ETH Balance: </p>
                                 </ListItemText>
