@@ -13,8 +13,8 @@ import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalance
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import metafox from '../images/metafox.png';
 
-
-
+//web3
+import Web3 from "web3";
 
 const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(purple[500]),
@@ -39,12 +39,14 @@ const GreenTooltip = styled(({ className, ...props }) => (
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [walletAddress, setWalletAddress] = useState(null);
+    const [walletBalance, setWalletBalance] = useState(null);
 
     const connectWallet = async () =>{
         if (typeof window.ethereum !== 'undefined') {
             console.log('MetaMask is Fucked');
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             setWalletAddress(accounts[0]);
+
         }
     }
     
@@ -83,8 +85,8 @@ const DrawerComponent = () => {
                             <Stack direction="row" gap={2}>
                                 <ListItemText>
                                     <p>Wallet Address: {walletAddress}</p>
-                                    <p>Not Connected</p>
-                                    <p>ETH Balance: </p>
+                                    <p>Not Connected</p> 
+                                    <p>ETH Balance: {walletBalance}</p>
                                 </ListItemText>
                             </Stack>
                         </Box>
