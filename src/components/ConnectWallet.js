@@ -10,7 +10,10 @@ function ConnectWallet() {
                 <div className='WalletFont1'>No wallet detected</div>
                 <div className='WalletFont2'>Please connect your wallet</div>
                 <Button variant="contained" style={{
-                    borderRadius: 25, backgroundColor: "#21b6ae", padding: "18px 36px", fontSize: "18px", margin: "20px"}}>Connect Wallet</Button>
+                    borderRadius: 25, backgroundColor: "#21b6ae", padding: "18px 36px", fontSize: "18px", margin: "20px"
+                }}>
+                    Connect Wallet
+                </Button>
             </div>
         </Box>
     )

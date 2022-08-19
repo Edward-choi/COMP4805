@@ -92,3 +92,13 @@ body {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
+
+.bottomDivider {
+    position: relative;
+    top: 12rem;
+}
+
+.bottomDivider2 {
+    position: relative;
+    top: 33rem;
+}
