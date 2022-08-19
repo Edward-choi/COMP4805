@@ -1,11 +1,11 @@
 import Navbar from './NavBar';
-import Banner from './Banner';
-import Container from '@mui/material/Container';
+import HomePage from './HomePage';
 
 function Home() {
   return (
     <div>
       <Navbar />
+      <HomePage />
     </div>
   );
 }
