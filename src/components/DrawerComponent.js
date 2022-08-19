@@ -36,6 +36,25 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
+const walletShorten = (address) => {
+    if (address != null){
+        var first = address.substring(0,11);
+        var second = address.substring(34,43);
+        return (first + "..." + second);
+    }
+    else{
+        return null
+    }
+}
+
+const balanceShorten = (balance) => {
+    if (balance != null){
+        return (parseFloat(balance).toFixed(4))
+    }
+    else{
+        return null
+    }
+}
 
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
@@ -63,8 +82,6 @@ const DrawerComponent = () => {
             setWalletBalance(ethers.utils.formatEther(balance));
         })
     }
-    
-
     
     return (
         <div>
@@ -97,14 +114,12 @@ const DrawerComponent = () => {
                     <ListItem>
                         <Box display="flex" justifyContent="center" minHeight="30vh"                        
                             sx={{ border: 2,borderRadius: 5,padding: 1,width: 200}}
-                        >
-                            <Stack direction="row" gap={2}>
-                                <ListItemText>
-                                    <p>Wallet Address: {walletAddress}</p>
-                                    <p>Not Connected</p> 
-                                    <p>ETH Balance: {walletBalance}</p>
-                                </ListItemText>
-                            </Stack>
+                        >                      
+                            <ListItemText>
+                                <p>Wallet Address: {walletShorten(walletAddress)}</p>
+                                <p>ETH Balance: {balanceShorten(walletBalance)}</p>
+                            </ListItemText>
+                            
                         </Box>
                     </ListItem>
 
