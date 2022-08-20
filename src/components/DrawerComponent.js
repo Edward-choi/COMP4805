@@ -14,8 +14,8 @@ import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import metafox from '../images/metafox.png';
 
 //web3
-import Web3 from "web3";
 import { ethers } from "ethers";
+import Web3 from "web3";
 
 const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(purple[500]),
@@ -36,53 +36,21 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
-const walletShorten = (address) => {
-    if (address != null){
-        var first = address.substring(0,11);
-        var second = address.substring(34,43);
-        return (first + "..." + second);
-    }
-    else{
-        return null
-    }
-}
-
-const balanceShorten = (balance) => {
-    if (balance != null){
-        return (parseFloat(balance).toFixed(4))
-    }
-    else{
-        return null
-    }
-}
-
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [walletAddress, setWalletAddress] = useState(null);
+    const [displayWalletAddress, setdisplayWalletAddress] = useState(null);
     const [walletBalance, setWalletBalance] = useState(null);
 
-    const connectWallet = () => {
-        if(window.ethereum){
-            window.ethereum.request({method:'eth_requestAccounts'}).then(result=>{
-                accountChangeHandler(result[0])
-            })
-        }
-        else{
-            alert("Metamask not detected")
-        }
+    async function handdleConnect(){
+        const web3 = new Web3(Web3.givenProvider);
+        const accounts = await web3.eth.requestAccounts();
+        setWalletAddress(accounts[0]);
+        setdisplayWalletAddress(accounts[0].substring(0,11) + "..." + accounts[0].substring(34,43));
+        const balance = await web3.eth.getBalance(accounts[0]);
+        setWalletBalance(parseFloat(ethers.utils.formatEther(balance)).toFixed(4));
     }
 
-    const accountChangeHandler = (newAccount) => {
-        setWalletAddress(newAccount);
-        getUserBalance(newAccount);
-    }
-
-    const getUserBalance = (address) => {
-        window.ethereum.request({method: 'eth_getBalance', params: [address, 'latest']}).then(balance => {
-            setWalletBalance(ethers.utils.formatEther(balance));
-        })
-    }
-    
     return (
         <div>
             <GreenTooltip title="Wallet">
@@ -105,7 +73,7 @@ const DrawerComponent = () => {
                     </ListItem>
                     
                     <ListItem>
-                        <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}} onClick={connectWallet}>
+                        <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}} onClick={handdleConnect}>
                             <img src={metafox} style={{ height: 45, width: 45}}/>
                             Metamask
                         </Button>
@@ -116,8 +84,8 @@ const DrawerComponent = () => {
                             sx={{ border: 2,borderRadius: 5,padding: 1,width: 200}}
                         >                      
                             <ListItemText>
-                                <p>Wallet Address: {walletShorten(walletAddress)}</p>
-                                <p>ETH Balance: {balanceShorten(walletBalance)}</p>
+                                <p>Wallet Address: {displayWalletAddress}</p>
+                                <p>ETH Balance: {walletBalance}</p>
                             </ListItemText>
                             
                         </Box>
