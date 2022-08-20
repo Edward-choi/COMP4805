@@ -110,3 +110,7 @@ body {
     margin-right: 0.5rem;
     color: black;
 }
+
+.bottomButtonContainer {
+    text-align: center;
+}

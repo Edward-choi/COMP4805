@@ -29,18 +29,20 @@ function HomePage(props) {
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={4}>
                     <Item style={{ height: "100%" }}>
-                        <div >
+                        <div>
                             <AccountBalanceIcon className='homePageTitle' />
                             <div className='homePageFont1 homePageTitle'>My NFTs</div>
                             <div>&nbsp;Total ERC721 Token</div>
                         </div>
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider2' />
-                        <Button variant="contained" className='bottomDivider2' style={{
-                            borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "10px", marginTop: "12px", width: "50%"
-                        }}>
-                            View My NFTs
-                        </Button>
+                        <div className='bottomDivider2 bottomButtonContainer'>
+                            <Button variant="contained" style={{
+                                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "15px", marginTop: "12px", width: "70%"
+                            }}>
+                                View My NFTs
+                            </Button>
+                        </div>
                     </Item>
                 </Grid>
                 <Grid item xs={4}>
@@ -54,16 +56,18 @@ function HomePage(props) {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <Button variant="contained" className='bottomDivider' component={Link} to="/deposit" style={{
-                                    borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "10px", marginTop: "12px", width: "30%"
-                                }}>
-                                    Deposit ETH
-                                </Button>
-                                <Button variant="outlined" className='bottomDivider' style={{
-                                    borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "10px", marginTop: "12px", width: "30%"
-                                }}>
-                                    My Deposits
-                                </Button>
+                                <div className='bottomDivider bottomButtonContainer'>
+                                    <Button variant="contained" component={Link} to="/deposit" style={{
+                                        borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
+                                    }}>
+                                        Deposit ETH
+                                    </Button>
+                                    <Button variant="outlined" style={{
+                                        borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
+                                    }}>
+                                        My Deposits
+                                    </Button>
+                                </div>
                             </Item>
                         </Grid>
                         <Grid item xs={12}>
@@ -75,11 +79,13 @@ function HomePage(props) {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <Button variant="contained" className='bottomDivider' style={{
-                                    borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "10px", marginTop: "12px", width: "50%"
-                                }}>
-                                    View History
-                                </Button>
+                                <div className='bottomDivider bottomButtonContainer'>
+                                    <Button variant="contained" style={{
+                                        borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
+                                    }}>
+                                        View History
+                                    </Button>
+                                </div>
                             </Item>
                         </Grid>
                     </Grid>
@@ -88,23 +94,25 @@ function HomePage(props) {
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
                             <Item>
-                                <div >
+                                <div>
                                     <VerticalAlignBottomIcon className='homePageTitle' />
                                     <div className='homePageFont1 homePageTitle'>My Borrows</div>
                                     <div>&nbsp;Total Debt</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <Button variant="contained" className='bottomDivider' component={Link} to="/borrow" style={{
-                                    borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "10px", marginTop: "12px", width: "30%"
-                                }}>
-                                    Borrow ETH
-                                </Button>
-                                <Button variant="outlined" className='bottomDivider' style={{
-                                    borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "10px", marginTop: "12px", width: "30%"
-                                }}>
-                                    My Borrows
-                                </Button>
+                                <div className='bottomDivider bottomButtonContainer'>
+                                    <Button variant="contained" component={Link} to="/borrow" style={{
+                                        borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
+                                    }}>
+                                        Borrow ETH
+                                    </Button>
+                                    <Button variant="outlined" style={{
+                                        borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
+                                    }}>
+                                        My Borrows
+                                    </Button>
+                                </div>
                             </Item>
                         </Grid>
                         <Grid item xs={12}>
@@ -116,11 +124,13 @@ function HomePage(props) {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <Button variant="contained" className='bottomDivider' style={{
-                                    borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "10px", marginTop: "12px", width: "50%"
-                                }}>
-                                    View On Ethereum
-                                </Button>
+                                <div className='bottomDivider bottomButtonContainer'>
+                                    <Button variant="contained" style={{
+                                        borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
+                                    }}>
+                                        View On Ethereum
+                                    </Button>
+                                </div>
                             </Item>
                         </Grid>
                     </Grid>
