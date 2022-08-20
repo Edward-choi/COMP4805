@@ -14,8 +14,9 @@ import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import metafox from '../images/metafox.png';
 
 //web3
-import { ethers } from "ethers";
-import Web3 from "web3";
+import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { formatEther } from "ethers/lib/utils";
+
 
 const ColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(purple[500]),
@@ -38,6 +39,8 @@ const GreenTooltip = styled(({ className, ...props }) => (
 
 const DrawerComponent = (props) => {
     const [openDrawer, setOpenDrawer] = useState(false);
+    const {activateBrowserWallet, account, deactivate } = useEthers()
+    const MainnetBalance = useEtherBalance(account, {chainId: Mainnet.chainId})
 
     return (
         <div>
@@ -58,27 +61,52 @@ const DrawerComponent = (props) => {
                                 <ListItemText>Connect wallet</ListItemText>
                             </Stack>
                         </Box>
-                    </ListItem>
-                    
-                    <ListItem>
-                        <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}} onClick={props.handleConnect}>
-                            <img src={metafox} style={{ height: 45, width: 45}}/>
-                            Metamask
-                        </Button>
-                    </ListItem>
+                    </ListItem>  
+                                     
+                    { //If account connected then show the disconnect page, else show the 'Please connect' page
+                        account
+                        ?
+                            <div>
+                                <ListItem>
+                                    <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}} 
+                                    onClick={() => deactivate()}>
+                                        Disconnect
+                                    </Button>
+                                </ListItem>
 
-                    <ListItem>
-                        <Box display="flex" justifyContent="center" minHeight="30vh"                        
-                            sx={{ border: 2,borderRadius: 5,padding: 1,width: 200}}
-                        >                      
-                            <ListItemText>
-                                <p>Wallet Address: {props.displayWalletAddress}</p>
-                                <p>ETH Balance: {props.walletBalance}</p>
-                            </ListItemText>
-                            
-                        </Box>
-                    </ListItem>
+                                <ListItem>
+                                    <Box display="flex" justifyContent="center" minHeight="30vh"                        
+                                        sx={{ border: 2,borderRadius: 5,padding: 1,width: 200}}
+                                    >                      
+                                        <ListItemText>
+                                            <p>Wallet Address: {account.substring(0,11) + "..." + account.substring(34,43)}</p>
+                                            {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)}</p>}
+                                        </ListItemText>
+                                    </Box>
+                                </ListItem>
+                            </div>
+                        :   
+                            <div>
+                                <ListItem>
+                                    <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}} 
+                                    onClick={() => activateBrowserWallet()}>
+                                        <img src={metafox} style={{ height: 45, width: 45}}/>
+                                        Metamask
+                                    </Button>
+                                </ListItem>
 
+                                <ListItem>
+                                    <Box display="flex" justifyContent="center" minHeight="30vh"                        
+                                        sx={{ border: 2,borderRadius: 5,padding: 1,width: 200}}
+                                    >                      
+                                        <ListItemText>
+                                            <p>Please connect wallet.</p>
+                                        </ListItemText>
+                                        
+                                    </Box>
+                                </ListItem>
+                            </div>
+                    }
                 </List>
             </Drawer>
         </div>
