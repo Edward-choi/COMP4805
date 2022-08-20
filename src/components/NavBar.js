@@ -9,7 +9,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFFLogo from '../images/logo.svg'
 
-export default function Navbar() {
+export default function Navbar(props) {
     return (
         <div>
             <nav className='navbar'>
@@ -22,7 +22,10 @@ export default function Navbar() {
                     <Button startIcon={<AddCircleOutlineIcon />} component={Link} to="/deposit">Deposit ETH</Button>
                 </ButtonGroup>
 
-                <DrawerComponent />
+                <DrawerComponent  handleConnect={props.handleConnect}
+                walletAddress={props.walletAddress} 
+                displayWalletAddress={props.displayWalletAddress} 
+                walletBalance={props.walletBalance} />
 
             </nav>
         </div>

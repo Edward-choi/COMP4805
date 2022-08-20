@@ -1,10 +1,13 @@
 import Navbar from './NavBar';
 import HomePage from './HomePage';
 
-function Home() {
+function Home(props) {
   return (
     <div>
-      <Navbar />
+      <Navbar handleConnect={props.handleConnect} 
+      walletAddress={props.walletAddress} 
+        displayWalletAddress={props.displayWalletAddress} 
+        walletBalance={props.walletBalance}/>
       <HomePage />
     </div>
   );

@@ -36,20 +36,8 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
-const DrawerComponent = () => {
+const DrawerComponent = (props) => {
     const [openDrawer, setOpenDrawer] = useState(false);
-    const [walletAddress, setWalletAddress] = useState(null);
-    const [displayWalletAddress, setdisplayWalletAddress] = useState(null);
-    const [walletBalance, setWalletBalance] = useState(null);
-
-    async function handdleConnect(){
-        const web3 = new Web3(Web3.givenProvider);
-        const accounts = await web3.eth.requestAccounts();
-        setWalletAddress(accounts[0]);
-        setdisplayWalletAddress(accounts[0].substring(0,11) + "..." + accounts[0].substring(34,43));
-        const balance = await web3.eth.getBalance(accounts[0]);
-        setWalletBalance(parseFloat(ethers.utils.formatEther(balance)).toFixed(4));
-    }
 
     return (
         <div>
@@ -73,7 +61,7 @@ const DrawerComponent = () => {
                     </ListItem>
                     
                     <ListItem>
-                        <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}} onClick={handdleConnect}>
+                        <Button variant="outlined" style={{width: 200, borderRadius: 10, borderColor: 'black'}} onClick={props.handleConnect}>
                             <img src={metafox} style={{ height: 45, width: 45}}/>
                             Metamask
                         </Button>
@@ -84,8 +72,8 @@ const DrawerComponent = () => {
                             sx={{ border: 2,borderRadius: 5,padding: 1,width: 200}}
                         >                      
                             <ListItemText>
-                                <p>Wallet Address: {displayWalletAddress}</p>
-                                <p>ETH Balance: {walletBalance}</p>
+                                <p>Wallet Address: {props.displayWalletAddress}</p>
+                                <p>ETH Balance: {props.walletBalance}</p>
                             </ListItemText>
                             
                         </Box>
