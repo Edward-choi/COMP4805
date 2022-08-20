@@ -102,3 +102,11 @@ body {
     position: relative;
     top: 33rem;
 }
+
+.homePageTitle {
+    vertical-align: middle;
+    display: inline-flex;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    color: black;
+}
