@@ -7,6 +7,11 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
+import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HistoryIcon from '@mui/icons-material/History';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     height: '20rem',
@@ -37,7 +42,10 @@ function HomePage() {
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
                             <Item>
-                                <div className='homePageFont1'>My Deposits</div>
+                                <div >
+                                    <AddCircleOutlineIcon className='homePageTitle' />
+                                    <div className='homePageFont1 homePageTitle'>My Deposits</div>
+                                </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
                                 <Button variant="contained" className='bottomDivider' component={Link} to="/deposit" style={{
@@ -54,7 +62,10 @@ function HomePage() {
                         </Grid>
                         <Grid item xs={12}>
                             <Item>
-                                <div className='homePageFont1'>History</div>
+                                <div >
+                                    <HistoryIcon className='homePageTitle' />
+                                    <div className='homePageFont1 homePageTitle'>History</div>
+                                </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
                                 <Button variant="contained" className='bottomDivider' style={{
@@ -70,7 +81,10 @@ function HomePage() {
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
                             <Item>
-                                <div className='homePageFont1'>My Borrows</div>
+                                <div >
+                                    <VerticalAlignBottomIcon className='homePageTitle' />
+                                    <div className='homePageFont1 homePageTitle'>My Borrows</div>
+                                </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
                                 <Button variant="contained" className='bottomDivider' component={Link} to="/borrow" style={{
@@ -87,7 +101,10 @@ function HomePage() {
                         </Grid>
                         <Grid item xs={12}>
                             <Item>
-                                <div className='homePageFont1'>My Wallet</div>
+                                <div >
+                                    <AccountBalanceWalletIcon className='homePageTitle' />
+                                    <div className='homePageFont1 homePageTitle'>My Wallet</div>
+                                </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
                                 <Button variant="contained" className='bottomDivider' style={{
