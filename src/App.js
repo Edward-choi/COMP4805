@@ -1,10 +1,9 @@
 import './style.css';
-import React, {useState} from "react";
 import Borrow from './components/Borrow';
 import Deposit from './components/Deposit';
 import DashBoard from './components/Dashboard';
 import Home from './components/Home';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { BrowserRouter as Route, Routes } from 'react-router-dom';
 import { DAppProvider, Mainnet } from '@usedapp/core';
 import {getDefaultProvider} from 'ethers'
 

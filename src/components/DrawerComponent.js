@@ -37,7 +37,7 @@ const GreenTooltip = styled(({ className, ...props }) => (
     },
 }));
 
-const DrawerComponent = (props) => {
+const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const {activateBrowserWallet, account, deactivate } = useEthers()
     const MainnetBalance = useEtherBalance(account, {chainId: Mainnet.chainId})
@@ -62,7 +62,7 @@ const DrawerComponent = (props) => {
                             </Stack>
                         </Box>
                     </ListItem>  
-                                     
+
                     { //If account connected then show the disconnect page, else show the 'Please connect' page
                         account
                         ?
