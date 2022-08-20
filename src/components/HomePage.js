@@ -11,24 +11,29 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import HistoryIcon from '@mui/icons-material/History';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     height: '20rem',
     ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
+    padding: theme.spacing(2),
+    textAlign: 'left',
     color: theme.palette.text.secondary,
     borderRadius: 40
 }));
 
-function HomePage() {
+function HomePage(props) {
     return (
         <Box className='homePage'>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={4}>
                     <Item style={{ height: "100%" }}>
-                        <div className='homePageFont1'>My NFTs</div>
+                        <div >
+                            <AccountBalanceIcon className='homePageTitle' />
+                            <div className='homePageFont1 homePageTitle'>My NFTs</div>
+                            <div>&nbsp;Total ERC721 Token</div>
+                        </div>
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider2' />
                         <Button variant="contained" className='bottomDivider2' style={{
@@ -45,6 +50,7 @@ function HomePage() {
                                 <div >
                                     <AddCircleOutlineIcon className='homePageTitle' />
                                     <div className='homePageFont1 homePageTitle'>My Deposits</div>
+                                    <div>&nbsp;Total Balance</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
@@ -65,6 +71,7 @@ function HomePage() {
                                 <div >
                                     <HistoryIcon className='homePageTitle' />
                                     <div className='homePageFont1 homePageTitle'>History</div>
+                                    <div>&nbsp;Record</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
@@ -84,6 +91,7 @@ function HomePage() {
                                 <div >
                                     <VerticalAlignBottomIcon className='homePageTitle' />
                                     <div className='homePageFont1 homePageTitle'>My Borrows</div>
+                                    <div>&nbsp;Total Debt</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
@@ -104,6 +112,7 @@ function HomePage() {
                                 <div >
                                     <AccountBalanceWalletIcon className='homePageTitle' />
                                     <div className='homePageFont1 homePageTitle'>My Wallet</div>
+                                    <div>&nbsp;{props.walletAddress}</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
