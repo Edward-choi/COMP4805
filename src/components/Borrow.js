@@ -1,12 +1,21 @@
 import Navbar from './NavBar';
 import Banner from './Banner';
-import Container from '@mui/material/Container';
+import ConnectWallet from './ConnectWallet';
+import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
 
 function Borrow() {
+  const { account } = useEthers()
   return (
     <div>
       <Navbar />
-      <Banner type="Borrow"/>
+      <Banner type="Borrow" />
+      {
+        account
+          ?
+          <ConnectWallet />
+          :
+          <ConnectWallet />
+      }
     </div>
   );
 }

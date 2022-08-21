@@ -114,3 +114,39 @@ body {
 .bottomButtonContainer {
     text-align: center;
 }
+
+.depositContainer1 {
+    width: 50%;
+    background: rgb(236, 236, 236);
+    background: linear-gradient(0deg, rgba(236, 236, 236, 1) 0%, rgba(255, 255, 255, 1) 35%, rgba(254, 254, 254, 1) 65%, rgba(236, 236, 236, 1) 100%);
+    padding: 30px;
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+    margin: auto;
+    margin-top: 3%;
+    margin-bottom: 1px;
+}
+
+.depositFont1 {
+    font-size: 25px;
+    font-weight: bold;
+    color: black;
+}
+
+.depositFont2 {
+    font-size: 15px;
+    color: gray;
+}
+
+.ethIcon {
+    position: relative;
+    left: 27rem;
+}
+
+.depositContainer2 {
+    width: 50%;
+    background: rgb(236, 236, 236);
+    background: linear-gradient(0deg, rgba(236, 236, 236, 1) 0%, rgba(255, 255, 255, 1) 35%, rgba(254, 254, 254, 1) 65%, rgba(236, 236, 236, 1) 100%);
+    padding: 30px;
+    margin: auto;
+}
