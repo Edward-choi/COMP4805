@@ -13,6 +13,9 @@ import HistoryIcon from '@mui/icons-material/History';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
+import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { formatEther } from "ethers/lib/utils";
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     height: '20rem',
@@ -23,7 +26,9 @@ const Item = styled(Paper)(({ theme }) => ({
     borderRadius: 40
 }));
 
-function HomePage(props) {
+function HomePage() {
+    const { account } = useEthers()
+    const MainnetBalance = useEtherBalance(account, {chainId: Mainnet.chainId})
     return (
         <Box className='homePage'>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -120,7 +125,7 @@ function HomePage(props) {
                                 <div >
                                     <AccountBalanceWalletIcon className='homePageTitle' />
                                     <div className='homePageFont1 homePageTitle'>My Wallet</div>
-                                    <div>&nbsp;{props.walletAddress}</div>
+                                    <div>&nbsp;{account}</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
