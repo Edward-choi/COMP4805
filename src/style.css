@@ -149,4 +149,17 @@ body {
     background: linear-gradient(0deg, rgba(236, 236, 236, 1) 0%, rgba(255, 255, 255, 1) 35%, rgba(254, 254, 254, 1) 65%, rgba(236, 236, 236, 1) 100%);
     padding: 30px;
     margin: auto;
+    transition: width 1s Ease, height 1s Ease;
+}
+
+.depositContainer3 {
+    width: 50%;
+    background: rgb(236, 236, 236);
+    background: linear-gradient(0deg, rgba(236, 236, 236, 1) 0%, rgba(255, 255, 255, 1) 35%, rgba(254, 254, 254, 1) 65%, rgba(236, 236, 236, 1) 100%);
+    padding: 30px;
+    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    margin: auto;
+    margin-top: 1px;
+    margin-bottom: 3%;
 }
