@@ -139,7 +139,7 @@ body {
 
 .ethIcon {
     position: relative;
-    left: 27rem;
+    left: 13.5rem;
 }
 
 .depositContainer2 {
@@ -159,4 +159,10 @@ body {
     border-bottom-left-radius: 1rem;
     margin: auto;
     margin-bottom: 3%;
+}
+
+.depositContainer3_1 {
+    width: 100%;
+    padding: 15px;
+    border-radius: 1rem;
 }
