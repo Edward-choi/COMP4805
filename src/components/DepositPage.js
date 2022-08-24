@@ -80,6 +80,7 @@ function DepositPage() {
 
                 </Grid>
                 <Divider sx={{ borderBottomWidth: 5, width: "50%", borderBlockColor: "lightgray", margin: "auto" }} />
+                
                 <Grid item xs={12}>
                     <Collapse in={slideIn} timeout={500} >
                         <Box className='depositContainer2' display="inline-flex">

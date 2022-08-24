@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import Borrow from './components/Borrow';
 import Deposit from './components/Deposit';
 import DashBoard from './components/Dashboard';
+import ViewNFT from './components/ViewNFT.js'
 import Home from './components/Home';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import { DAppProvider, Mainnet } from '@usedapp/core';
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/borrow" element={<Borrow />} />
           <Route path="/deposit" element={<Deposit />} />
+          <Route path="/ViewNFT" element={<ViewNFT />} />
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/" element={<Home/>} />
         </Routes>
