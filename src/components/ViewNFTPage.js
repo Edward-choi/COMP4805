@@ -10,7 +10,6 @@ function ViewNFTPage() {
         const response = await fetch(`https://api.rarible.org/v0.1/items/byOwner/?owner=ETHEREUM:${account}`)
         const data = await response.json()
         setNfts(data.items)
-        debugger
     }
 
     useEffect(()=> {
