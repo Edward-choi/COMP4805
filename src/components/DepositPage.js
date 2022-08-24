@@ -112,16 +112,17 @@ function DepositPage() {
                                         value={depositInput}
                                         onChange={(e) => {
                                             var value = parseFloat(e.target.value);
-                                            if (depositValue > 10) value = 10;
+                                            if (depositValue > balance) value = balance;
                                             if (depositValue < 0) value = 0;
                                             setDepositValue(value);
                                         }}
                                         onBlur={(e) => {
                                             var value = e.target.value === "" ? 0 : parseFloat(e.target.value);
-                                            if (depositValue > 10) value = 10;
+                                            if (depositValue > balance) value = balance;
                                             if (depositValue < 0) value = 0;
                                             setDepositValue(value);
                                         }}
+                                        disabled={balance == 0}
                                     /></div>
                                 </Box>
                             </Box>
@@ -138,7 +139,7 @@ function DepositPage() {
                                         var value = balance ? parseFloat(e.target.value) / 100 * balance : 0;
                                         setDepositValue(value);
                                     }}
-                                    disabled={!balance}
+                                    disabled={balance == 0}
                                 />
                             </Box>
                         </Box>
