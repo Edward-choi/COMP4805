@@ -24,7 +24,6 @@ function ViewNFTPage() {
         await axios.request(options).then(function (response) {
             const data = response.data
             setNfts(data.assets)
-            debugger
         }).catch(function (error) {
             console.error(error);
         });
