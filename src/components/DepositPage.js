@@ -10,6 +10,7 @@ import { formatEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
 import { Margin } from "@mui/icons-material";
+import Button from '@mui/material/Button';
 
 function DepositPage() {
     const { account } = useEthers()
@@ -96,7 +97,7 @@ function DepositPage() {
 
                 <Grid item xs={12}>
                     <Box className='depositContainer3' display="inline-flex">
-                        <Box sx={{width: "100%"}}>
+                        <Box sx={{ width: "100%" }}>
                             <Box sx={{ border: 1 }} className="depositContainer3_1">
 
                                 <Box textAlign="left">
@@ -126,14 +127,14 @@ function DepositPage() {
                                     /></div>
                                 </Box>
                             </Box>
-                            <Box sx={{ width: "75%", margin: "auto", marginTop: "5%"}}>
+                            <Box sx={{ width: "90%", margin: "auto", marginTop: "5%" }}>
                                 <Slider
                                     aria-label="Custom marks"
                                     defaultValue={0}
                                     getAriaValueText={valuetext}
                                     step={1}
                                     valueLabelDisplay="auto"
-                                    value={ (depositInput && balance) ? depositInput / balance * 100 : 0}
+                                    value={(depositInput && balance) ? depositInput / balance * 100 : 0}
                                     marks={marks}
                                     onChange={(e) => {
                                         var value = balance ? parseFloat(e.target.value) / 100 * balance : 0;
@@ -142,6 +143,11 @@ function DepositPage() {
                                     disabled={balance == 0}
                                 />
                             </Box>
+                            <Button variant="contained" style={{
+                                borderRadius: 20, padding: "12px 24px", fontSize: "18px", margin: "35px 10px 20px 10px", width: "90%"
+                            }}>
+                                Deposit
+                            </Button>
                         </Box>
                     </Box>
 
