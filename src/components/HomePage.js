@@ -32,6 +32,7 @@ function HomePage() {
     return (
         <Box className='homePage'>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+
                 <Grid item xs={4}>
                     <Item style={{ height: "100%" }}>
                         <div>
@@ -42,7 +43,7 @@ function HomePage() {
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider2' />
                         <div className='bottomDivider2 bottomButtonContainer'>
-                            <Button variant="contained" style={{
+                            <Button variant="contained" component={Link} to="/viewnft" style={{
                                 borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "15px", marginTop: "12px", width: "70%"
                             }}>
                                 View My NFTs
@@ -50,6 +51,7 @@ function HomePage() {
                         </div>
                     </Item>
                 </Grid>
+
                 <Grid item xs={4}>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
