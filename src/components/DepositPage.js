@@ -9,7 +9,6 @@ import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
 import { formatEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
-import { Margin } from "@mui/icons-material";
 import Button from '@mui/material/Button';
 
 function DepositPage() {
@@ -81,16 +80,40 @@ function DepositPage() {
 
                 </Grid>
                 <Divider sx={{ borderBottomWidth: 5, width: "50%", borderBlockColor: "lightgray", margin: "auto" }} />
-                
+
                 <Grid item xs={12}>
                     <Collapse in={slideIn} timeout={500} >
                         <Box className='depositContainer2' display="inline-flex">
-                            <Box textAlign="left">
-                                <div className='depositFont1' style={{ marginBottom: "10px" }}>Deposit ETH</div>
-                                <div className='depositFont2'>Available in Wallet: {balance}</div>
-                            </Box>
-                            <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} className='ethIcon' />
-
+                            <Grid item xs={4}>
+                                <Box textAlign="left" marginLeft="5%">
+                                    <Box className='depositFont2' marginBottom="5%">
+                                        Utilization rate
+                                    </Box>
+                                    <Box fontWeight="bold">
+                                        40.23 %
+                                    </Box>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Box>
+                                    <Box className='depositFont2' marginBottom="5%">
+                                        Your balance
+                                    </Box>
+                                    <Box fontWeight="bold">
+                                        {balance}
+                                    </Box>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Box textAlign="right" marginRight="5%">
+                                    <Box className='depositFont2' marginBottom="5%">
+                                        Deposit APR
+                                    </Box>
+                                    <Box fontWeight="bold">
+                                        7.47 %
+                                    </Box>
+                                </Box>
+                            </Grid>
                         </Box>
                         <Divider sx={{ borderBottomWidth: 5, width: "50%", borderBlockColor: "lightgray", margin: "auto" }} />
                     </Collapse>

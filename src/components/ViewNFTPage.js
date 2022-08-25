@@ -24,7 +24,7 @@ function ViewNFTPage() {
         await axios.request(options).then(function (response) {
             const data = response.data
             setNfts(data.assets)
-            debugger
+            // debugger
         }).catch(function (error) {
             console.error(error);
         });
@@ -42,7 +42,7 @@ function ViewNFTPage() {
     },[account])
 
     return (
-        <Box Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
+        <Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
 
             <Box className='depositContainer1' display="inline-flex">
                 <div className='nft-container'>
