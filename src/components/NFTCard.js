@@ -1,10 +1,11 @@
  import React from 'react'
  
 function NFTCard({nft}){
-  if (nft.contractMetadata != null && nft.contractMetadata.tokenType == "ERC721"){
+  if (nft.asset_contract.schema_name == "ERC721"){
     return (
       <div>
-        {nft.contractMetadata.name}
+        <img width={"100px"} height={"100px"} src={nft.image_url}/>
+        {nft.name}
       </div>
     )
   }

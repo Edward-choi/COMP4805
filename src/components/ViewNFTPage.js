@@ -9,20 +9,21 @@ function ViewNFTPage() {
     const [nfts, setNfts] = useState([])
 
     const axios = require("axios");
+
     const options = {
         method: 'GET',
-        url: 'https://nfts-by-address.p.rapidapi.com/getNFTs/',
+        url: 'https://opensea15.p.rapidapi.com/api/v1/assets',
         params: {owner: `${account}`},
         headers: {
-            'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
-            'X-RapidAPI-Host': 'nfts-by-address.p.rapidapi.com'
+          'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
+          'X-RapidAPI-Host': 'opensea15.p.rapidapi.com'
         }
-    };
+      };
 
     const getNftData = async() => {
         await axios.request(options).then(function (response) {
             const data = response.data
-            setNfts(data.ownedNfts)
+            setNfts(data.assets)
             debugger
         }).catch(function (error) {
             console.error(error);
