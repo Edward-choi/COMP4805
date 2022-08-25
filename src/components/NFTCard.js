@@ -1,11 +1,12 @@
- import React from 'react'
+import React from 'react'
  
 function NFTCard({nft}){
   if (nft.asset_contract.schema_name == "ERC721" && nft.name != null){
     return (
       <div>
-        <img width={"100px"} height={"100px"} src={nft.image_url}/>
-        {nft.name}
+        <img width={"100px"} height={"100px"} src={nft.image_url}/><br/>
+        {nft.name}<br/>
+        {nft.collection.slug}
       </div>
     )
   }
@@ -14,19 +15,6 @@ function NFTCard({nft}){
   }
 }
 
-// function NFTCard({nft}){
-//   if (nft.blockchain == "ETHEREUM" && nft.meta != null && nft.meta.name != null && nft.meta.content[0].url != null){
-//     return (
-//       <div>
-//         <img width={"100px"} height={"100px"} src={nft.meta.content[0].url}/>
-//         {nft.meta.name}
-//       </div>
-//     )
-//   }
-//   else{
-//     return (null)
-//   }
-// }
 
 export default NFTCard;
   

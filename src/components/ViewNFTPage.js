@@ -24,16 +24,29 @@ function ViewNFTPage() {
         await axios.request(options).then(function (response) {
             const data = response.data
             setNfts(data.assets)
+            // debugger
         }).catch(function (error) {
             console.error(error);
         });
     }
 
-    // const getNftData = async () =>{
-    //     const response = await fetch(`https://api.rarible.org/v0.1/items/byOwner/?owner=ETHEREUM:${account}`)
-    //     const data = await response.json()
-    //     setNfts(data.items)
-    //     debugger
+    //future use
+    // const options = {
+    //     method: 'GET',
+    //     url: 'https://opensea15.p.rapidapi.com/api/v1/collection/thepotatoz',
+    //     headers: {
+    //       'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
+    //       'X-RapidAPI-Host': 'opensea15.p.rapidapi.com'
+    //     }
+    // };
+    // const getNftPrice = async() => {
+    //     await axios.request(options).then(function (response) {
+    //         const data = response.data
+    //         setNfts(data.assets)
+    //         debugger
+    //     }).catch(function (error) {
+    //         console.error(error);
+    //     });
     // }
 
     useEffect(()=> {
