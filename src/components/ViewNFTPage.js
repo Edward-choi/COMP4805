@@ -4,13 +4,37 @@ import Box from '@mui/material/Box';
 import NFTCard from './NFTCard.js'
 
 function ViewNFTPage() {
+    
     const { account } = useEthers()
     const [nfts, setNfts] = useState([])
-    const getNftData = async () =>{
-        const response = await fetch(`https://api.rarible.org/v0.1/items/byOwner/?owner=ETHEREUM:${account}`)
-        const data = await response.json()
-        setNfts(data.items)
+
+    const axios = require("axios");
+    const options = {
+        method: 'GET',
+        url: 'https://nfts-by-address.p.rapidapi.com/getNFTs/',
+        params: {owner: `${account}`},
+        headers: {
+            'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
+            'X-RapidAPI-Host': 'nfts-by-address.p.rapidapi.com'
+        }
+    };
+
+    const getNftData = async() => {
+        await axios.request(options).then(function (response) {
+            const data = response.data
+            setNfts(data.ownedNfts)
+            debugger
+        }).catch(function (error) {
+            console.error(error);
+        });
     }
+
+    // const getNftData = async () =>{
+    //     const response = await fetch(`https://api.rarible.org/v0.1/items/byOwner/?owner=ETHEREUM:${account}`)
+    //     const data = await response.json()
+    //     setNfts(data.items)
+    //     debugger
+    // }
 
     useEffect(()=> {
         getNftData()
@@ -20,7 +44,7 @@ function ViewNFTPage() {
         <Box Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
 
             <Box className='depositContainer1' display="inline-flex">
-                <div>
+                <div className='nft-container'>
                     {nfts.map((nft, index) => {
                         return <NFTCard nft = {nft} key = {index}/>
                     })}
