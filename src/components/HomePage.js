@@ -33,7 +33,6 @@ function HomePage() {
     const [EthData, setEthData] = useState([])
 
 
-
     useEffect(()=> {
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
         ws.onmessage = (event) => {
@@ -41,7 +40,8 @@ function HomePage() {
             // debugger
             setEthData(data)
         }
-    })
+
+    },[])
 
     return (
         <Box className='homePage'>
