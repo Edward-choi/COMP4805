@@ -80,7 +80,7 @@ const DrawerComponent = () => {
                                     >
                                         <ListItemText>
                                             <p>Wallet Address: {account.substring(0, 11) + "..." + account.substring(34, 43)}</p>
-                                            {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)}</p>}
+                                            {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</p>}
                                         </ListItemText>
                                     </Box>
                                 </ListItem>

@@ -146,7 +146,7 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                     <div>
-                                        {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)}</p>}
+                                        {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</p>}
                                         Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br/>
                                         Price Change: ${parseFloat(EthData.p).toFixed(2)} <br/>
                                         Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
