@@ -32,15 +32,16 @@ function HomePage() {
     const MainnetBalance = useEtherBalance(account, {chainId: Mainnet.chainId})
     const [EthData, setEthData] = useState([])
 
-    const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        // debugger
-        setEthData(data)
-    }
+
 
     useEffect(()=> {
-    },[EthData])
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            // debugger
+            setEthData(data)
+        }
+    })
 
     return (
         <Box className='homePage'>
