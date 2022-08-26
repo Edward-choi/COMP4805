@@ -14,6 +14,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { useEffect, useState } from 'react'
 import { formatEther } from "ethers/lib/utils";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -29,6 +30,18 @@ const Item = styled(Paper)(({ theme }) => ({
 function HomePage() {
     const { account } = useEthers()
     const MainnetBalance = useEtherBalance(account, {chainId: Mainnet.chainId})
+    const [EthData, setEthData] = useState([])
+
+    const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        // debugger
+        setEthData(data)
+    }
+
+    useEffect(()=> {
+    },[EthData])
+
     return (
         <Box className='homePage'>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -122,6 +135,7 @@ function HomePage() {
                                 </div>
                             </Item>
                         </Grid>
+
                         <Grid item xs={12}>
                             <Item>
                                 <div >
@@ -130,6 +144,12 @@ function HomePage() {
                                     <div>&nbsp;{account}</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
+                                    <div>
+                                        {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)}</p>}
+                                        Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br/>
+                                        Price Change: ${parseFloat(EthData.p).toFixed(2)} <br/>
+                                        Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
+                                    </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
                                 <div className='bottomDivider bottomButtonContainer'>
                                     <Button variant="contained" style={{
@@ -140,6 +160,7 @@ function HomePage() {
                                 </div>
                             </Item>
                         </Grid>
+
                     </Grid>
                 </Grid>
             </Grid>

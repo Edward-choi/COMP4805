@@ -18,7 +18,7 @@ function ViewNFTPage() {
           'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
           'X-RapidAPI-Host': 'opensea15.p.rapidapi.com'
         }
-      };
+    };
 
     const getNftData = async() => {
         await axios.request(options).then(function (response) {
