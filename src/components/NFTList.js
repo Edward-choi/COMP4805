@@ -9,13 +9,19 @@ function NFTList({ nft }) {
       <ListItem>
         <Grid container rowSpacing={0} columnSpacing={0}>
           <Grid item xs={3}>
-            <img width={"70px"} height={"70px"} src={nft.image_url} className="nftImg" />
+            <Box textAlign="center">
+              <img width={"70px"} height={"70px"} src={nft.image_url} className="nftImg" />
+            </Box>
           </Grid>
           <Grid item xs={5}>
-          {nft.name}
+            <Box textAlign="center">
+              {nft.name}
+            </Box>
           </Grid>
           <Grid item xs={4}>
-          {nft.collection.slug}
+            <Box textAlign="center">
+              {nft.collection.slug}
+            </Box>
           </Grid>
         </Grid>
       </ListItem>
