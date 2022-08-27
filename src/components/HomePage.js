@@ -60,6 +60,7 @@ function HomePage() {
     }
 
     useEffect(() => {
+        //Get ETH price data
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -97,7 +98,7 @@ function HomePage() {
                             <Button variant="contained" component={Link} to="/viewnft" style={{
                                 borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
                             }}>
-                                View My NFTs
+                                Deposit NFTs
                             </Button>
                         </div>
                     </Item>
@@ -188,8 +189,8 @@ function HomePage() {
                                 <Box sx={{ height: "10rem", padding: "1rem" }}>
                                     {MainnetBalance && <Box>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</Box>}
                                     Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
-                                    Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
-                                    Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
+                                    24h Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
+                                    24h Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
 
                                 </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
