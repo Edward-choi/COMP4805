@@ -5,6 +5,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
@@ -12,7 +13,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import HistoryIcon from '@mui/icons-material/History';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import NFTCard from './NFTCard.js'
+import NFTList from './NFTList.js'
 
 import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
 import { useEffect, useState } from 'react'
@@ -85,9 +86,11 @@ function HomePage() {
                         </div>
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <Box sx={{ height: "31rem" }}>
-                            {nfts.map((nft, index) => {
-                                return <NFTCard nft={nft} key={index} />
-                            })}
+                            <List>
+                                {nfts.map((nft, index) => {
+                                    return <NFTList nft={nft} key={index} />
+                                })}
+                            </List>
                         </Box>
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <div className='bottomButtonContainer'>
