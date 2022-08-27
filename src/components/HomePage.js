@@ -149,13 +149,12 @@ function HomePage() {
                                     <div>&nbsp;{account}</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Box sx={{ height: "10rem" }}>
-                                    <div>
-                                        {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</p>}
+                                <Box sx={{ height: "10rem", padding: "1rem" }}>
+                                        {MainnetBalance && <Box>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</Box>}
                                         Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
                                         Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
                                         Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
-                                    </div>
+
                                 </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>
