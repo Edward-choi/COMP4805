@@ -29,11 +29,11 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function HomePage() {
     const { account } = useEthers()
-    const MainnetBalance = useEtherBalance(account, {chainId: Mainnet.chainId})
+    const MainnetBalance = useEtherBalance(account, { chainId: Mainnet.chainId })
     const [EthData, setEthData] = useState([])
 
 
-    useEffect(()=> {
+    useEffect(() => {
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -41,24 +41,25 @@ function HomePage() {
             setEthData(data)
         }
 
-    },[])
+    }, [])
 
     return (
         <Box className='homePage'>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 
                 <Grid item xs={4}>
-                    <Item style={{ height: "100%" }}>
+                    <Item style={{ height: "41rem" }}>
                         <div>
                             <AccountBalanceIcon className='homePageTitle' />
                             <div className='homePageFont1 homePageTitle'>My NFTs</div>
                             <div>&nbsp;Total ERC721 Token</div>
                         </div>
                         <Divider sx={{ borderBottomWidth: 5 }} />
-                        <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider2' />
-                        <div className='bottomDivider2 bottomButtonContainer'>
+                        <Box sx={{ height: "31rem" }}></Box>
+                        <Divider sx={{ borderBottomWidth: 5 }} />
+                        <div className='bottomButtonContainer'>
                             <Button variant="contained" component={Link} to="/viewnft" style={{
-                                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "15px", marginTop: "12px", width: "70%"
+                                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
                             }}>
                                 View My NFTs
                             </Button>
@@ -76,8 +77,9 @@ function HomePage() {
                                     <div>&nbsp;Total Balance</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <div className='bottomDivider bottomButtonContainer'>
+                                <Box sx={{ height: "10rem" }}></Box>
+                                <Divider sx={{ borderBottomWidth: 5 }} />
+                                <div className='bottomButtonContainer'>
                                     <Button variant="contained" component={Link} to="/deposit" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
@@ -99,8 +101,9 @@ function HomePage() {
                                     <div>&nbsp;Record</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <div className='bottomDivider bottomButtonContainer'>
+                                <Box sx={{ height: "10rem" }}></Box>
+                                <Divider sx={{ borderBottomWidth: 5 }} />
+                                <div className='bottomButtonContainer'>
                                     <Button variant="contained" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
                                     }}>
@@ -121,8 +124,9 @@ function HomePage() {
                                     <div>&nbsp;Total Debt</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <div className='bottomDivider bottomButtonContainer'>
+                                <Box sx={{ height: "10rem" }}></Box>
+                                <Divider sx={{ borderBottomWidth: 5 }} />
+                                <div className='bottomButtonContainer'>
                                     <Button variant="contained" component={Link} to="/borrow" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
@@ -145,14 +149,16 @@ function HomePage() {
                                     <div>&nbsp;{account}</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
+                                <Box sx={{ height: "10rem" }}>
                                     <div>
                                         {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</p>}
-                                        Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br/>
-                                        Price Change: ${parseFloat(EthData.p).toFixed(2)} <br/>
+                                        Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
+                                        Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
                                         Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
                                     </div>
-                                <Divider sx={{ borderBottomWidth: 5 }} className='bottomDivider' />
-                                <div className='bottomDivider bottomButtonContainer'>
+                                </Box>
+                                <Divider sx={{ borderBottomWidth: 5 }} />
+                                <div className='bottomButtonContainer'>
                                     <Button variant="contained" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
                                     }}>
