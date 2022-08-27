@@ -12,6 +12,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import HistoryIcon from '@mui/icons-material/History';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import NFTCard from './NFTCard.js'
 
 import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
 import { useEffect, useState } from 'react'
@@ -27,11 +28,35 @@ const Item = styled(Paper)(({ theme }) => ({
     borderRadius: 40
 }));
 
+
 function HomePage() {
     const { account } = useEthers()
     const MainnetBalance = useEtherBalance(account, { chainId: Mainnet.chainId })
     const [EthData, setEthData] = useState([])
 
+    const [nfts, setNfts] = useState([])
+
+    const axios = require("axios");
+
+    const options = {
+        method: 'GET',
+        url: 'https://opensea15.p.rapidapi.com/api/v1/assets',
+        params: { owner: `${account}` },
+        headers: {
+            'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
+            'X-RapidAPI-Host': 'opensea15.p.rapidapi.com'
+        }
+    };
+
+    const getNftData = async () => {
+        await axios.request(options).then(function (response) {
+            const data = response.data
+            setNfts(data.assets)
+            // debugger
+        }).catch(function (error) {
+            console.error(error);
+        });
+    }
 
     useEffect(() => {
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
@@ -42,6 +67,10 @@ function HomePage() {
         }
 
     }, [])
+
+    useEffect(() => {
+        getNftData()
+    }, [account])
 
     return (
         <Box className='homePage'>
@@ -55,7 +84,11 @@ function HomePage() {
                             <div>&nbsp;Total ERC721 Token</div>
                         </div>
                         <Divider sx={{ borderBottomWidth: 5 }} />
-                        <Box sx={{ height: "31rem" }}></Box>
+                        <Box sx={{ height: "31rem" }}>
+                            {nfts.map((nft, index) => {
+                                return <NFTCard nft={nft} key={index} />
+                            })}
+                        </Box>
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <div className='bottomButtonContainer'>
                             <Button variant="contained" component={Link} to="/viewnft" style={{
@@ -150,10 +183,10 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem" }}>
-                                        {MainnetBalance && <Box>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</Box>}
-                                        Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
-                                        Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
-                                        Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
+                                    {MainnetBalance && <Box>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</Box>}
+                                    Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
+                                    Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
+                                    Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
 
                                 </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
