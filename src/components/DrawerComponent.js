@@ -14,7 +14,7 @@ import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import metafox from '../images/metafox.png';
 
 //web3
-import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { useEthers, useEtherBalance, Ropsten } from "@usedapp/core";
 import { formatEther } from "ethers/lib/utils";
 
 
@@ -40,7 +40,7 @@ const GreenTooltip = styled(({ className, ...props }) => (
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const { activateBrowserWallet, account, deactivate } = useEthers()
-    const MainnetBalance = useEtherBalance(account, { chainId: Mainnet.chainId })
+    const RopstenBalance = useEtherBalance(account, { chainId: Ropsten.chainId })
 
     return (
         <div>
@@ -80,7 +80,7 @@ const DrawerComponent = () => {
                                     >
                                         <ListItemText>
                                             <p>Wallet Address: {account.substring(0, 11) + "..." + account.substring(34, 43)}</p>
-                                            {MainnetBalance && <p>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</p>}
+                                            {RopstenBalance && <p>ETH Balance: {parseFloat(formatEther(RopstenBalance)).toFixed(4)} Ξ</p>}
                                         </ListItemText>
                                     </Box>
                                 </ListItem>

@@ -6,16 +6,16 @@ import DashBoard from './components/Dashboard';
 import ViewNFT from './components/ViewNFT.js'
 import Home from './components/Home';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
-import { DAppProvider, Mainnet } from '@usedapp/core';
+import { DAppProvider, Ropsten } from '@usedapp/core';
 import {getDefaultProvider} from 'ethers'
 
 function App() {
 
   const config = {
-    networks: [Mainnet],
-    readOnlyChainId: Mainnet.chainId,
+    networks: [Ropsten],
+    readOnlyChainId: Ropsten.chainId,
     readOnlyUrls:{
-      [Mainnet.chainId]: getDefaultProvider('mainnet') //https://mainnet.infura.io/v3/04dd4e7b623849fe98bbd0f990ae105f 
+      [Ropsten.chainId]: getDefaultProvider('ropsten') //https://mainnet.infura.io/v3/04dd4e7b623849fe98bbd0f990ae105f 
     }                                                  // ^ This is an API for connection to the blockchain, use this when getDefaultProvider dont work
   }
 

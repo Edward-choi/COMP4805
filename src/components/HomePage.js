@@ -15,7 +15,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFTList from './NFTList.js'
 
-import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { useEthers, useEtherBalance, Mainnet, Ropsten } from "@usedapp/core";
 import { useEffect, useState } from 'react'
 import { formatEther } from "ethers/lib/utils";
 
@@ -32,7 +32,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function HomePage() {
     const { account } = useEthers()
-    const MainnetBalance = useEtherBalance(account, { chainId: Mainnet.chainId })
+    const RopstenBalance = useEtherBalance(account, { chainId: Ropsten.chainId })
     const [EthData, setEthData] = useState([])
 
     const [nfts, setNfts] = useState([])
@@ -78,7 +78,7 @@ function HomePage() {
         <Box className='homePage'>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 
-                <Grid item xs={4}>
+                <Grid item md={4} xs={12}>
                     <Item style={{ height: "41rem" }}>
                         <div>
                             <AccountBalanceIcon className='homePageTitle' />
@@ -104,7 +104,7 @@ function HomePage() {
                     </Item>
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item md={4} xs={12}>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
                             <Item>
@@ -151,7 +151,7 @@ function HomePage() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item md={4} xs={12}>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
                             <Item>
@@ -187,7 +187,7 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem" }}>
-                                    {MainnetBalance && <Box>ETH Balance: {parseFloat(formatEther(MainnetBalance)).toFixed(4)} Ξ</Box>}
+                                    {RopstenBalance && <Box>ETH Balance: {parseFloat(formatEther(RopstenBalance)).toFixed(4)} Ξ</Box>}
                                     Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
                                     24h Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
                                     24h Percentage Change: {parseFloat(EthData.P).toFixed(2)}%

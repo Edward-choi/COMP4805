@@ -5,7 +5,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
-import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { useEthers, useEtherBalance, Ropsten } from "@usedapp/core";
 import { formatEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,8 +13,8 @@ import Button from '@mui/material/Button';
 
 function DepositPage() {
     const { account } = useEthers()
-    const MainnetBalance = useEtherBalance(account, { chainId: Mainnet.chainId })
-    const balance = MainnetBalance ? parseFloat(formatEther(MainnetBalance)).toFixed(4) : "";
+    const RopstenBalance = useEtherBalance(account, { chainId: Ropsten.chainId })
+    const balance = RopstenBalance ? parseFloat(formatEther(RopstenBalance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [depositValue, setDepositValue] = useState(0);
     const depositInput = depositValue === 0 || depositValue ? depositValue : '';
