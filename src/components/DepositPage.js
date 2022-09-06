@@ -75,7 +75,7 @@ function DepositPage() {
                     <Grid item xs={11}>
                         <Box textAlign="left">
                             <div className='depositFont1' style={{ marginBottom: "10px" }}>Deposit ETH</div>
-                            <div className='depositFont2'>Available in Wallet: {erc20Balances? parseFloat(formatUnits(erc20Balances,6)).toFixed(2) : 0}</div>
+                            <div className='depositFont2'>Available USDC in Wallet: {erc20Balances? parseFloat(formatUnits(erc20Balances,6)).toFixed(2) : 0}</div>
                         </Box>
                         </Grid>
                         <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} />
