@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
 import { useEthers, useEtherBalance, Ropsten, useTokenBalance } from "@usedapp/core";
-import { formatEther } from "ethers/lib/utils";
+import { formatEther, formatUnits } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@mui/material/Button';
@@ -21,8 +21,8 @@ function DepositPage() {
     const handleToggle = () => {
         setSlideIn(!slideIn);
     };
-    const erc20Balances = useTokenBalance("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", account);
 
+    const erc20Balances = useTokenBalance("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", account);
     const useStyles = makeStyles({
         input: {
             '& input[type=number]': {
@@ -75,7 +75,7 @@ function DepositPage() {
                     <Grid item xs={11}>
                         <Box textAlign="left">
                             <div className='depositFont1' style={{ marginBottom: "10px" }}>Deposit ETH</div>
-                            <div className='depositFont2'>Available in Wallet: {erc20Balances? formatEther(erc20Balances) : 0}</div>
+                            <div className='depositFont2'>Available in Wallet: {erc20Balances? parseFloat(formatUnits(erc20Balances,6)).toFixed(2) : 0}</div>
                         </Box>
                         </Grid>
                         <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} />
