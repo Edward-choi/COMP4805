@@ -2,7 +2,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
-import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { useEthers} from "@usedapp/core";
 
 function ConnectWallet() {
     const {activateBrowserWallet} = useEthers()
