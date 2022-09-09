@@ -110,7 +110,7 @@ function HomePage() {
                             <Item>
                                 <div >
                                     <AddCircleOutlineIcon className='homePageTitle' />
-                                    <div className='homePageFont1 homePageTitle'>My Deposits</div>
+                                    <div className='homePageFont1 homePageTitle'>My Account</div>
                                     <div>&nbsp;Total Balance</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
@@ -125,7 +125,7 @@ function HomePage() {
                                     <Button variant="outlined" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
-                                        My Deposits
+                                        Withdraw ETH
                                     </Button>
                                 </div>
                             </Item>
