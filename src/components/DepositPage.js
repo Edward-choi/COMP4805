@@ -5,7 +5,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
-import { useEthers, useEtherBalance, Ropsten, useTokenBalance } from "@usedapp/core";
+import { useEthers, useEtherBalance, Goerli, useTokenBalance } from "@usedapp/core";
 import { formatEther, formatUnits } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,8 +13,8 @@ import Button from '@mui/material/Button';
 
 function DepositPage() {
     const { account } = useEthers()
-    const RopstenBalance = useEtherBalance(account, { chainId: Ropsten.chainId })
-    const balance = RopstenBalance ? parseFloat(formatEther(RopstenBalance)).toFixed(4) : "";
+    const GoerliBalance = useEtherBalance(account, { chainId: Goerli.chainId })
+    const balance = GoerliBalance ? parseFloat(formatEther(GoerliBalance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [depositValue, setDepositValue] = useState(0);
     const depositInput = depositValue === 0 || depositValue ? depositValue : '';
@@ -22,7 +22,7 @@ function DepositPage() {
         setSlideIn(!slideIn);
     };
 
-    const erc20Balances = useTokenBalance("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", account);
+    const erc20Balances = useTokenBalance("0x4526a0a7ffb468e4933f51c05a09493d7e65e1bb", account);
     const useStyles = makeStyles({
         input: {
             '& input[type=number]': {
@@ -75,7 +75,7 @@ function DepositPage() {
                     <Grid item xs={11}>
                         <Box textAlign="left">
                             <div className='depositFont1' style={{ marginBottom: "10px" }}>Deposit ETH</div>
-                            <div className='depositFont2'>Available USDC in Wallet: {erc20Balances? parseFloat(formatUnits(erc20Balances,6)).toFixed(2) : 0}</div>
+                            <div className='depositFont2'>Available USDC in Wallet: {erc20Balances? parseFloat(formatEther(erc20Balances)).toFixed(4) : 0}</div>
                         </Box>
                         </Grid>
                         <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} />
@@ -103,7 +103,7 @@ function DepositPage() {
                                         Your balance
                                     </Box>
                                     <Box fontWeight="bold">
-                                        {balance}
+                                        {erc20Balances? parseFloat(formatEther(erc20Balances)).toFixed(4) : 0}
                                     </Box>
                                 </Box>
                             </Grid>
@@ -137,20 +137,20 @@ function DepositPage() {
                                         }}
                                         type="number"
                                         className={useStyles().input}
-                                        value={depositInput}
+                                        value={depositInput.toFixed(4)}
                                         onChange={(e) => {
                                             var value = parseFloat(e.target.value);
-                                            if (depositValue > balance) value = balance;
+                                            if (depositValue > formatEther(erc20Balances)) value = formatEther(erc20Balances);
                                             if (depositValue < 0) value = 0;
                                             setDepositValue(value);
                                         }}
                                         onBlur={(e) => {
                                             var value = e.target.value === "" ? 0 : parseFloat(e.target.value);
-                                            if (depositValue > balance) value = balance;
+                                            if (depositValue > formatEther(erc20Balances)) value = formatEther(erc20Balances);
                                             if (depositValue < 0) value = 0;
                                             setDepositValue(value);
                                         }}
-                                        disabled={balance == 0}
+                                        disabled={erc20Balances == 0}
                                     /></div>
                                 </Box>
                             </Box>
@@ -161,13 +161,13 @@ function DepositPage() {
                                     getAriaValueText={valuetext}
                                     step={1}
                                     valueLabelDisplay="auto"
-                                    value={(depositInput && balance) ? depositInput / balance * 100 : 0}
+                                    value={(depositInput && erc20Balances) ? depositInput / formatEther(erc20Balances) * 100 : 0}
                                     marks={marks}
                                     onChange={(e) => {
-                                        var value = balance ? parseFloat(e.target.value) / 100 * balance : 0;
+                                        var value = erc20Balances ? parseFloat(e.target.value) / 100 * formatEther(erc20Balances) : 0;
                                         setDepositValue(value);
                                     }}
-                                    disabled={balance == 0}
+                                    disabled={erc20Balances == 0}
                                 />
                             </Box>
                             <Button variant="contained" style={{

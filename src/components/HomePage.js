@@ -15,7 +15,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFTList from './NFTList.js'
 
-import { useEthers, useEtherBalance, Mainnet, Ropsten } from "@usedapp/core";
+import { useEthers, useEtherBalance, Mainnet, Goerli } from "@usedapp/core";
 import { useEffect, useState } from 'react'
 import { formatEther } from "ethers/lib/utils";
 
@@ -32,7 +32,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function HomePage() {
     const { account } = useEthers()
-    const RopstenBalance = useEtherBalance(account, { chainId: Ropsten.chainId })
+    const GoerliBalance = useEtherBalance(account, { chainId: Goerli.chainId })
     const [EthData, setEthData] = useState([])
 
     const [nfts, setNfts] = useState([])
@@ -187,7 +187,7 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem" }}>
-                                    {RopstenBalance && <Box>ETH Balance: {parseFloat(formatEther(RopstenBalance)).toFixed(4)} Ξ</Box>}
+                                    {GoerliBalance && <Box>ETH Balance: {parseFloat(formatEther(GoerliBalance)).toFixed(4)} Ξ</Box>}
                                     Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
                                     24h Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
                                     24h Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
