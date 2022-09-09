@@ -2,12 +2,13 @@ import './style.css';
 import React, {useState} from "react";
 import Borrow from './components/Borrow';
 import Deposit from './components/Deposit';
-import DashBoard from './components/Dashboard';
+import Withdraw from './components/Withdraw';
 import ViewNFT from './components/ViewNFT.js'
 import Home from './components/Home';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import { DAppProvider, Goerli, Mainnet } from '@usedapp/core';
 import {getDefaultProvider} from 'ethers'
+import WithdrawPage from './components/WithdrawPage';
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
           <Route path="/borrow" element={<Borrow />} />
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/ViewNFT" element={<ViewNFT />} />
-          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/withdraw" element={<Withdraw />} />
           <Route path="/" element={<Home/>} />
         </Routes>
       </div>

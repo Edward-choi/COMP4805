@@ -7,6 +7,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import NFFLogo from '../images/logo.svg'
 
 
@@ -18,9 +19,9 @@ export default function Navbar() {
 
                 <ButtonGroup variant="text" size="large" className='buttongp'>
                     <Button startIcon={<AccountBalanceIcon />} component={Link} to="/">home</Button>
-                    <Button startIcon={<PersonIcon />} component={Link} to="/dashboard">Dashboard</Button>
                     <Button startIcon={<VerticalAlignBottomIcon />} component={Link} to="/borrow">Borrow ETH</Button>
                     <Button startIcon={<AddCircleOutlineIcon />} component={Link} to="/deposit">Deposit ETH</Button>
+                    <Button startIcon={<LocalAtmIcon />} component={Link} to="/withdraw">Withdraw ETH</Button>
                 </ButtonGroup>
 
                 <DrawerComponent />

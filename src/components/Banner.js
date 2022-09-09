@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import PersonIcon from '@mui/icons-material/Person'
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 
 
 
@@ -16,8 +16,8 @@ function Banner(props) {
         case "Deposit":
             icon = <AddCircleOutlineIcon sx={{ fontSize: "2rem" }} />;
             break;
-        case "Dashboard":
-            icon = <PersonIcon sx={{ fontSize: "2rem" }} />;
+        case "Withdraw":
+            icon = <LocalAtmIcon sx={{ fontSize: "2rem" }} />;
             break;
     }
     return (
