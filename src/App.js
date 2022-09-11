@@ -8,7 +8,6 @@ import Home from './components/Home';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import { DAppProvider, Goerli, Mainnet } from '@usedapp/core';
 import {getDefaultProvider} from 'ethers'
-import WithdrawPage from './components/WithdrawPage';
 
 function App() {
 
