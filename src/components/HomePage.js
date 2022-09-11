@@ -14,6 +14,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFTList from './NFTList.js'
+import {Network, Alchemy} from "alchemy-sdk"
 
 import { useEthers, useEtherBalance, Mainnet, Goerli } from "@usedapp/core";
 import { useEffect, useState } from 'react'
@@ -37,24 +38,39 @@ function HomePage() {
 
     const [nfts, setNfts] = useState([])
 
-    const axios = require("axios");
+    // const axios = require("axios");
+    // const options = {
+    //     method: 'GET',
+    //     url: 'https://opensea15.p.rapidapi.com/api/v1/assets',
+    //     params: { owner: `${account}` },
+    //     headers: {
+    //         'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
+    //         'X-RapidAPI-Host': 'opensea15.p.rapidapi.com'
+    //     }
+    // };
+    // const getNftData = async () => {
+    //     await axios.request(options).then(function (response) {
+    //         const data = response.data
+    //         setNfts(data.assets)
+    //         // debugger
+    //     }).catch(function (error) {
+    //         console.error(error);
+    //     });
+    // }
 
-    const options = {
-        method: 'GET',
-        url: 'https://opensea15.p.rapidapi.com/api/v1/assets',
-        params: { owner: `${account}` },
-        headers: {
-            'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
-            'X-RapidAPI-Host': 'opensea15.p.rapidapi.com'
-        }
+    const settings = {
+        apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
+        network: Network.ETH_MAINNET, // Replace with your network.
+        'filters[]': 'SPAM&filters[]=AIRDROPS'
     };
 
-    const getNftData = async () => {
-        await axios.request(options).then(function (response) {
-            const data = response.data
-            setNfts(data.assets)
+    const getNftData = () => {
+        const alchemy = new Alchemy(settings);
+        alchemy.nft.getNftsForOwner(account).then(function (response) {
+            const data = response.ownedNfts
+            setNfts(data)
             // debugger
-        }).catch(function (error) {
+        }).catch(function (error){
             console.error(error);
         });
     }

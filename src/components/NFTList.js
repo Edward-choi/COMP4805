@@ -2,28 +2,41 @@ import React from 'react'
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import ListItem from '@mui/material/ListItem';
+import {IpfsImage} from 'react-ipfs-image';
 
 function NFTList({ nft }) {
-  if (nft.asset_contract.schema_name == "ERC721" && nft.name != null) {
+  if (nft.title != null) {
     return (
       <ListItem>
-        <Grid container rowSpacing={0} columnSpacing={0}>
+        {
+          nft.rawMetadata.image.startsWith("https")
+          ?
+          <Grid container rowSpacing={0} columnSpacing={0}>     
           <Grid item xs={3}>
             <Box textAlign="center">
-              <img width={"70px"} height={"70px"} src={nft.image_url} className="nftImg" />
+              <img width={"70px"} height={"70px"} src={nft.rawMetadata.image} className="nftImg" />
             </Box>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             <Box textAlign="center">
-              {nft.name}
-            </Box>
-          </Grid>
-          <Grid item xs={4}>
-            <Box textAlign="center">
-              {nft.collection.slug}
+              {nft.title}
             </Box>
           </Grid>
         </Grid>
+        :
+        <Grid container rowSpacing={0} columnSpacing={0}>     
+        <Grid item xs={3}>
+          <Box textAlign="center">
+            <IpfsImage width={"70px"} height={"70px"} hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="nftImg" />
+          </Box>
+        </Grid>
+        <Grid item xs={6}>
+          <Box textAlign="center">
+            {nft.title}
+          </Box>
+        </Grid>
+      </Grid>
+      }
       </ListItem>
     )
   }
