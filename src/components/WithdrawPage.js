@@ -149,7 +149,7 @@ function WithdrawPage() {
                                         }}
                                         type="number"
                                         className={useStyles().input}
-                                        value={withdrawInput.toFixed(4)}
+                                        value={withdrawInput}
                                         onChange={(e) => {
                                             var value = parseFloat(e.target.value);
                                             if (withDrawValue > formatEther(depositBalance)) value = formatEther(depositBalance);

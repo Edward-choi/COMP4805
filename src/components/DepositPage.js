@@ -142,7 +142,7 @@ function DepositPage() {
                                         }}
                                         type="number"
                                         className={useStyles().input}
-                                        value={depositInput.toFixed(4)}
+                                        value={depositInput}
                                         onChange={(e) => {
                                             var value = parseFloat(e.target.value);
                                             if (depositValue > formatEther(erc20Balances)) value = formatEther(erc20Balances);
