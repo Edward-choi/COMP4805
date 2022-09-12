@@ -5,11 +5,14 @@ interface IERC20 {
 
     function totalSupply() external view returns (uint256);
     function balanceOf(address account) external view returns (uint256);
+    function depositOf(address account) external view returns (uint256);
     function allowance(address owner, address spender) external view returns (uint256);
 
     function transfer(address recipient, uint256 amount) external returns (bool);
     function approve(address spender, uint256 amount) external returns (bool);
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function deposit(uint256 amount) external returns (bool);
+    function withdraw(uint256 amount) external returns (bool);
 
 
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -28,19 +31,27 @@ contract ERC20Basic is IERC20 {
 
     mapping(address => mapping (address => uint256)) allowed;
 
-    uint256 totalSupply_ = 10 ether;
+    mapping(address => uint256) deposits;
+
+    uint256 totalSupply_ = 120000 ether;
 
 
-   constructor() {
-    balances[msg.sender] = totalSupply_;
+    constructor() {
+        balances[msg.sender] = 10000 ether;
+        balances[0xA7207a289D7ed09FA68D2c93c0e6b9d8Ac91F80F] = 10000 ether;
+        balances[address(this)] = 100000 ether;
     }
 
     function totalSupply() public override view returns (uint256) {
-    return totalSupply_;
+        return totalSupply_;
     }
 
     function balanceOf(address tokenOwner) public override view returns (uint256) {
         return balances[tokenOwner];
+    }
+
+    function depositOf(address tokenOwner) public override view returns (uint256) {
+        return deposits[tokenOwner];
     }
 
     function transfer(address receiver, uint256 numTokens) public override returns (bool) {
@@ -69,6 +80,25 @@ contract ERC20Basic is IERC20 {
         allowed[owner][msg.sender] = allowed[owner][msg.sender]-numTokens;
         balances[buyer] = balances[buyer]+numTokens;
         emit Transfer(owner, buyer, numTokens);
+        return true;
+    }
+
+    function deposit(uint256 numTokens) public override returns (bool) {
+        require(numTokens <= balances[msg.sender]);
+        balances[msg.sender] = balances[msg.sender]-numTokens;
+        balances[address(this)] = balances[address(this)]+numTokens;
+        deposits[msg.sender] = deposits[msg.sender]+numTokens;
+        emit Transfer(msg.sender, address(this), numTokens);
+        return true;
+    }
+
+    function withdraw(uint256 numTokens) public override returns (bool) {
+        require(numTokens <= balances[address(this)]);
+        require(numTokens <= deposits[msg.sender]);
+        balances[msg.sender] = balances[msg.sender]+numTokens;
+        balances[address(this)] = balances[address(this)]-numTokens;
+        deposits[msg.sender] = deposits[msg.sender]-numTokens;
+        emit Transfer(address(this), msg.sender, numTokens);
         return true;
     }
 }
