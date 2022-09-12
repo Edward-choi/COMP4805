@@ -23,7 +23,7 @@ function DepositPage() {
     const handleToggle = () => {
         setSlideIn(!slideIn);
     };
-    const contractAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+    const contractAddress = "0x4260a13cd63583aaf9c3f4c25de5a33e887f7420";
     const ercContract = new Contract(contractAddress, abi);
     const erc20Balances = useTokenBalance(contractAddress, account);
 
