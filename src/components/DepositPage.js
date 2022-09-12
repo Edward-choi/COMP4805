@@ -23,7 +23,7 @@ function DepositPage() {
     const handleToggle = () => {
         setSlideIn(!slideIn);
     };
-    const contractAddress = "0xc7b007c2397e95279f0cf969b35f32c4768b1bb2";
+    const contractAddress = "0x6fdaa07ea4c74c6382033ae14f1c9f47943d8d1a";
     const contract = new Contract(contractAddress, abi);
 
     const { send, state } = useContractFunction(contract, "deposit");
