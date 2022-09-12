@@ -117,7 +117,7 @@ function HomePage() {
                                     }}>
                                         Deposit ETH
                                     </Button>
-                                    <Button variant="outlined"  component={Link} to="/withdraw" style={{
+                                    <Button variant="outlined" component={Link} to="/withdraw" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
                                         Withdraw ETH

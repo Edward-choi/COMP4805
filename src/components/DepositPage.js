@@ -15,7 +15,7 @@ import { Contract } from '@ethersproject/contracts';
 
 function DepositPage() {
     const { account } = useEthers()
-    const Balance = useEtherBalance(account, { refresh: 'never' })
+    const Balance = useEtherBalance(account)
     const balance = Balance ? parseFloat(formatEther(Balance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [depositValue, setDepositValue] = useState(0);
@@ -23,11 +23,10 @@ function DepositPage() {
     const handleToggle = () => {
         setSlideIn(!slideIn);
     };
-    const contractAddress = "0x4260a13cd63583aaf9c3f4c25de5a33e887f7420";
-    const ercContract = new Contract(contractAddress, abi);
-    const erc20Balances = useTokenBalance(contractAddress, account);
+    const contractAddress = "0xc7b007c2397e95279f0cf969b35f32c4768b1bb2";
+    const contract = new Contract(contractAddress, abi);
 
-    const { send, state } = useContractFunction(ercContract, "deposit");
+    const { send, state } = useContractFunction(contract, "deposit");
     
     const useStyles = makeStyles({
         input: {
@@ -81,8 +80,7 @@ function DepositPage() {
                     <Grid item xs={11}>
                         <Box textAlign="left">
                             <div className='depositFont1' style={{ marginBottom: "10px" }}>Deposit ETH</div>
-                            <div className='depositFont2'>Available ERC20 Token in Wallet: {balance}</div>
-                            {/* {erc20Balances? parseFloat(formatEther(erc20Balances)).toFixed(4) : 0} */}
+                            <div className='depositFont2'>Available ETH in Wallet: {balance}</div>
                         </Box>
                         </Grid>
                         <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} />
@@ -110,7 +108,7 @@ function DepositPage() {
                                         Your balance
                                     </Box>
                                     <Box fontWeight="bold">
-                                        {erc20Balances? parseFloat(formatEther(erc20Balances)).toFixed(4) : 0}
+                                        {balance}
                                     </Box>
                                 </Box>
                             </Grid>
@@ -147,17 +145,17 @@ function DepositPage() {
                                         value={depositInput}
                                         onChange={(e) => {
                                             var value = parseFloat(e.target.value);
-                                            if (depositValue > formatEther(erc20Balances)) value = formatEther(erc20Balances);
+                                            if (depositValue > balance) value = balance;
                                             if (depositValue < 0) value = 0;
                                             setDepositValue(value);
                                         }}
                                         onBlur={(e) => {
                                             var value = e.target.value === "" ? 0 : parseFloat(e.target.value);
-                                            if (depositValue > formatEther(erc20Balances)) value = formatEther(erc20Balances);
+                                            if (depositValue > balance) value = balance;
                                             if (depositValue < 0) value = 0;
                                             setDepositValue(value);
                                         }}
-                                        disabled={erc20Balances == 0}
+                                        disabled={balance == 0}
                                     /></div>
                                 </Box>
                             </Box>
@@ -168,18 +166,18 @@ function DepositPage() {
                                     getAriaValueText={valuetext}
                                     step={1}
                                     valueLabelDisplay="auto"
-                                    value={(depositInput && erc20Balances) ? depositInput / formatEther(erc20Balances) * 100 : 0}
+                                    value={(depositInput && balance) ? depositInput / balance * 100 : 0}
                                     marks={marks}
                                     onChange={(e) => {
-                                        var value = erc20Balances ? parseFloat(e.target.value) / 100 * formatEther(erc20Balances) : 0;
+                                        var value = balance ? parseFloat(e.target.value) / 100 * balance : 0;
                                         setDepositValue(value);
                                     }}
-                                    disabled={erc20Balances == 0}
+                                    disabled={balance == 0}
                                 />
                             </Box>
                             <Button variant="contained" style={{
                                 borderRadius: 20, padding: "12px 24px", fontSize: "18px", margin: "35px 10px 20px 10px", width: "90%"
-                            }} onClick={() => send(parseEther(depositValue.toString()))}>
+                            }} onClick={() => send({value: parseEther(depositValue.toString())})}>
                                 Deposit
                             </Button>
                         </Box>

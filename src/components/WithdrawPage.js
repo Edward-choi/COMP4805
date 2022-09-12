@@ -16,22 +16,22 @@ import { Interface } from '@ethersproject/abi';
 
 function WithdrawPage() {
     const { account } = useEthers();
-    const GoerliBalance = useEtherBalance(account, { chainId: Goerli.chainId })
-    const balance = GoerliBalance ? parseFloat(formatEther(GoerliBalance)).toFixed(4) : "";
+    const Balance = useEtherBalance(account);
+    const balance = Balance ? parseFloat(formatEther(Balance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [withDrawValue, setWithdrawValue] = useState(0);
     const withdrawInput = withDrawValue === 0 || withDrawValue ? withDrawValue : '';
     const handleToggle = () => {
         setSlideIn(!slideIn);
     };
-    const contractAddress = "0x4260a13cd63583aaf9c3f4c25de5a33e887f7420";
+    const contractAddress = "0xc7b007c2397e95279f0cf969b35f32c4768b1bb2";
     const ABI  = new Interface(abi);
 
     const ercContract = new Contract(contractAddress, abi);
     const { send, state } = useContractFunction(ercContract, "withdraw");
     const { value, error } = useCall(account && contractAddress && {
         contract: new Contract(contractAddress, ABI),
-        method: 'depositOf',
+        method: 'balanceOf',
         args: [account]
     }) ?? {};
     const depositBalance = value ? value[0] : 0;
