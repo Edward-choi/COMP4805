@@ -33,35 +33,14 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function HomePage() {
     const { account } = useEthers()
-    const GoerliBalance = useEtherBalance(account, { chainId: Goerli.chainId })
+    const Balance = useEtherBalance(account, { refresh: 'never'})
     const [EthData, setEthData] = useState([])
-
     const [nfts, setNfts] = useState([])
-
-    // const axios = require("axios");
-    // const options = {
-    //     method: 'GET',
-    //     url: 'https://opensea15.p.rapidapi.com/api/v1/assets',
-    //     params: { owner: `${account}` },
-    //     headers: {
-    //         'X-RapidAPI-Key': '73764aa404msh6e5e4f2abf95983p14f036jsna93351c64534',
-    //         'X-RapidAPI-Host': 'opensea15.p.rapidapi.com'
-    //     }
-    // };
-    // const getNftData = async () => {
-    //     await axios.request(options).then(function (response) {
-    //         const data = response.data
-    //         setNfts(data.assets)
-    //         // debugger
-    //     }).catch(function (error) {
-    //         console.error(error);
-    //     });
-    // }
 
     const settings = {
         apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
         network: Network.ETH_MAINNET, // Replace with your network.
-        'filters[]': 'SPAM&filters[]=AIRDROPS'
+        'filters[]': 'SPAM&filters[]=AIRDROPS',
     };
 
     const getNftData = () => {
@@ -203,7 +182,7 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem" }}>
-                                    {GoerliBalance && <Box>ETH Balance: {parseFloat(formatEther(GoerliBalance)).toFixed(4)} Ξ</Box>}
+                                    {Balance && <Box>ETH Balance: {parseFloat(formatEther(Balance)).toFixed(4)} Ξ</Box>}
                                     Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
                                     24h Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
                                     24h Percentage Change: {parseFloat(EthData.P).toFixed(2)}%

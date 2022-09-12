@@ -8,7 +8,6 @@ function ViewNFTPage() {
     
     const { account } = useEthers()
     const [nfts, setNfts] = useState([])
-    
     // const axios = require("axios");
     // const options = {
     //     method: 'GET',
@@ -30,14 +29,13 @@ function ViewNFTPage() {
     //     });
     // }
 
-    const settings = {
+    const settingsGetNft = {
         apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
         network: Network.ETH_MAINNET, // Replace with your network.
-        'filters[]': 'SPAM&filters[]=AIRDROPS'
     };
 
     const getNftData = () => {
-        const alchemy = new Alchemy(settings);
+        const alchemy = new Alchemy(settingsGetNft);
         alchemy.nft.getNftsForOwner(account).then(function (response) {
             const data = response.ownedNfts
             setNfts(data)
@@ -47,8 +45,6 @@ function ViewNFTPage() {
         });
     }
     
-
-
     useEffect(()=> {
         getNftData()
     },[account])

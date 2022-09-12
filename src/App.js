@@ -12,9 +12,8 @@ import {getDefaultProvider} from 'ethers'
 function App() {
 
   const config = {
-    networks: [Goerli],
-    readOnlyChainId: Goerli.chainId,
     readOnlyUrls:{
+      [Mainnet.chainId]: getDefaultProvider('mainnet'),
       [Goerli.chainId]: getDefaultProvider('goerli') //https://mainnet.infura.io/v3/04dd4e7b623849fe98bbd0f990ae105f 
     }                                                  // ^ This is an API for connection to the blockchain, use this when getDefaultProvider dont work
   }

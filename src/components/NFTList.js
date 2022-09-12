@@ -3,9 +3,21 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import ListItem from '@mui/material/ListItem';
 import {IpfsImage} from 'react-ipfs-image';
+import {Alchemy} from "alchemy-sdk"
 
 function NFTList({ nft }) {
-  if (nft.title != null) {
+
+  const settingsDefault = {
+    apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL"
+  }
+
+  const isSpamNft = async(contractAddr) =>{
+    const alchemy = new Alchemy(settingsDefault);
+    const response = await alchemy.nft.isSpamContract(contractAddr);
+    return response;
+  }
+
+  if (nft.title != null && nft.rawMetadata.image != null) {
     return (
       <ListItem>
         {
@@ -14,7 +26,8 @@ function NFTList({ nft }) {
           <Grid container rowSpacing={0} columnSpacing={0}>     
           <Grid item xs={3}>
             <Box textAlign="center">
-              <img width={"70px"} height={"70px"} src={nft.rawMetadata.image} className="nftImg" />
+              <img width={"70px"} height={"70px"} src={nft.rawMetadata.image} className="nftImg" 
+              onError={({currentTarget}) => {currentTarget.onerror = null; currentTarget.src ='https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'}}/>
             </Box>
           </Grid>
           <Grid item xs={6}>
@@ -27,7 +40,8 @@ function NFTList({ nft }) {
         <Grid container rowSpacing={0} columnSpacing={0}>     
         <Grid item xs={3}>
           <Box textAlign="center">
-            <IpfsImage width={"70px"} height={"70px"} hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="nftImg" />
+            <IpfsImage width={"70px"} height={"70px"} hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="nftImg" 
+            onError={({currentTarget}) => {currentTarget.onerror = null; currentTarget.src ='https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'}}/>
           </Box>
         </Grid>
         <Grid item xs={6}>

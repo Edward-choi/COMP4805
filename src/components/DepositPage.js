@@ -15,19 +15,20 @@ import { Contract } from '@ethersproject/contracts';
 
 function DepositPage() {
     const { account } = useEthers()
-    const GoerliBalance = useEtherBalance(account, { chainId: Goerli.chainId })
-    const balance = GoerliBalance ? parseFloat(formatEther(GoerliBalance)).toFixed(4) : "";
+    const Balance = useEtherBalance(account, { refresh: 'never' })
+    const balance = Balance ? parseFloat(formatEther(Balance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [depositValue, setDepositValue] = useState(0);
     const depositInput = depositValue === 0 || depositValue ? depositValue : '';
     const handleToggle = () => {
         setSlideIn(!slideIn);
     };
-    const contractAddress = "0x4260a13cd63583aaf9c3f4c25de5a33e887f7420";
+    const contractAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
     const ercContract = new Contract(contractAddress, abi);
     const erc20Balances = useTokenBalance(contractAddress, account);
 
     const { send, state } = useContractFunction(ercContract, "deposit");
+    
     const useStyles = makeStyles({
         input: {
             '& input[type=number]': {
@@ -80,7 +81,8 @@ function DepositPage() {
                     <Grid item xs={11}>
                         <Box textAlign="left">
                             <div className='depositFont1' style={{ marginBottom: "10px" }}>Deposit ETH</div>
-                            <div className='depositFont2'>Available ERC20 Token in Wallet: {erc20Balances? parseFloat(formatEther(erc20Balances)).toFixed(4) : 0}</div>
+                            <div className='depositFont2'>Available ERC20 Token in Wallet: {balance}</div>
+                            {/* {erc20Balances? parseFloat(formatEther(erc20Balances)).toFixed(4) : 0} */}
                         </Box>
                         </Grid>
                         <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} />

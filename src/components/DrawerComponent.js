@@ -40,7 +40,7 @@ const GreenTooltip = styled(({ className, ...props }) => (
 const DrawerComponent = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const { activateBrowserWallet, account, deactivate } = useEthers()
-    const GoerliBalance = useEtherBalance(account, { chainId: Goerli.chainId })
+    const Balance = useEtherBalance(account, { refresh: 'never' })
 
     return (
         <div>
@@ -80,7 +80,7 @@ const DrawerComponent = () => {
                                     >
                                         <ListItemText>
                                             <p>Wallet Address: {account.substring(0, 11) + "..." + account.substring(34, 43)}</p>
-                                            {GoerliBalance && <p>ETH Balance: {parseFloat(formatEther(GoerliBalance)).toFixed(4)} Ξ</p>}
+                                            {Balance && <p>ETH Balance: {parseFloat(formatEther(Balance)).toFixed(4)} Ξ</p>}
                                         </ListItemText>
                                     </Box>
                                 </ListItem>
