@@ -39,8 +39,7 @@ function HomePage() {
 
     const settings = {
         apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
-        network: Network.ETH_MAINNET, // Replace with your network.
-        'filters[]': 'SPAM&filters[]=AIRDROPS',
+        network: Network.ETH_GOERLI, // Replace with your network.
     };
 
     const getNftData = () => {

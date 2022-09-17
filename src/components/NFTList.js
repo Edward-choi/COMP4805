@@ -11,12 +11,6 @@ function NFTList({ nft }) {
     apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL"
   }
 
-  const isSpamNft = async(contractAddr) =>{
-    const alchemy = new Alchemy(settingsDefault);
-    const response = await alchemy.nft.isSpamContract(contractAddr);
-    return response;
-  }
-
   if (nft.title != null && nft.rawMetadata.image != null) {
     return (
       <ListItem>
