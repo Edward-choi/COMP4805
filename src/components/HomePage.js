@@ -83,7 +83,7 @@ function HomePage() {
                         <Box sx={{ height: "31rem" }}>
                             <List>
                                 {nfts.map((nft, index) => {
-                                    return <NFTList nft={nft} key={index} />
+                                    return index < 5 && <NFTList nft={nft} key={index} />
                                 })}
                             </List>
                         </Box>
@@ -92,7 +92,7 @@ function HomePage() {
                             <Button variant="contained" component={Link} to="/viewnft" style={{
                                 borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
                             }}>
-                                Deposit NFTs
+                                View My NFTs
                             </Button>
                         </div>
                     </Item>

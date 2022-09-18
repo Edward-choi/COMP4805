@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import NFTCard from './NFTCard.js'
 import Grid from '@mui/material/Grid';
 
-function ViewNFTPage() {
+function MarketPlace() {
 
     const { account } = useEthers()
     const [nfts, setNfts] = useState([])
@@ -71,4 +71,4 @@ function ViewNFTPage() {
 
 }
 
-export default ViewNFTPage;
+export default MarketPlace;
