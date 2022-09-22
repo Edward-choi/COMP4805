@@ -19,7 +19,7 @@ export default function Navbar() {
 
                 <ButtonGroup variant="text" size="large" className='buttongp'>
                     <Button startIcon={<AccountBalanceIcon />} component={Link} to="/">home</Button>
-                    <Button startIcon={<VerticalAlignBottomIcon />} component={Link} to="/borrow">Borrow ETH</Button>
+                    <Button startIcon={<VerticalAlignBottomIcon />} component={Link} to="/marketplace">Marketplace</Button>
                     <Button startIcon={<AddCircleOutlineIcon />} component={Link} to="/deposit">Deposit ETH</Button>
                     <Button startIcon={<LocalAtmIcon />} component={Link} to="/withdraw">Withdraw ETH</Button>
                 </ButtonGroup>

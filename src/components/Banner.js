@@ -10,7 +10,7 @@ function Banner(props) {
     var icon;
     var type = props.type;
     switch (type) {
-        case "Borrow":
+        case "Marketplace":
             icon = <VerticalAlignBottomIcon sx={{ fontSize: "2rem" }} />;
             break;
         case "Deposit":

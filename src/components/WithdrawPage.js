@@ -10,9 +10,10 @@ import { formatEther, formatUnits, parseEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@mui/material/Button';
-import abi from './abi.json';
+import abi from '../contracts/Bank/abi.json';
 import { Contract } from '@ethersproject/contracts';
 import { Interface } from '@ethersproject/abi';
+import ContractAddress from './ContractAddress.json'
 
 function WithdrawPage() {
     const { account } = useEthers();
@@ -24,7 +25,7 @@ function WithdrawPage() {
     const handleToggle = () => {
         setSlideIn(!slideIn);
     };
-    const contractAddress = "0x6fdaa07ea4c74c6382033ae14f1c9f47943d8d1a";
+    const contractAddress = ContractAddress.bank;
     const ABI  = new Interface(abi);
 
     const ercContract = new Contract(contractAddress, abi);

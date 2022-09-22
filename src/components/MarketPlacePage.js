@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
 import { Network, Alchemy } from "alchemy-sdk"
 import Box from '@mui/material/Box';
-import SellNFTCard from './SellNFTCard.js'
+import ListedNFTCard from './ListedNFTCard.js'
 import Grid from '@mui/material/Grid';
+import ContractAddress from './ContractAddress.json'
 
-function ViewNFTPage() {
+function MarketPlacePage() {
 
     const { account } = useEthers()
+    const contractAddress = ContractAddress.bank;
     const [nfts, setNfts] = useState([])
     // const axios = require("axios");
     // const options = {
@@ -37,7 +39,7 @@ function ViewNFTPage() {
 
     const getNftData = () => {
         const alchemy = new Alchemy(settingsGetNft);
-        alchemy.nft.getNftsForOwner(account).then(function (response) {
+        alchemy.nft.getNftsForOwner(contractAddress).then(function (response) {
             const data = response.ownedNfts
             setNfts(data)
             // debugger
@@ -48,7 +50,7 @@ function ViewNFTPage() {
 
     useEffect(() => {
         getNftData()
-    }, [account])
+    }, [contractAddress])
 
     return (
         <Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
@@ -58,7 +60,7 @@ function ViewNFTPage() {
                     {/* <div className='nft-container'> */}
                     {nfts.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
-                            <SellNFTCard nft={nft} key={index} />
+                            <ListedNFTCard nft={nft} key={index} />
                         </Grid>
                     })}
                     {/* </div> */}
@@ -71,4 +73,4 @@ function ViewNFTPage() {
 
 }
 
-export default ViewNFTPage;
+export default MarketPlacePage;
