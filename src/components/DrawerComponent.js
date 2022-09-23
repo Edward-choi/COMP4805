@@ -79,7 +79,7 @@ const DrawerComponent = () => {
                                         sx={{ border: 2, borderRadius: 5, padding: 1, width: 200 }}
                                     >
                                         <ListItemText>
-                                            <p>Wallet Address: {account.substring(0, 11) + "..." + account.substring(34, 43)}</p>
+                                            <p>Wallet Address: {account.substring(0, 9) + "..." + account.substring(35, 43)}</p>
                                             {Balance && <p>ETH Balance: {parseFloat(formatEther(Balance)).toFixed(4)} Ξ</p>}
                                         </ListItemText>
                                     </Box>
