@@ -61,7 +61,7 @@ contract nffBank{
         payable(msg.sender).transfer(amount);
     }
 
-/*__________________________________NFT Selling________________________________ */
+/*__________________________________NFT Liquidating________________________________ */
 
     function liquidateNFT(address contractAddr, uint256 tokenId) external payable{
         //First check if the NFT collection is verified on our platform
