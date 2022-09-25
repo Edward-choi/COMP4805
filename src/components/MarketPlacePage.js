@@ -6,7 +6,7 @@ import ListedNFTCard from './ListedNFTCard.js'
 import Grid from '@mui/material/Grid';
 import ContractAddress from './ContractAddress.json'
 
-function MarketPlacePage() {
+function MarketplacePage() {
 
     const { account } = useEthers()
     const contractAddress = ContractAddress.bank;
@@ -73,4 +73,4 @@ function MarketPlacePage() {
 
 }
 
-export default MarketPlacePage;
+export default MarketplacePage;

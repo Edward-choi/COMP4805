@@ -2,7 +2,7 @@ import Navbar from './NavBar';
 import Banner from './Banner';
 import ConnectWallet from './ConnectWallet';
 import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
-import MarketPlacePage from './MarketPlacePage';
+import MarketplacePage from './MarketplacePage';
 
 function Marketplace() {
   const { account } = useEthers()
@@ -13,7 +13,7 @@ function Marketplace() {
       {
         account
           ?
-          <MarketPlacePage />
+          <MarketplacePage />
           :
           <ConnectWallet />
       }
