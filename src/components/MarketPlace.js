@@ -2,7 +2,7 @@ import Navbar from './NavBar';
 import Banner from './Banner';
 import ConnectWallet from './ConnectWallet';
 import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
-import MarketplacePage from './MarketplacePage';
+import MarketplacePage from './MarketPlacePage';
 
 function Marketplace() {
   const { account } = useEthers()
