@@ -1,6 +1,6 @@
 import './style.css';
 import React, {useState} from "react";
-import Marketplace from './components/MarketPlace';
+import Marketplace from './components/Marketplace';
 import Deposit from './components/Deposit';
 import Withdraw from './components/Withdraw';
 import ViewNFT from './components/ViewNFT'
