@@ -172,6 +172,7 @@ contract nffLoan{
         return false;
     }
 
+    //Check if the nft is in the loan list
     function checkNftInList(NftToken memory token) public view returns(bool){
         for(uint256 i = 0; i<nftInLoan.length; i++){
             //Check if the nft in the list or not
@@ -183,6 +184,7 @@ contract nffLoan{
         return false;
     }
 
+    //Check if the this contract owns the nft
     function checkNftBalance(NftToken memory token) public view returns(bool){
         ERC721 Nft = ERC721(token.nftContractAddr);
         if (Nft.ownerOf(token.tokenId) == address(this)){
