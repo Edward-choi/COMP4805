@@ -105,6 +105,12 @@ contract nffLoan{
                 addressToInLoans[addr].pop();
             }
         }
+        for (uint256 i = 0; i<nftInLoan.length; i++){
+            if(nftInLoan[i].nftContractAddr == token.nftContractAddr && nftInLoan[i].tokenId == token.tokenId){
+                nftInLoan[i] = nftInLoan[nftInLoan.length-1];
+                nftInLoan.pop();
+            }
+        }
     }
 
     /*__________________________________Getter_____________________________________ */
