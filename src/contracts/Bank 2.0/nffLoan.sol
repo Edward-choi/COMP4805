@@ -9,19 +9,23 @@ import "./nffBank.sol";
 contract nffLoan{
     /*
     * Check if a loan is due every day at 00:00, if current time > due time, the loan is defaulted
-    *
+    * Future development: Implement BokkyPooBahsDateTimeLibrary https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary
     */
     address public owner;
     address public bankaddr;
-    uint256 interstRate;
-    uint256 downPayment;
+    address public oracleAddr;
+    uint256 public defaultRate;
+    uint256 public interstRate;
+    uint256 public downPayment;
     //The Loan structure InLoan = instalment Loan
+    //The Nft token uniquely define the Loan
     struct InLoan{
         address loanOwner;
         uint256 loanAmount;
         uint256 outstandBalance;
         uint256 startTime;
         uint256 dueTime;
+        uint256 defaultCount;
         NftToken nft;
     }
     struct NftToken{
@@ -30,16 +34,22 @@ contract nffLoan{
     }
     //For mapping between owner and thier loans
     mapping(address => InLoan[]) addressToInLoans;
-    //For tracking customers
+    //For mapping between customers and the number of loans
+    mapping(address => uint256) customAddrToNumLoans;
+    //For tracking customers, no dups in this array
     address[] public customerList;
-    //For tracking which nft is in a loan
+    //For tracking which nft is in a loan, no dups in this array
     NftToken[] public nftInLoan;
+    //For storing a list of Loan to be removed
+    InLoan[] public loanRemoveList;
 
     using SafeMath for uint256;
 
     constructor(){
         downPayment = 1 ether;
         owner = msg.sender;
+        //initial defaultRate
+        defaultRate = 3;
         //initial interstRate
         interstRate = 5;
     }
@@ -61,11 +71,15 @@ contract nffLoan{
         require(!checkNftInList(token), "The NFT you selected is on others instalment loan");
         //Create the loan
         InLoan memory temp = InLoan(msg.sender, loanAmount, 
-        loanAmount - msg.value, block.timestamp, dueTime, token);
+        loanAmount - msg.value, block.timestamp, dueTime, 0, token);
         //Append the loan into the array inside the map
         addressToInLoans[msg.sender].push(temp);
-        //Append the sender address to the customer list
-        customerList.push(msg.sender);
+        //Append the sender address to the customer list if he is a new customer
+        if(!checkCustomerInList(msg.sender)){
+            customerList.push(msg.sender);
+        }
+        //Increase the customers number of loan
+        customAddrToNumLoans[msg.sender] += 1;
         //Append the nft to the loaning list
         nftInLoan.push(token);
     }
@@ -84,19 +98,20 @@ contract nffLoan{
                 addressToInLoans[msg.sender][i].outstandBalance -= msg.value;
                 //Check if the loan is fully paid
                 if (addressToInLoans[msg.sender][i].outstandBalance <= 0){
-                    //Remove the loan if it is fully paid
+                    //Transfer the nft
                     transferNft(addressToInLoans[msg.sender][i].nft, msg.sender);
+                    //Remove the loan
                     removeLoan(msg.sender,token);
                 }
             }
         }
     }
 
-    //Only callable by the contract to remove the paid loan
+    //Only callable by the contract to remove the paid loan from the addressToInLoans mapping InLoan[] aray
     function removeLoan(address addr, NftToken memory token) private{
         //A for loop to locate the loan matching the the NFT contractaddr and tokenID
         for(uint256 i = 0; i<addressToInLoans[addr].length; i++){
-            //Check if the loan exist and if it is paid
+            //Check if the loan exist
             if (addressToInLoans[addr][i].nft.tokenId == token.tokenId &&
                 addressToInLoans[addr][i].nft.nftContractAddr == token.nftContractAddr){
                 //Set the matching loan to the last loan of the array
@@ -105,12 +120,34 @@ contract nffLoan{
                 addressToInLoans[addr].pop();
             }
         }
-        for (uint256 i = 0; i<nftInLoan.length; i++){
-            if(nftInLoan[i].nftContractAddr == token.nftContractAddr && nftInLoan[i].tokenId == token.tokenId){
-                nftInLoan[i] = nftInLoan[nftInLoan.length-1];
-                nftInLoan.pop();
+        //remove the nft from the NFT in loan list
+        removeNftList(token);
+        //Decrease the number of loans a customer holds
+        customAddrToNumLoans[addr] -= 1;
+        if (customAddrToNumLoans[addr] <= 0){
+            //remove customer from the customerList if they dont have any loan
+            removeCustomerList(addr);
+        }
+    }
+
+    //Check which loan is due and remove those loan which doesn't fully paid
+    //only callable by the oracle
+    function callDueLoan() public{
+        // require(msg.sender == oracleAddr, "Only the orcacle contract can call this function");
+        for (uint256 i=0; i < customerList.length; i++){
+            for(uint256 j=0; j< addressToInLoans[customerList[i]].length; j++){
+                if(addressToInLoans[customerList[i]][j].dueTime < block.timestamp){
+                    if(addressToInLoans[customerList[i]][j].defaultCount >= defaultRate){
+                        loanRemoveList.push(addressToInLoans[customerList[i]][j]);
+                    }
+                    else{
+                        addressToInLoans[customerList[i]][j].defaultCount++;
+                    }
+                }
             }
         }
+        bulkRemoveLoan(loanRemoveList);
+        delete loanRemoveList;
     }
 
     /*__________________________________Getter_____________________________________ */
@@ -120,14 +157,8 @@ contract nffLoan{
         return addressToInLoans[addr];
     }
 
-    function callDueLoan() public view{
-        for(uint256 i = 0; i < customerList.length; i++){
-            for(uint256 j = 0; j < addressToInLoans[customerList[i]].length; j++){
-                if (addressToInLoans[customerList[i]][j].dueTime < block.timestamp){
-                    
-                }
-            }
-        }
+    function getUserNumLoan(address addr) public view returns(uint256){
+        return customAddrToNumLoans[addr];
     }
 
     /*__________________________________Setter_____________________________________ */
@@ -146,10 +177,50 @@ contract nffLoan{
         }
     }
 
+    //Only called by the contract
+    //Remove a customer from the customer list
+    function removeCustomerList(address addr) private{
+        for(uint256 i = 0; i <customerList.length; i++){
+            if(customerList[i] == addr){
+                customerList[i] = customerList[customerList.length-1];
+                customerList.pop();
+            }
+        }
+    }
+
+    function setDefaultRate(uint256 rate) public onlyOwner{
+        defaultRate = rate;
+    }
+
+    function bulkRemoveLoan(InLoan[] memory removeList) private{
+        for(uint256 i=0; i < removeList.length; i++){
+            //remove the loan from addressToInLoans
+            for (uint256 j=0; j < addressToInLoans[removeList[i].loanOwner].length; j++){
+                if(addressToInLoans[removeList[i].loanOwner][j].nft.nftContractAddr == removeList[i].nft.nftContractAddr && 
+                   addressToInLoans[removeList[i].loanOwner][j].nft.tokenId == removeList[i].nft.tokenId){
+
+                    addressToInLoans[removeList[i].loanOwner][j] = 
+                    addressToInLoans[removeList[i].loanOwner][addressToInLoans[removeList[i].loanOwner].length -1];
+
+                    addressToInLoans[removeList[i].loanOwner].pop();
+                    
+                    removeNftList(removeList[i].nft);
+                    customAddrToNumLoans[removeList[i].loanOwner] -= 1;
+
+                    if (customAddrToNumLoans[removeList[i].loanOwner] <= 0){
+                    //remove customer from the customerList if they dont have any loan
+                        removeCustomerList(removeList[i].loanOwner);
+                    }           
+                }
+            }
+
+        }
+    }
+
     /*__________________________________Checker_____________________________________ */
 
     //Return true if a loan is fully repaid, false otherwise
-    //For future use just in case
+    //For future use just in case, no use right now
     function checkLoanPaid(address addr, NftToken memory token) public view returns(bool){
         for(uint256 i = 0; i<addressToInLoans[addr].length; i++){
             if(addressToInLoans[addr][i].nft.tokenId == token.tokenId &&
@@ -195,6 +266,15 @@ contract nffLoan{
         }
     }
 
+    function checkCustomerInList(address addr) public view returns(bool){
+        for(uint256 i =0; i < customerList.length; i++){
+            if(customerList[i] == addr){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /*__________________________________Other_____________________________________ */
 
     //Transfer the nft to the customer, only called by the contract
@@ -206,4 +286,5 @@ contract nffLoan{
     function withdraw() public onlyOwner {
         Address.sendValue(payable(msg.sender), address(this).balance);
     }
+
 }
