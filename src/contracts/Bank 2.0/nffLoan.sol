@@ -101,14 +101,14 @@ contract nffLoan{
                     //Transfer the nft
                     transferNft(addressToInLoans[msg.sender][i].nft, msg.sender);
                     //Remove the loan
-                    removeLoan(msg.sender,token);
+                    removePaidLoan(msg.sender,token);
                 }
             }
         }
     }
 
     //Only callable by the contract to remove the paid loan from the addressToInLoans mapping InLoan[] aray
-    function removeLoan(address addr, NftToken memory token) private{
+    function removePaidLoan(address addr, NftToken memory token) private{
         //A for loop to locate the loan matching the the NFT contractaddr and tokenID
         for(uint256 i = 0; i<addressToInLoans[addr].length; i++){
             //Check if the loan exist
@@ -146,7 +146,7 @@ contract nffLoan{
                 }
             }
         }
-        bulkRemoveLoan(loanRemoveList);
+        removeDefaultLoan(loanRemoveList);
         delete loanRemoveList;
     }
 
@@ -192,7 +192,7 @@ contract nffLoan{
         defaultRate = rate;
     }
 
-    function bulkRemoveLoan(InLoan[] memory removeList) private{
+    function removeDefaultLoan(InLoan[] memory removeList) private{
         for(uint256 i=0; i < removeList.length; i++){
             //remove the loan from addressToInLoans
             for (uint256 j=0; j < addressToInLoans[removeList[i].loanOwner].length; j++){
