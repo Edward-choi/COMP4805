@@ -15,7 +15,7 @@ contract nffLoan{
     address public bankaddr;
     address public oracleAddr;
     uint256 public defaultRate;
-    uint256 public interstRate;
+    uint256 public interestRate;
     uint256 public downPayment;
     //The Loan structure InLoan = instalment Loan
     //The Nft token uniquely define the Loan
@@ -50,8 +50,8 @@ contract nffLoan{
         owner = msg.sender;
         //initial defaultRate
         defaultRate = 3;
-        //initial interstRate
-        interstRate = 5;
+        //initial interestRate
+        interestRate = 5;
     }
 
     modifier onlyOwner() {
