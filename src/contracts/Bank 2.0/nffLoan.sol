@@ -192,19 +192,22 @@ contract nffLoan{
         defaultRate = rate;
     }
 
+    //Remove all defaulted loan from all the array and mapping
     function removeDefaultLoan(InLoan[] memory removeList) private{
         for(uint256 i=0; i < removeList.length; i++){
-            //remove the loan from addressToInLoans
+            //Search the Loan index from addressToInLoans
             for (uint256 j=0; j < addressToInLoans[removeList[i].loanOwner].length; j++){
                 if(addressToInLoans[removeList[i].loanOwner][j].nft.nftContractAddr == removeList[i].nft.nftContractAddr && 
                    addressToInLoans[removeList[i].loanOwner][j].nft.tokenId == removeList[i].nft.tokenId){
-
+                    
+                    //remove the loan from addressToInLoans
                     addressToInLoans[removeList[i].loanOwner][j] = 
                     addressToInLoans[removeList[i].loanOwner][addressToInLoans[removeList[i].loanOwner].length -1];
-
                     addressToInLoans[removeList[i].loanOwner].pop();
                     
+                    //remove the loan from nftInLoan list so that it will be avalible for loaning out again
                     removeNftList(removeList[i].nft);
+                    //Decrease the customers number of loans
                     customAddrToNumLoans[removeList[i].loanOwner] -= 1;
 
                     if (customAddrToNumLoans[removeList[i].loanOwner] <= 0){
