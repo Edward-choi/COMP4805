@@ -70,7 +70,7 @@ contract nffBank{
         //Second check if the user approved this contract to use the NFT token
         require(Nft.isApprovedForAll(msg.sender, address(this)), "This contract must be approved to use your NFT");
         //Third check if the user own the NFT token
-        require(Nft.ownerOf(tokenId) == msg.sender, "caller must own the NFT");
+        require(Nft.ownerOf(tokenId) == msg.sender, "caller must own the NFT"); //no need
         //All statisfied then call transfer
         Nft.transferFrom(msg.sender, address(this), tokenId);
         //Set condition on amout paid later
@@ -112,6 +112,7 @@ contract nffBank{
     }
 
     // Set the orcacle address (onlyOwner)
+    // Should be called using Constructor, Deploy oracle first then this contract to get the oracle contract address
     function setOracleAddr(address contractAddr) external onlyOwner{
         oracleAddr = contractAddr;
     }

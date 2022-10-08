@@ -16,7 +16,8 @@ contract nffLoan{
     address public oracleAddr;
     uint256 public defaultRate;
     uint256 public interstRate;
-    uint256 public downPayment;
+    uint256 public downPayment; //to be implemented
+
     //The Loan structure InLoan = instalment Loan
     //The Nft token uniquely define the Loan
     struct InLoan{
@@ -36,12 +37,16 @@ contract nffLoan{
     mapping(address => InLoan[]) addressToInLoans;
     //For mapping between customers and the number of loans
     mapping(address => uint256) customAddrToNumLoans;
+    //For mapping between NFT contract address and floor price
+    mapping(address => uint256) nftToFloorPrice;
     //For tracking customers, no dups in this array
     address[] public customerList;
     //For tracking which nft is in a loan, no dups in this array
     NftToken[] public nftInLoan;
     //For storing a list of Loan to be removed
     InLoan[] public loanRemoveList;
+    //For storing a list of avalible NFT
+    NftToken[] public avalibleNft;
 
     using SafeMath for uint256;
 
@@ -60,16 +65,16 @@ contract nffLoan{
     }
 
     /*__________________________________NFT Loaning_________________________________ */
-
     //For starting a nft instalment loan. block.timestamp gives you the current time in unix timestamp
     //Please use https://www.unixtimestamp.com/ for conversion
+    //LoanAmount set by the oracle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     function startLoan(address nftContractAddr, uint256 loanAmount, uint256 dueTime, uint256 tokenId) external payable{
         require(msg.value >= downPayment, "down payment requirement not met");
         require(msg.value < loanAmount, "Please consider direct buying instead of loan");
         NftToken memory token = NftToken(nftContractAddr, tokenId);
         require(checkNftBalance(token), "The contract doesnt own this NFT");
         require(!checkNftInList(token), "The NFT you selected is on others instalment loan");
-        //Create the loan
+        //Create the loan, msg.value = down payment
         InLoan memory temp = InLoan(msg.sender, loanAmount, 
         loanAmount - msg.value, block.timestamp, dueTime, 0, token);
         //Append the loan into the array inside the map
@@ -159,6 +164,11 @@ contract nffLoan{
 
     function getUserNumLoan(address addr) public view returns(uint256){
         return customAddrToNumLoans[addr];
+    }
+
+    //A function that return all nft not in loan
+    function getAvalibleNft() public view returns(NftToken[] memory){
+        
     }
 
     /*__________________________________Setter_____________________________________ */
