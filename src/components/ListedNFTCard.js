@@ -3,6 +3,7 @@ import { IpfsImage } from 'react-ipfs-image'
 import { Alchemy } from "alchemy-sdk"
 import { useEthers, Goerli } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import ContractAddress from './ContractAddress.json'
@@ -15,6 +16,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Grid from '@mui/material/Grid';
+import dayjs from 'dayjs';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 function ListNFTCard({ nft }) {
   const { library } = useEthers();
@@ -27,6 +35,7 @@ function ListNFTCard({ nft }) {
   }));
 
   const [pay, setPay] = useState(false);
+  const [dueDay, setDueDay] = useState(dayjs());
 
   const bankAddress = ContractAddress.bank;
   const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
@@ -63,17 +72,37 @@ function ListNFTCard({ nft }) {
                 aria-describedby="alert-dialog-description"
               >
                 <DialogTitle id="alert-dialog-title">
-                  {"Loan Term"}
+                  {"Down Payment Details"}
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                    Please select the loan term. 
+                  <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item md={6} xs={12}>
+                      <img src={nft.rawMetadata.image} className="NFTImg"
+                        onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />                      
+                    </Grid>
+                    <Grid item md={6} xs={12}>
+                      Name: {nft.title}<br></br>
+                      Please select the loan maturity date.
+                      <Box marginTop={2}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <Stack spacing={3}>
+                            <DatePicker minDate={dayjs()} label="Loan maturity date" openTo="year"
+                              views={['day', 'month']} value={dueDay}
+                              onChange={(newValue) => { setDueDay(newValue); }}
+                              renderInput={(params) => <TextField {...params} />}
+                            />
+                          </Stack>
+                        </LocalizationProvider>
+                      </Box>
+                    </Grid>
+                  </Grid>
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={() => setPay(false)}>Disagree</Button>
+                  <Button onClick={() => setPay(false)}>Back</Button>
                   <Button onClick={() => setPay(false)} autoFocus>
-                    Agree
+                    Confirmed
                   </Button>
                 </DialogActions>
               </Dialog>
