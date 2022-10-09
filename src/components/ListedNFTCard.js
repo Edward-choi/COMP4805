@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from "react";
 import { IpfsImage } from 'react-ipfs-image'
 import { Alchemy } from "alchemy-sdk"
 import { useEthers, Goerli } from "@usedapp/core";
@@ -10,6 +10,11 @@ import bankAbi from '../contracts/Bank/abi.json';
 import nftAbi from '../contracts/NFT/abi.json';
 import { Contract } from '@ethersproject/contracts';
 import { NetworkPingTwoTone } from '@mui/icons-material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 function ListNFTCard({ nft }) {
   const { library } = useEthers();
@@ -21,12 +26,14 @@ function ListNFTCard({ nft }) {
     borderRadius: 40
   }));
 
+  const [pay, setPay] = useState(false);
+
   const bankAddress = ContractAddress.bank;
   const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
   const nftAddress = ContractAddress.nft;
   const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
-  
-  async function executeTransaction( nft, bank, tokenId) {
+
+  async function executeTransaction(nft, bank, tokenId) {
     await nftContract.setApprovalForAll(bank, true);
     await bankContract.buyNFT(nft, tokenId);
   }
@@ -42,16 +49,34 @@ function ListNFTCard({ nft }) {
                 onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
               {nft.title}<br />
               <Button variant="contained" style={{
-                 borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
-              }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
+                borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
+              }} onClick={() => setPay(true)}>
                 Down Payment
               </Button>
               <Button variant="outlined" style={{
-                 borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
+                borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
               }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
                 Full Payment
               </Button>
-
+              <Dialog
+                open={pay} onClose={() => setPay(false)} aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Loan Term"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Please select the loan term. 
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setPay(false)}>Disagree</Button>
+                  <Button onClick={() => setPay(false)} autoFocus>
+                    Agree
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Item>
             :
             <Item>
@@ -60,7 +85,7 @@ function ListNFTCard({ nft }) {
                 onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
               {nft.title}<br />
               <Button variant="contained" style={{
-                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%" 
+                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%"
               }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
                 Purchase
               </Button>
