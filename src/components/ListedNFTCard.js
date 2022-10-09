@@ -68,36 +68,53 @@ function ListNFTCard({ nft }) {
                 Full Payment
               </Button>
               <Dialog
-                open={pay} onClose={() => setPay(false)} aria-labelledby="alert-dialog-title"
+                open={pay} onClose={() => setPay(false)}
+                aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                PaperProps={{
+                  style: { borderRadius: "2rem" }
+                }}
               >
                 <DialogTitle id="alert-dialog-title">
                   {"Down Payment Details"}
                 </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
+                <DialogContent id="alert-dialog-description">
                   <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item md={6} xs={12}>
                       <img src={nft.rawMetadata.image} className="NFTImg"
-                        onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />                      
+                        onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
                     </Grid>
                     <Grid item md={6} xs={12}>
-                      Name: {nft.title}<br></br>
-                      Please select the loan maturity date.
+                      <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item md={6} xs={12}>
+                          <DialogContentText id="alert-dialog-description">
+                            Name:<br></br>
+                            Full payment:<br></br>
+                            Down payment:<br></br>
+                            Interest rate:<br></br>
+                          </DialogContentText>
+                        </Grid>
+                        <Grid item md={6} xs={12} >
+                          <DialogContentText id="alert-dialog-description">
+                            {nft.title}<br></br>
+                            10 ETH<br></br>
+                            6 ETH<br></br>
+                            3%<br></br>
+                          </DialogContentText>
+                        </Grid>
+                      </Grid>
+                      <Box marginTop={2}>Please select the loan maturity date.</Box>
                       <Box marginTop={2}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <Stack spacing={3}>
-                            <DatePicker minDate={dayjs()} label="Loan maturity date" openTo="year"
-                              views={['day', 'month']} value={dueDay}
-                              onChange={(newValue) => { setDueDay(newValue); }}
-                              renderInput={(params) => <TextField {...params} />}
-                            />
-                          </Stack>
+                          <DatePicker minDate={dayjs()} label="Loan maturity date" openTo="year"
+                            views={['day', 'month']} value={dueDay}
+                            onChange={(newValue) => { setDueDay(newValue); }}
+                            renderInput={(params) => <TextField {...params} />}
+                          />
                         </LocalizationProvider>
                       </Box>
                     </Grid>
                   </Grid>
-                  </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={() => setPay(false)}>Back</Button>
