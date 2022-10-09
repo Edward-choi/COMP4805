@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import TokenIcon from '@mui/icons-material/Token';
 
 
 
@@ -18,6 +19,9 @@ function Banner(props) {
             break;
         case "Withdraw":
             icon = <LocalAtmIcon sx={{ fontSize: "2rem" }} />;
+            break;
+        case "View My NFTs":
+            icon = <TokenIcon sx={{ fontSize: "2rem" }} />;
             break;
     }
     return (

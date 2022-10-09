@@ -55,9 +55,8 @@ function MarketplacePage() {
     return (
         <Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
 
-            <Box className='viewNFTContainer' display="inline-flex">
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    {/* <div className='nft-container'> */}
+            <Box className='marketplaceContainer' display="inline-flex">
+                <Grid container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     {nfts.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
                             <ListedNFTCard nft={nft} key={index} />

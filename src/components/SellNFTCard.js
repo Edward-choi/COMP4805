@@ -5,7 +5,6 @@ import { useEthers, Goerli } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import ApproveTransaction from './ApproveTransaction';
 import ContractAddress from './ContractAddress.json'
 import bankAbi from '../contracts/Bank/abi.json';
 import nftAbi from '../contracts/NFT/abi.json';
@@ -18,7 +17,6 @@ function SellNFTCard({ nft }) {
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     padding: theme.spacing(2),
-    marginBottom: 10,
     color: theme.palette.text.secondary,
     borderRadius: 40
   }));

@@ -5,7 +5,6 @@ import { useEthers, Goerli } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import ApproveTransaction from './ApproveTransaction';
 import ContractAddress from './ContractAddress.json'
 import bankAbi from '../contracts/Bank/abi.json';
 import nftAbi from '../contracts/NFT/abi.json';
@@ -18,7 +17,6 @@ function ListNFTCard({ nft }) {
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     padding: theme.spacing(2),
-    marginBottom: 10,
     color: theme.palette.text.secondary,
     borderRadius: 40
   }));
@@ -44,9 +42,14 @@ function ListNFTCard({ nft }) {
                 onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
               {nft.title}<br />
               <Button variant="contained" style={{
-                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%" 
+                 borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
               }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
-                Purchase
+                Down Payment
+              </Button>
+              <Button variant="outlined" style={{
+                 borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
+              }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
+                Full Payment
               </Button>
 
             </Item>

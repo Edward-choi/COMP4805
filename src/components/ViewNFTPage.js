@@ -4,11 +4,16 @@ import { Network, Alchemy } from "alchemy-sdk"
 import Box from '@mui/material/Box';
 import SellNFTCard from './SellNFTCard.js'
 import Grid from '@mui/material/Grid';
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import { ownerDocument } from '@mui/material';
 
 function ViewNFTPage() {
 
     const { account } = useEthers()
     const [nfts, setNfts] = useState([])
+    const [own, setOwn] = useState(true);
+
     // const axios = require("axios");
     // const options = {
     //     method: 'GET',
@@ -51,17 +56,37 @@ function ViewNFTPage() {
     }, [account])
 
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
+        <Box justifyContent="center" alignItems="center" textAlign="center">
 
-            <Box className='viewNFTContainer' display="inline-flex">
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    {/* <div className='nft-container'> */}
-                    {nfts.map((nft, index) => {
+            <Box width="90%" margin="auto">
+                <ButtonGroup className='viewNFTButtonContainer' display="inline-flex" 
+                variant='text' exclusive="true" fullWidth sx={ { borderRadius: "3rem 3rem 0 0" } }>
+                    <Button value="own" style={{ backgroundColor: own ? "rgb(236, 236, 236)" : "#fff" }} 
+                    onClick={() => setOwn(true)} sx={ { borderTopLeftRadius: "3rem", fontSize: "1.5rem", padding: "1rem" } }>
+                        Fully owned NFTs
+                    </Button>
+                    <Button value="loan" style={{ backgroundColor: !own ? "rgb(236, 236, 236)" : "#fff" }} 
+                    onClick={() => setOwn(false)} sx={ { borderTopRightRadius: "3rem", fontSize: "1.5rem", padding: "1rem"  } }>
+                        NFTs on loan
+                    </Button>
+                </ButtonGroup>
+            </Box>
+            <Box className='viewNFTContainer' display="inline-flex" ariant="text" exclusive="true">
+                <Grid container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    {own ?
+                    nfts.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
                             <SellNFTCard nft={nft} key={index} />
                         </Grid>
-                    })}
-                    {/* </div> */}
+                    })
+                    :
+                    nfts.map((nft, index) => {
+                        return <Grid item md={3} xs={12}>
+                            <SellNFTCard nft={nft} key={index} />
+                        </Grid>
+                    })
+                }
+                    
                 </Grid>
             </Box>
 

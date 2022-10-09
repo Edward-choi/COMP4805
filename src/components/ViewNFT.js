@@ -8,7 +8,7 @@ function ViewNFT() {
   return (
     <div>
       <Navbar />
-      <Banner type="ViewNFT"/>
+      <Banner type="View My NFTs"/>
       {
         account
           ?
