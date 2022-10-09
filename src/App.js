@@ -1,11 +1,11 @@
 import './style.css';
-import React, {useState} from "react";
+import React from "react";
 import Marketplace from './components/Marketplace';
 import Deposit from './components/Deposit';
 import Withdraw from './components/Withdraw';
 import ViewNFT from './components/ViewNFT'
 import Home from './components/Home';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { DAppProvider, Goerli, Mainnet } from '@usedapp/core';
 import {getDefaultProvider} from 'ethers'
 

@@ -2,7 +2,7 @@ import Navbar from './NavBar';
 import Banner from './Banner';
 import ConnectWallet from './ConnectWallet';
 import DepositPage from './DepositPage';
-import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 function Deposit() {
   const { account } = useEthers()
   return (

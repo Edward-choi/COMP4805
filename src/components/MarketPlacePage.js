@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
 import { Network, Alchemy } from "alchemy-sdk"
 import Box from '@mui/material/Box';
 import ListedNFTCard from './ListedNFTCard.js'
@@ -7,8 +6,6 @@ import Grid from '@mui/material/Grid';
 import ContractAddress from './ContractAddress.json'
 
 function MarketplacePage() {
-
-    const { account } = useEthers()
     const contractAddress = ContractAddress.bank;
     const [nfts, setNfts] = useState([])
     // const axios = require("axios");
@@ -32,23 +29,23 @@ function MarketplacePage() {
     //     });
     // }
 
-    const settingsGetNft = {
-        apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
-        network: Network.ETH_GOERLI, // Replace with your network.
-    };
-
-    const getNftData = () => {
-        const alchemy = new Alchemy(settingsGetNft);
-        alchemy.nft.getNftsForOwner(contractAddress).then(function (response) {
-            const data = response.ownedNfts
-            setNfts(data)
-            // debugger
-        }).catch(function (error) {
-            console.error(error);
-        });
-    }
-
     useEffect(() => {
+        const settingsGetNft = {
+            apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
+            network: Network.ETH_GOERLI, // Replace with your network.
+        };
+    
+        const getNftData = () => {
+            const alchemy = new Alchemy(settingsGetNft);
+            alchemy.nft.getNftsForOwner(contractAddress).then(function (response) {
+                const data = response.ownedNfts
+                setNfts(data)
+                // debugger
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
+    
         getNftData()
     }, [contractAddress])
 

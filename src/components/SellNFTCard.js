@@ -1,7 +1,6 @@
 import React from 'react'
 import { IpfsImage } from 'react-ipfs-image'
-import { Alchemy } from "alchemy-sdk"
-import { useEthers, Goerli } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -9,7 +8,6 @@ import ContractAddress from './ContractAddress.json'
 import bankAbi from '../contracts/Bank/abi.json';
 import nftAbi from '../contracts/NFT/abi.json';
 import { Contract } from '@ethersproject/contracts';
-import { NetworkPingTwoTone } from '@mui/icons-material';
 
 function SellNFTCard({ nft }) {
   const { library } = useEthers();
@@ -38,7 +36,7 @@ function SellNFTCard({ nft }) {
           nft.rawMetadata.image.startsWith("https")
             ?
             <Item>
-              <img src={nft.rawMetadata.image} className="NFTImg"
+              <img src={nft.rawMetadata.image} alt="" className="NFTImg"
                 onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
               {nft.title}<br />
               <Button variant="contained" style={{

@@ -5,8 +5,8 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
-import { useEthers, useEtherBalance, Goerli, useTokenBalance, useContractFunction } from "@usedapp/core";
-import { formatEther, formatUnits, parseEther } from "ethers/lib/utils";
+import { useEthers, useEtherBalance, useContractFunction } from "@usedapp/core";
+import { formatEther, parseEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@mui/material/Button';
@@ -27,7 +27,7 @@ function DepositPage() {
     const contractAddress = ContractAddress.bank;
     const contract = new Contract(contractAddress, abi);
 
-    const { send, state } = useContractFunction(contract, "deposit");
+    const { send } = useContractFunction(contract, "deposit");
     
     const useStyles = makeStyles({
         input: {
@@ -84,7 +84,7 @@ function DepositPage() {
                             <div className='depositFont2'>Available ETH in Wallet: {balance}</div>
                         </Box>
                         </Grid>
-                        <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} />
+                        <img src={eth} alt="" style={{ height: 45, width: 45, margin: "auto" }} />
                     </Box>
 
                 </Grid>
@@ -156,7 +156,7 @@ function DepositPage() {
                                             if (depositValue < 0) value = 0;
                                             setDepositValue(value);
                                         }}
-                                        disabled={balance == 0}
+                                        disabled={balance === 0}
                                     /></div>
                                 </Box>
                             </Box>
@@ -173,7 +173,7 @@ function DepositPage() {
                                         var value = balance ? parseFloat(e.target.value) / 100 * balance : 0;
                                         setDepositValue(value);
                                     }}
-                                    disabled={balance == 0}
+                                    disabled={balance === 0}
                                 />
                             </Box>
                             <Button variant="contained" style={{

@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -16,7 +16,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFTList from './NFTList.js'
 import {Network, Alchemy} from "alchemy-sdk"
 
-import { useEthers, useEtherBalance, Mainnet, Goerli } from "@usedapp/core";
+import { useEthers, useEtherBalance } from "@usedapp/core";
 import { useEffect, useState } from 'react'
 import { formatEther } from "ethers/lib/utils";
 
@@ -37,22 +37,6 @@ function HomePage() {
     const [EthData, setEthData] = useState([])
     const [nfts, setNfts] = useState([])
 
-    const settings = {
-        apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
-        network: Network.ETH_GOERLI, // Replace with your network.
-    };
-
-    const getNftData = () => {
-        const alchemy = new Alchemy(settings);
-        alchemy.nft.getNftsForOwner(account).then(function (response) {
-            const data = response.ownedNfts
-            setNfts(data)
-            // debugger
-        }).catch(function (error){
-            console.error(error);
-        });
-    }
-
     useEffect(() => {
         //Get ETH price data
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@ticker')
@@ -65,6 +49,20 @@ function HomePage() {
     }, [])
 
     useEffect(() => {
+        const settings = {
+            apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
+            network: Network.ETH_GOERLI, // Replace with your network.
+        };
+        const getNftData = () => {
+            const alchemy = new Alchemy(settings);
+            alchemy.nft.getNftsForOwner(account).then(function (response) {
+                const data = response.ownedNfts
+                setNfts(data)
+                // debugger
+            }).catch(function (error){
+                console.error(error);
+            });
+        }
         getNftData()
     }, [account])
 

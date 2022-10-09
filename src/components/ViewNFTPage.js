@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useEthers, useEtherBalance, Mainnet } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import { Network, Alchemy } from "alchemy-sdk"
 import Box from '@mui/material/Box';
 import SellNFTCard from './SellNFTCard.js'
 import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { ownerDocument } from '@mui/material';
 
 function ViewNFTPage() {
 
@@ -35,23 +34,23 @@ function ViewNFTPage() {
     //     });
     // }
 
-    const settingsGetNft = {
-        apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
-        network: Network.ETH_GOERLI, // Replace with your network.
-    };
-
-    const getNftData = () => {
-        const alchemy = new Alchemy(settingsGetNft);
-        alchemy.nft.getNftsForOwner(account).then(function (response) {
-            const data = response.ownedNfts
-            setNfts(data)
-            // debugger
-        }).catch(function (error) {
-            console.error(error);
-        });
-    }
-
+    
     useEffect(() => {
+        const settingsGetNft = {
+            apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
+            network: Network.ETH_GOERLI, // Replace with your network.
+        };
+    
+        const getNftData = () => {
+            const alchemy = new Alchemy(settingsGetNft);
+            alchemy.nft.getNftsForOwner(account).then(function (response) {
+                const data = response.ownedNfts
+                setNfts(data)
+                // debugger
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
         getNftData()
     }, [account])
 

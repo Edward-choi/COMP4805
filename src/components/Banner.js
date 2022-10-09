@@ -23,6 +23,8 @@ function Banner(props) {
         case "View My NFTs":
             icon = <TokenIcon sx={{ fontSize: "2rem" }} />;
             break;
+        default:
+            break;
     }
     return (
         <Box className='banner' display="flex" justifyContent="center" alignItems="center">

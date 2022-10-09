@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { IpfsImage } from 'react-ipfs-image'
-import { Alchemy } from "alchemy-sdk"
-import { useEthers, Goerli } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
@@ -10,7 +9,6 @@ import ContractAddress from './ContractAddress.json'
 import bankAbi from '../contracts/Bank/abi.json';
 import nftAbi from '../contracts/NFT/abi.json';
 import { Contract } from '@ethersproject/contracts';
-import { NetworkPingTwoTone } from '@mui/icons-material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -19,7 +17,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import dayjs from 'dayjs';
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -54,7 +51,7 @@ function ListNFTCard({ nft }) {
           nft.rawMetadata.image.startsWith("https")
             ?
             <Item>
-              <img src={nft.rawMetadata.image} className="NFTImg"
+              <img src={nft.rawMetadata.image} alt="" className="NFTImg"
                 onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
               {nft.title}<br />
               <Button variant="contained" style={{
@@ -81,12 +78,12 @@ function ListNFTCard({ nft }) {
                 <DialogContent id="alert-dialog-description">
                   <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item md={6} xs={12}>
-                      <img src={nft.rawMetadata.image} className="NFTImg"
+                      <img src={nft.rawMetadata.image} alt="" className="NFTImg"
                         onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
                     </Grid>
                     <Grid item md={6} xs={12}>
                       <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item md={6} xs={12}>
+                        <Grid item md={6}>
                           <DialogContentText id="alert-dialog-description">
                             Name:<br></br>
                             Full payment:<br></br>
@@ -94,7 +91,7 @@ function ListNFTCard({ nft }) {
                             Interest rate:<br></br>
                           </DialogContentText>
                         </Grid>
-                        <Grid item md={6} xs={12} >
+                        <Grid item md={6} >
                           <DialogContentText id="alert-dialog-description">
                             {nft.title}<br></br>
                             10 ETH<br></br>

@@ -5,8 +5,8 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
-import { useEthers, useEtherBalance, Goerli, useTokenBalance, useContractFunction, useCall } from "@usedapp/core";
-import { formatEther, formatUnits, parseEther } from "ethers/lib/utils";
+import { useEthers, useContractFunction, useCall } from "@usedapp/core";
+import { formatEther, parseEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@mui/material/Button';
@@ -17,8 +17,6 @@ import ContractAddress from './ContractAddress.json'
 
 function WithdrawPage() {
     const { account } = useEthers();
-    const Balance = useEtherBalance(account);
-    const balance = Balance ? parseFloat(formatEther(Balance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [withDrawValue, setWithdrawValue] = useState(0);
     const withdrawInput = withDrawValue === 0 || withDrawValue ? withDrawValue : '';
@@ -29,8 +27,8 @@ function WithdrawPage() {
     const ABI  = new Interface(abi);
 
     const ercContract = new Contract(contractAddress, abi);
-    const { send, state } = useContractFunction(ercContract, "withdraw");
-    const { value, error } = useCall(account && contractAddress && {
+    const { send } = useContractFunction(ercContract, "withdraw");
+    const { value } = useCall(account && contractAddress && {
         contract: new Contract(contractAddress, ABI),
         method: 'balanceOf',
         args: [account]
@@ -91,7 +89,7 @@ function WithdrawPage() {
                             <div className='depositFont2'>Available ERC20 Token in Wallet: {depositBalance? parseFloat(formatEther(depositBalance)).toFixed(4) : 0}</div>
                         </Box>
                         </Grid>
-                        <img src={eth} style={{ height: 45, width: 45, margin: "auto" }} />
+                        <img src={eth} alt="" style={{ height: 45, width: 45, margin: "auto" }} />
                     </Box>
 
                 </Grid>
@@ -163,7 +161,7 @@ function WithdrawPage() {
                                             if (withDrawValue < 0) value = 0;
                                             setWithdrawValue(value);
                                         }}
-                                        disabled={depositBalance == 0}
+                                        disabled={depositBalance === 0}
                                     /></div>
                                 </Box>
                             </Box>
@@ -180,7 +178,7 @@ function WithdrawPage() {
                                         var value = depositBalance ? parseFloat(e.target.value) / 100 * formatEther(depositBalance) : 0;
                                         setWithdrawValue(value);
                                     }}
-                                    disabled={depositBalance == 0}
+                                    disabled={depositBalance === 0}
                                 />
                             </Box>
                             <Button variant="contained" style={{

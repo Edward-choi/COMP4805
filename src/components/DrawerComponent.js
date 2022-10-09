@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Drawer, List, ListItem, ListItemIcon, Icon } from '@material-ui/core'
+import { Button, Drawer, List, ListItem } from '@material-ui/core'
 import { ListItemText, Box, Stack } from "@mui/material";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 
@@ -14,7 +14,7 @@ import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import metafox from '../images/metafox.png';
 
 //web3
-import { useEthers, useEtherBalance, Goerli } from "@usedapp/core";
+import { useEthers, useEtherBalance } from "@usedapp/core";
 import { formatEther } from "ethers/lib/utils";
 
 
@@ -90,7 +90,7 @@ const DrawerComponent = () => {
                                 <ListItem>
                                     <Button variant="outlined" style={{ width: 200, borderRadius: 10, borderColor: 'black' }}
                                         onClick={() => activateBrowserWallet()}>
-                                        <img src={metafox} style={{ height: 45, width: 45 }} />
+                                        <img src={metafox} alt="" style={{ height: 45, width: 45 }} />
                                         Metamask
                                     </Button>
                                 </ListItem>
