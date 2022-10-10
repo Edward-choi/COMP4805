@@ -47,93 +47,89 @@ function ListNFTCard({ nft }) {
   if (nft.title != null && nft.rawMetadata.image != null) {
     return (
       <div>
-        {
-          nft.rawMetadata.image.startsWith("https")
-            ?
-            <Item>
+        <Item>
+          {
+            nft.rawMetadata.image.startsWith("https") ?
               <img src={nft.rawMetadata.image} alt="" className="NFTImg"
-                onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
-              {nft.title}<br />
-              <Button variant="contained" style={{
-                borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
-              }} onClick={() => setPay(true)}>
-                Down Payment
-              </Button>
-              <Button variant="outlined" style={{
-                borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
-              }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
-                Full Payment
-              </Button>
-              <Dialog
-                open={pay} onClose={() => setPay(false)}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                PaperProps={{
-                  style: { borderRadius: "2rem" }
-                }}
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {"Down Payment Details"}
-                </DialogTitle>
-                <DialogContent id="alert-dialog-description">
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'
+                }} />
+              :
+              <IpfsImage hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="NFTImg"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'
+                }} />
+          }
+          {nft.title}<br />
+          <Button variant="contained" style={{
+            borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
+          }} onClick={() => setPay(true)}>
+            Down Payment
+          </Button>
+          <Button variant="outlined" style={{
+            borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
+          }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
+            Full Payment
+          </Button>
+          <Dialog
+            open={pay} onClose={() => setPay(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            PaperProps={{
+              style: { borderRadius: "2rem" }
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Down Payment Details"}
+            </DialogTitle>
+            <DialogContent id="alert-dialog-description">
+              <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item md={5} xs={12}>
+                  <img src={nft.rawMetadata.image} alt="" className="NFTImg"
+                    onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
+                </Grid>
+                <Grid item md={7} xs={12}>
                   <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item md={6} xs={12}>
-                      <img src={nft.rawMetadata.image} alt="" className="NFTImg"
-                        onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
+                    <Grid item md={7}>
+                      <DialogContentText id="alert-dialog-description">
+                        Name:<br></br>
+                        Full payment:<br></br>
+                        Down payment:<br></br>
+                        Interest rate:<br></br>
+                      </DialogContentText>
                     </Grid>
-                    <Grid item md={6} xs={12}>
-                      <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                        <Grid item md={6}>
-                          <DialogContentText id="alert-dialog-description">
-                            Name:<br></br>
-                            Full payment:<br></br>
-                            Down payment:<br></br>
-                            Interest rate:<br></br>
-                          </DialogContentText>
-                        </Grid>
-                        <Grid item md={6} >
-                          <DialogContentText id="alert-dialog-description">
-                            {nft.title}<br></br>
-                            10 ETH<br></br>
-                            6 ETH<br></br>
-                            3%<br></br>
-                          </DialogContentText>
-                        </Grid>
-                      </Grid>
-                      <Box marginTop={2}>Please select the loan maturity date.</Box>
-                      <Box marginTop={2}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker minDate={dayjs()} label="Loan maturity date" openTo="year"
-                            views={['day', 'month']} value={dueDay}
-                            onChange={(newValue) => { setDueDay(newValue); }}
-                            renderInput={(params) => <TextField {...params} />}
-                          />
-                        </LocalizationProvider>
-                      </Box>
+                    <Grid item md={5} >
+                      <DialogContentText id="alert-dialog-description">
+                        {nft.title}<br></br>
+                        10 ETH<br></br>
+                        6 ETH<br></br>
+                        3%<br></br>
+                      </DialogContentText>
                     </Grid>
                   </Grid>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setPay(false)}>Back</Button>
-                  <Button onClick={() => setPay(false)} autoFocus>
-                    Confirmed
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </Item>
-            :
-            <Item>
-              {/* https://developers.cloudflare.com/web3/ipfs-gateway/reference/updating-for-ipfs/ <- speed depends on this free gateway*/}
-              <IpfsImage hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="NFTImg"
-                onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
-              {nft.title}<br />
-              <Button variant="contained" style={{
-                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%"
-              }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
-                Purchase
+                  <Box marginTop={2}>Please select the loan maturity date.</Box>
+                  <Box marginTop={2}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker minDate={dayjs()} label="Loan maturity date" openTo="year"
+                        views={['day', 'month']} value={dueDay}
+                        onChange={(newValue) => { setDueDay(newValue); }}
+                        renderInput={(params) => <TextField {...params} />}
+                      />
+                    </LocalizationProvider>
+                  </Box>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setPay(false)}>Back</Button>
+              <Button onClick={() => setPay(false)} autoFocus>
+                Confirmed
               </Button>
-            </Item>
-        }
+            </DialogActions>
+          </Dialog>
+        </Item>
 
       </div>
     )

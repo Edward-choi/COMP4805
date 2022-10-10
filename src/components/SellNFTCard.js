@@ -10,62 +10,54 @@ import nftAbi from '../contracts/NFT/abi.json';
 import { Contract } from '@ethersproject/contracts';
 
 function SellNFTCard({ nft }) {
-  const { library } = useEthers();
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(2),
-    color: theme.palette.text.secondary,
-    borderRadius: 40
-  }));
+	const { library } = useEthers();
+	const Item = styled(Paper)(({ theme }) => ({
+		backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+		...theme.typography.body2,
+		padding: theme.spacing(2),
+		color: theme.palette.text.secondary,
+		borderRadius: 40
+	}));
 
-  const bankAddress = ContractAddress.bank;
-  const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
-  const nftAddress = ContractAddress.nft;
-  const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
-  
-  async function executeTransaction(nft, bank, tokenId) {
-    await nftContract.setApprovalForAll(bank, true);
-    await bankContract.sellNFT(nft, tokenId);
-  }
+	const bankAddress = ContractAddress.bank;
+	const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
+	const nftAddress = ContractAddress.nft;
+	const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
 
-  if (nft.title != null && nft.rawMetadata.image != null) {
-    return (
-      <div>
-        {
-          nft.rawMetadata.image.startsWith("https")
-            ?
-            <Item>
-              <img src={nft.rawMetadata.image} alt="" className="NFTImg"
-                onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
-              {nft.title}<br />
-              <Button variant="contained" style={{
-                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%" 
-              }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
-                Sell
-              </Button>
+	async function executeTransaction(nft, bank, tokenId) {
+		await nftContract.setApprovalForAll(bank, true);
+		await bankContract.sellNFT(nft, tokenId);
+	}
 
-            </Item>
-            :
-            <Item>
-              {/* https://developers.cloudflare.com/web3/ipfs-gateway/reference/updating-for-ipfs/ <- speed depends on this free gateway*/}
-              <IpfsImage hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="NFTImg"
-                onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
-              {nft.title}<br />
-              <Button variant="contained" style={{
-                borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%" 
-              }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
-                Sell
-              </Button>
-            </Item>
-        }
+	if (nft.title != null && nft.rawMetadata.image != null) {
+		return (
+			<div>
+				<Item>
+					{
+						nft.rawMetadata.image.startsWith("https") ?
+						<img src={nft.rawMetadata.image} alt="" className="NFTImg"
+							onError={({ currentTarget }) => { currentTarget.onerror = null; 
+							currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
+						:
+						<IpfsImage hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="NFTImg"
+							onError={({ currentTarget }) => { currentTarget.onerror = null; 
+							currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
+					}
+					{nft.title}<br />
+					<Button variant="contained" style={{
+						borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%"
+					}} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
+						Sell
+					</Button>
 
-      </div>
-    )
-  }
-  else {
-    return (null)
-  }
+				</Item>
+
+			</div>
+		)
+	}
+	else {
+		return (null)
+	}
 }
 
 

@@ -3,6 +3,7 @@ import { useEthers } from "@usedapp/core";
 import { Network, Alchemy } from "alchemy-sdk"
 import Box from '@mui/material/Box';
 import SellNFTCard from './SellNFTCard.js'
+import LoanedNFTCard from './LoanedNFTCard.js'
 import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -81,7 +82,7 @@ function ViewNFTPage() {
                     :
                     nfts.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
-                            <SellNFTCard nft={nft} key={index} />
+                            <LoanedNFTCard nft={nft} key={index} />
                         </Grid>
                     })
                 }
