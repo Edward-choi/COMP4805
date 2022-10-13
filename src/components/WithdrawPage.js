@@ -172,7 +172,7 @@ function WithdrawPage() {
                                     getAriaValueText={valuetext}
                                     step={1}
                                     valueLabelDisplay="auto"
-                                    value={(withdrawInput && depositBalance) ? withdrawInput / formatEther(depositBalance) * 100 : 0}
+                                    value={(withdrawInput && depositBalance) ? Math.round(withdrawInput / formatEther(depositBalance) * 100) : 0}
                                     marks={marks}
                                     onChange={(e) => {
                                         var value = depositBalance ? parseFloat(e.target.value) / 100 * formatEther(depositBalance) : 0;

@@ -167,7 +167,7 @@ function DepositPage() {
                                     getAriaValueText={valuetext}
                                     step={1}
                                     valueLabelDisplay="auto"
-                                    value={(depositInput && balance) ? depositInput / balance * 100 : 0}
+                                    value={(depositInput && balance) ? Math.round(depositInput / balance * 100) : 0}
                                     marks={marks}
                                     onChange={(e) => {
                                         var value = balance ? parseFloat(e.target.value) / 100 * balance : 0;
