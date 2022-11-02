@@ -28,8 +28,11 @@ contract nffMain{
     * Check if a loan is due every day at 00:00, if current time > due time, the loan is defaulted
     * Future development: Implement BokkyPooBahsDateTimeLibrary https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary
     */
+    //defaultRate = number of times that the customer can pay their loan later
     uint256 public defaultRate;
     uint256 public interstRate;
+    //penatly for loan with default count > 0
+    uint256 public penaltyRate;
     uint256 public downPayment; //to be implemented
     //The Loan structure InLoan = instalment Loan
     //The Nft token uniquely define the Loan
@@ -74,8 +77,10 @@ contract nffMain{
         downPayment = 1 ether;
         //initial defaultRate
         defaultRate = 3;
-        //initial interstRate
+        //initial interstRate in percent
         interstRate = 5;
+        //initial penatlyRate in percent
+        penaltyRate = 5;
     }
 
     modifier onlyOwner() {
@@ -280,7 +285,7 @@ contract nffMain{
     function callDueLoan() public{
         // require(msg.sender == oracleAddr, "Only the orcacle contract can call this function");
         for (uint256 i=0; i < customerList.length; i++){
-            for(uint256 j=0; j< addressToInLoans[customerList[i]].length; j++){
+            for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
                 if(addressToInLoans[customerList[i]][j].dueTime < block.timestamp){
                     if(addressToInLoans[customerList[i]][j].defaultCount >= defaultRate){
                         loanRemoveList.push(addressToInLoans[customerList[i]][j]);
@@ -293,6 +298,32 @@ contract nffMain{
         }
         removeDefaultLoan(loanRemoveList);
         delete loanRemoveList;
+    }
+
+    //Change interest on every NFT based on defaultRate
+    //only allow the oracle contract to call this
+    function chargeInterest() public{
+        // require(msg.sender == oracleAddr, "Only the orcacle contract can call this function");
+        for (uint256 i=0; i < customerList.length; i++){
+            for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
+                if(addressToInLoans[customerList[i]][j].defaultCount == 0){
+                    addressToInLoans[customerList[i]][j].outstandBalance += 
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate).div(100);
+                }
+                else if(addressToInLoans[customerList[i]][j].defaultCount == 1){
+                    addressToInLoans[customerList[i]][j].outstandBalance += 
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate.mul(2)).div(100);
+                }
+                else if(addressToInLoans[customerList[i]][j].defaultCount == 2){
+                    addressToInLoans[customerList[i]][j].outstandBalance += 
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate.mul(3)).div(100);
+                }
+                else if(addressToInLoans[customerList[i]][j].defaultCount == 3){
+                    addressToInLoans[customerList[i]][j].outstandBalance += 
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate.mul(4)).div(100);
+                }
+            }
+        }
     }
 
     /*__________________________________Getter_____________________________________ */
