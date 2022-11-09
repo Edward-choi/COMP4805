@@ -11,6 +11,7 @@ contract nffMain{
     address public owner;
     /*__________________________________From Orignal NFT Bank_________________________________ */
     uint256 public minDeposit;
+    uint256 public nftFloorPrice; //temporary
     uint256 public nftLiquidationPrice;
     uint256 public discountFactor;
     //Use to store user's eth balance
@@ -179,8 +180,9 @@ contract nffMain{
     }
 
     //only allow the oracle contract to call this
-    function setLiquidationPrice(uint256 amount) external{
+    function setAssetPrice(uint256 amount) external{
         require(msg.sender == oracleAddr, "Only the orcacle contract can call this function");
+        nftFloorPrice = amount;
         nftLiquidationPrice = amount.mul(discountFactor).div(100);
     }
 
@@ -255,6 +257,15 @@ contract nffMain{
                 }
             }
         }
+    }
+
+    function buyNFT(address nftContractAddr, uint256 tokenId) external payable{
+        NftToken memory token = NftToken(nftContractAddr, tokenId);
+        require(supportedNft[nftContractAddr], "Your NFT collection is not verified");
+        require(checkNftBalance(token), "The contract doesnt own this NFT");
+        require(!checkNftInList(token), "The NFT you selected is on others instalment loan");
+        require(msg.value == nftFloorPrice, "You pay too much or too less");
+        transferNft(token,msg.sender);
     }
 
     //Only callable by the contract to remove the paid loan from the addressToInLoans mapping InLoan[] aray
@@ -335,11 +346,6 @@ contract nffMain{
 
     function getUserNumLoan(address addr) public view returns(uint256){
         return customAddrToNumLoans[addr];
-    }
-
-    //A function that return all nft not in loan
-    function getAvalibleNft() public view returns(NftToken[] memory){
-        
     }
 
     /*__________________________________Setter_____________________________________ */
