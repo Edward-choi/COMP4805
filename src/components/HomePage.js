@@ -14,7 +14,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFTList from './NFTList.js'
-import {Network, Alchemy} from "alchemy-sdk"
+import { Network, Alchemy } from "alchemy-sdk"
 
 import { useEthers, useEtherBalance } from "@usedapp/core";
 import { useEffect, useState } from 'react'
@@ -33,9 +33,10 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function HomePage() {
     const { account } = useEthers()
-    const Balance = useEtherBalance(account, { refresh: 'never'})
+    const Balance = useEtherBalance(account, { refresh: 'never' })
     const [EthData, setEthData] = useState([])
     const [nfts, setNfts] = useState([])
+    const link = "https://goerli.etherscan.io/address/" + account
 
     useEffect(() => {
         //Get ETH price data
@@ -59,7 +60,7 @@ function HomePage() {
                 const data = response.ownedNfts
                 setNfts(data)
                 // debugger
-            }).catch(function (error){
+            }).catch(function (error) {
                 console.error(error);
             });
         }
@@ -189,7 +190,7 @@ function HomePage() {
                                 <div className='bottomButtonContainer'>
                                     <Button variant="contained" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
-                                    }}>
+                                    }} target="_blank" component="a" href={link}>
                                         View On Ethereum
                                     </Button>
                                 </div>
