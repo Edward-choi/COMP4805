@@ -26,7 +26,7 @@ function SellNFTCard({ nft }) {
 
 	async function executeTransaction(nft, bank, tokenId) {
 		await nftContract.setApprovalForAll(bank, true);
-		await bankContract.sellNFT(nft, tokenId);
+		await bankContract.liquidateNFT(nft, tokenId);
 	}
 
 	if (nft.title != null && nft.rawMetadata.image != null) {

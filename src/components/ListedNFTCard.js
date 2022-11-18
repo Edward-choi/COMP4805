@@ -20,6 +20,7 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { parseEther } from "ethers/lib/utils";
 
 function ListNFTCard({ nft }) {
   const { library } = useEthers();
@@ -42,6 +43,11 @@ function ListNFTCard({ nft }) {
   async function executeTransaction(nft, bank, tokenId) {
     await nftContract.setApprovalForAll(bank, true);
     await bankContract.buyNFT(nft, tokenId);
+  }
+
+  async function downPayment(nft, amount, tokenId, dueDay) {
+    setPay(false);
+    await bankContract.startLoan(nft, amount, dueDay, tokenId);
   }
 
   if (nft.title != null && nft.rawMetadata.image != null) {
@@ -114,7 +120,7 @@ function ListNFTCard({ nft }) {
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker minDate={dayjs()} label="Loan maturity date" openTo="year"
                         views={['day', 'month']} value={dueDay}
-                        onChange={(newValue) => { setDueDay(newValue); }}
+                        onChange={(newValue) => { setDueDay(newValue) }}
                         renderInput={(params) => <TextField {...params} />}
                       />
                     </LocalizationProvider>
@@ -124,7 +130,7 @@ function ListNFTCard({ nft }) {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setPay(false)}>Back</Button>
-              <Button onClick={() => setPay(false)} autoFocus>
+              <Button onClick={() => downPayment(nft.contract.address, parseEther("1"), dueDay.$d.getTime(), nft.tokenId)} autoFocus>
                 Confirmed
               </Button>
             </DialogActions>

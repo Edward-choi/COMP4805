@@ -7,7 +7,6 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import ContractAddress from './ContractAddress.json'
 import bankAbi from '../contracts/Bank/abi.json';
-import nftAbi from '../contracts/NFT/abi.json';
 import { Contract } from '@ethersproject/contracts';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -16,6 +15,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import { parseEther } from "ethers/lib/utils";
 
 function LoanedNFTCard({ nft }) {
 	const { library } = useEthers();
@@ -29,13 +29,15 @@ function LoanedNFTCard({ nft }) {
 
 	const bankAddress = ContractAddress.bank;
 	const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
-	const nftAddress = ContractAddress.nft;
-	const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
 	const [repay, setRepay] = useState(false);
 
-	async function executeTransaction(nft, bank, tokenId) {
-		await nftContract.setApprovalForAll(bank, true);
-		await bankContract.sellNFT(nft, tokenId);
+	
+	const [loanAmount, setLoanAmount] = useState('');
+	const handleLoanInputChange = event => {
+		setLoanAmount(event.target.value);
+	};
+	async function executeTransaction(nft, tokenId) {
+		await bankContract.repayLoan(nft, tokenId, {value: parseEther(loanAmount.toString())});
 		setRepay(false);
 	}
 
@@ -105,6 +107,8 @@ function LoanedNFTCard({ nft }) {
 											id="outlined-number"
 											label="Repayment"
 											type="number"
+											value= {loanAmount}
+            								onChange= {handleLoanInputChange}
 											InputLabelProps={{
 												shrink: true,
 											}}
@@ -115,7 +119,7 @@ function LoanedNFTCard({ nft }) {
 						</DialogContent>
 						<DialogActions>
 							<Button onClick={() => setRepay(false)}>Back</Button>
-							<Button onClick={() => executeTransaction(null, null, null)} autoFocus>
+							<Button onClick={() => executeTransaction(nft.contract.address, nft.tokenId)} autoFocus>
 								Confirmed
 							</Button>
 						</DialogActions>
