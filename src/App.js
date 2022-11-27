@@ -5,6 +5,7 @@ import Deposit from './components/Deposit';
 import Withdraw from './components/Withdraw';
 import ViewNFT from './components/ViewNFT'
 import Home from './components/Home';
+import History from './components/History';
 import { Route, Routes } from 'react-router-dom';
 import { DAppProvider, Goerli, Mainnet } from '@usedapp/core';
 import {getDefaultProvider} from 'ethers'
@@ -26,6 +27,7 @@ function App() {
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/ViewNFT" element={<ViewNFT />} />
           <Route path="/withdraw" element={<Withdraw />} />
+          <Route path="/history" element={<History />} />
           <Route path="/" element={<Home/>} />
         </Routes>
       </div>

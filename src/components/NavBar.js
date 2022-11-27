@@ -17,10 +17,10 @@ export default function Navbar() {
                 <img src={NFFLogo} style={{ height: 100, width: 150 }} alt='logo' />
 
                 <ButtonGroup variant="text" size="large" className='buttongp'>
-                    <Button startIcon={<AccountBalanceIcon />} component={Link} to="/">home</Button>
-                    <Button startIcon={<VerticalAlignBottomIcon />} component={Link} to="/marketplace">Marketplace</Button>
-                    <Button startIcon={<AddCircleOutlineIcon />} component={Link} to="/deposit">Deposit ETH</Button>
-                    <Button startIcon={<LocalAtmIcon />} component={Link} to="/withdraw">Withdraw ETH</Button>
+                    <Button startIcon={<AccountBalanceIcon />} component={Link} to="/" sx={{ color: "black" }}>Home</Button>
+                    <Button startIcon={<VerticalAlignBottomIcon />} component={Link} to="/marketplace" sx={{ color: "black" }}>Marketplace</Button>
+                    <Button startIcon={<AddCircleOutlineIcon />} component={Link} to="/deposit" sx={{ color: "black" }}>Deposit ETH</Button>
+                    <Button startIcon={<LocalAtmIcon />} component={Link} to="/withdraw" sx={{ color: "black" }}>Withdraw ETH</Button>
                 </ButtonGroup>
 
                 <DrawerComponent />

@@ -45,7 +45,7 @@ const DrawerComponent = () => {
     return (
         <div>
             <GreenTooltip title="Wallet">
-                <ColorButton size="large" color="default" aria-label="wallet" onClick={() => setOpenDrawer(true)}>
+                <ColorButton size="large" color="inherit" aria-label="wallet" onClick={() => setOpenDrawer(true)}>
                     <AccountBalanceWalletOutlinedIcon />
                 </ColorButton>
             </GreenTooltip>

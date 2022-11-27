@@ -134,7 +134,7 @@ function HomePage() {
                                 <Box sx={{ height: "10rem" }}></Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>
-                                    <Button variant="contained" style={{
+                                    <Button variant="contained" component={Link} to="/history" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
                                     }}>
                                         View History

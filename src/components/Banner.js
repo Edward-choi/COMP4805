@@ -4,6 +4,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import TokenIcon from '@mui/icons-material/Token';
+import HistoryIcon from '@mui/icons-material/History';
 
 
 
@@ -22,6 +23,9 @@ function Banner(props) {
             break;
         case "View My NFTs":
             icon = <TokenIcon sx={{ fontSize: "2rem" }} />;
+            break;
+        case "History":
+            icon = <HistoryIcon sx={{ fontSize: "2rem" }} />;
             break;
         default:
             break;
