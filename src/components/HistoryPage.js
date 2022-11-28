@@ -129,7 +129,7 @@ function HistoryPage() {
             ? results.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : results
           ).map((result) => (
-            <TableRow key={result.name}>
+            <TableRow key={result.hash}>
               <TableCell component="th" scope="row">
                 {result.hash}
               </TableCell>
@@ -140,7 +140,7 @@ function HistoryPage() {
                 {result.functionName}
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
-                {formatEther(result.value)}
+                {parseFloat(formatEther(result.value)).toFixed(4)}
               </TableCell>
             </TableRow>
           ))}

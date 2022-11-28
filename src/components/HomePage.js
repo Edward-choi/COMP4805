@@ -20,6 +20,9 @@ import { useEthers, useEtherBalance } from "@usedapp/core";
 import { useEffect, useState } from 'react'
 import { formatEther } from "ethers/lib/utils";
 
+import Moment from 'react-moment';
+import axios from 'axios';
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     height: '20rem',
@@ -37,6 +40,7 @@ function HomePage() {
     const [EthData, setEthData] = useState([])
     const [nfts, setNfts] = useState([])
     const link = "https://goerli.etherscan.io/address/" + account
+    const [results, setResults] = useState([])
 
     useEffect(() => {
         //Get ETH price data
@@ -66,6 +70,14 @@ function HomePage() {
         }
         getNftData()
     }, [account])
+
+    useEffect(() => {
+        const apikey = "F8BTXW9R9QHDY2IUTMNDTZKGX423D7SYGV";
+        const endpoint = "https://api-goerli.etherscan.io/api"
+        axios
+        .get(endpoint + `?module=account&action=txlist&address=${account}&apikey=${apikey}&sort=desc`)
+        .then(response => setResults(response.data.result));
+    }, [account, results]);
 
     return (
         <Box className='homePage'>
@@ -131,7 +143,50 @@ function HomePage() {
                                     <div>&nbsp;Record</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Box sx={{ height: "10rem" }}></Box>
+                                <Box sx={{ height: "10rem" }}>
+                                    <List>
+                                        <Grid container rowSpacing={2}>
+                                            <Grid item xs={3}>
+                                                <div style={{ fontWeight: 'bolder' }}>Time</div>
+                                            </Grid>
+                                            <Grid item xs={7}>
+                                                <div style={{ fontWeight: 'bolder' }}>Action</div>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <div style={{ fontWeight: 'bolder' }}>Amount</div>
+                                            </Grid>
+                                        </Grid>
+                                    {Object.values(results).map((result, index) => {
+                                        return index < 3 && account && (
+                                            <Grid container rowSpacing={2}>
+                                                <Grid item xs={3}>
+                                                    <Moment unix format="YYYY/MM/DD">{result.timeStamp}</Moment>
+                                                </Grid>
+                                                <Grid item xs={7}>
+                                                    {result.functionName}
+                                                </Grid>
+                                                <Grid item xs={2}>
+                                                    {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0}
+                                                </Grid>
+                                            </Grid>
+                                        );
+                                    })}
+                                        {/* {results.map((result, index) => {
+                                            return index < 5 && account &&
+                                            <Grid container rowSpacing={2}>
+                                                <Grid item xs={4}>
+                                                    <Moment unix format="YYYY/MM/DD">{result.timeStamp}</Moment>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    {result.functionName}
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    {parseFloat(formatEther(result.value)).toFixed(4)}
+                                                </Grid>
+                                            </Grid>
+                                        })} */}
+                                    </List>
+                                </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>
                                     <Button variant="contained" component={Link} to="/history" style={{
@@ -157,12 +212,12 @@ function HomePage() {
                                 <Box sx={{ height: "10rem" }}></Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>
-                                    <Button variant="contained" component={Link} to="/borrow" style={{
+                                    <Button variant="contained" component={Link} to="/marketplace" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
                                         Borrow ETH
                                     </Button>
-                                    <Button variant="outlined" style={{
+                                    <Button variant="outlined" component={Link} to="/viewnft" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
                                         My Borrows
@@ -180,11 +235,20 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem" }}>
-                                    {Balance && <Box>ETH Balance: {parseFloat(formatEther(Balance)).toFixed(4)} Ξ</Box>}
-                                    Ethereum Price: ${parseFloat(EthData.c).toFixed(2)} <br />
-                                    24h Price Change: ${parseFloat(EthData.p).toFixed(2)} <br />
-                                    24h Percentage Change: {parseFloat(EthData.P).toFixed(2)}%
-
+                                    <Grid container rowSpacing={2}>
+                                        <Grid item xs={8}>
+                                            {Balance && <Box>ETH Balance: </Box>}
+                                            Ethereum Price: <br />
+                                            24h Price Change: <br />
+                                            24h Percentage Change: 
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            {Balance && <Box>{parseFloat(formatEther(Balance)).toFixed(4)} Ξ</Box>}
+                                            ${parseFloat(EthData.c).toFixed(2)} <br />
+                                            ${parseFloat(EthData.p).toFixed(2)} <br />
+                                            {parseFloat(EthData.P).toFixed(2)}%
+                                        </Grid>
+                                    </Grid>
                                 </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>

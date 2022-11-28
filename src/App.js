@@ -25,7 +25,7 @@ function App() {
         <Routes>
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/deposit" element={<Deposit />} />
-          <Route path="/ViewNFT" element={<ViewNFT />} />
+          <Route path="/viewnft" element={<ViewNFT />} />
           <Route path="/withdraw" element={<Withdraw />} />
           <Route path="/history" element={<History />} />
           <Route path="/" element={<Home/>} />
