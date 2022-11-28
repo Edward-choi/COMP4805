@@ -149,10 +149,10 @@ function HomePage() {
                                             <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Time</div>
                                             </Grid>
-                                            <Grid item xs={7}>
+                                            <Grid item xs={6}>
                                                 <div style={{ fontWeight: 'bolder' }}>Action</div>
                                             </Grid>
-                                            <Grid item xs={2}>
+                                            <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Amount</div>
                                             </Grid>
                                         </Grid>
@@ -162,11 +162,11 @@ function HomePage() {
                                                 <Grid item xs={3}>
                                                     <Moment unix format="YYYY/MM/DD">{result.timeStamp}</Moment>
                                                 </Grid>
-                                                <Grid item xs={7}>
+                                                <Grid item xs={6}>
                                                     {result.functionName}
                                                 </Grid>
-                                                <Grid item xs={2}>
-                                                    {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0}
+                                                <Grid item xs={3}>
+                                                    {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0} ETH
                                                 </Grid>
                                             </Grid>
                                         );
