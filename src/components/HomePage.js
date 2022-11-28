@@ -16,12 +16,16 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import NFTList from './NFTList.js'
 import { Network, Alchemy } from "alchemy-sdk"
 
-import { useEthers, useEtherBalance } from "@usedapp/core";
+import { useEthers, useEtherBalance, useCall } from "@usedapp/core";
 import { useEffect, useState } from 'react'
 import { formatEther } from "ethers/lib/utils";
 
 import Moment from 'react-moment';
 import axios from 'axios';
+import abi from '../contracts/Bank/abi.json';
+import ContractAddress from './ContractAddress.json'
+import { Interface } from '@ethersproject/abi';
+import { Contract } from '@ethersproject/contracts';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -41,6 +45,14 @@ function HomePage() {
     const [nfts, setNfts] = useState([])
     const link = "https://goerli.etherscan.io/address/" + account
     const [results, setResults] = useState([])
+    const contractAddress = ContractAddress.bank;
+    const ABI  = new Interface(abi);
+    const { value } = useCall(account && contractAddress && {
+        contract: new Contract(contractAddress, ABI),
+        method: 'balanceOf',
+        args: [account]
+    }) ?? {};
+    const depositBalance = value ? value[0] : 0;
 
     useEffect(() => {
         //Get ETH price data
@@ -115,11 +127,27 @@ function HomePage() {
                             <Item>
                                 <div >
                                     <AddCircleOutlineIcon className='homePageTitle' />
-                                    <div className='homePageFont1 homePageTitle'>My Account</div>
-                                    <div>&nbsp;Total Balance</div>
+                                    <div className='homePageFont1 homePageTitle'>My Account</div><br/>
+                                    <div style={{ display: "inline-flex" }}>&nbsp;Total Balance</div>
+                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance? parseFloat(formatEther(depositBalance)).toFixed(4) : 0} ETH</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Box sx={{ height: "10rem" }}></Box>
+                                <Box sx={{ height: "10rem", padding: "1rem" }}>
+                                <Grid container rowSpacing={2}>
+                                    <Grid item xs={8}>
+                                        {Balance && <Box>Total value: </Box>}
+                                        Utilization rate: <br />
+                                        APR: <br />
+                                        {Balance && <Box>Total interest: </Box>}
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {Balance && <Box>${depositBalance? (parseFloat(formatEther(depositBalance)).toFixed(4) * parseFloat(EthData.c).toFixed(2)).toFixed(4) : 0}</Box>}
+                                        40.23 % <br />
+                                        7.47 % <br />
+                                        {Balance && <Box>0.1 ETH </Box>}
+                                    </Grid>
+                                </Grid>
+                                </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>
                                     <Button variant="contained" component={Link} to="/deposit" style={{
@@ -143,9 +171,9 @@ function HomePage() {
                                     <div>&nbsp;Record</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Box sx={{ height: "10rem" }}>
+                                <Box sx={{ height: "10rem", padding: "1rem", paddingTop: 0 }}>
                                     <List>
-                                        <Grid container rowSpacing={2}>
+                                        <Grid container>
                                             <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Time</div>
                                             </Grid>
@@ -156,35 +184,21 @@ function HomePage() {
                                                 <div style={{ fontWeight: 'bolder' }}>Amount</div>
                                             </Grid>
                                         </Grid>
-                                    {Object.values(results).map((result, index) => {
-                                        return index < 3 && account && (
-                                            <Grid container rowSpacing={2}>
-                                                <Grid item xs={3}>
-                                                    <Moment unix format="YYYY/MM/DD">{result.timeStamp}</Moment>
+                                        {Object.values(results).map((result, index) => {
+                                            return index < 3 && account && (
+                                                <Grid container rowSpacing={2}>
+                                                    <Grid item xs={3}>
+                                                        <Moment unix format="YYYY/MM/DD">{result.timeStamp}</Moment>
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        {result.functionName}
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0} ETH
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid item xs={6}>
-                                                    {result.functionName}
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0} ETH
-                                                </Grid>
-                                            </Grid>
-                                        );
-                                    })}
-                                        {/* {results.map((result, index) => {
-                                            return index < 5 && account &&
-                                            <Grid container rowSpacing={2}>
-                                                <Grid item xs={4}>
-                                                    <Moment unix format="YYYY/MM/DD">{result.timeStamp}</Moment>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    {result.functionName}
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    {parseFloat(formatEther(result.value)).toFixed(4)}
-                                                </Grid>
-                                            </Grid>
-                                        })} */}
+                                            );
+                                        })}
                                     </List>
                                 </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
@@ -205,11 +219,41 @@ function HomePage() {
                             <Item>
                                 <div>
                                     <VerticalAlignBottomIcon className='homePageTitle' />
-                                    <div className='homePageFont1 homePageTitle'>My Borrows</div>
-                                    <div>&nbsp;Total Debt</div>
+                                    <div className='homePageFont1 homePageTitle'>My Borrows</div><br/>
+                                    <div style={{ display: "inline-flex" }}>&nbsp;Total Debt</div>
+                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance? parseFloat(formatEther(depositBalance)).toFixed(4) : 0} ETH</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
-                                <Box sx={{ height: "10rem" }}></Box>
+                                <Box sx={{ height: "10rem", padding: "1rem", paddingTop: 0 }}>
+                                    <List>
+                                        <Grid container>
+                                            <Grid item xs={4}>
+                                                <div style={{ fontWeight: 'bolder' }}>Name</div>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <div style={{ fontWeight: 'bolder' }}>Price</div>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <div style={{ fontWeight: 'bolder' }}>Outstanding loan</div>
+                                            </Grid>
+                                        </Grid>
+                                        {Object.values(results).map((result, index) => {
+                                            return index < 5 && account && (
+                                                <Grid container rowSpacing={2}>
+                                                    <Grid item xs={4}>
+                                                        COMP4805
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        {result.value ? parseFloat(formatEther(result.value)).toFixed(4) + 1 : 0} ETH
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0} ETH
+                                                    </Grid>
+                                                </Grid>
+                                            );
+                                        })}
+                                    </List>
+                                </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>
                                     <Button variant="contained" component={Link} to="/marketplace" style={{
