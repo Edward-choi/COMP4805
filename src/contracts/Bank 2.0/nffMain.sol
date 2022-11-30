@@ -41,7 +41,7 @@ contract nffMain{
     */
     //defaultRate = number of times that the customer can pay their loan later
     uint256 public defaultRate;
-    uint256 public interstRate;
+    uint256 public baseInterstRate;
     //The Loan structure InLoan = instalment Loan
     //The Nft token uniquely define the Loan
     struct InLoan{
@@ -51,6 +51,7 @@ contract nffMain{
         uint256 startTime;
         uint256 dueTime;
         uint256 defaultCount;
+        uint256 LoanRate;
         NftToken nft;
     }
     struct NftToken{
@@ -80,8 +81,8 @@ contract nffMain{
 
         //initial defaultRate (Max number of default)
         defaultRate = 3;
-        //initial interstRate in percent
-        interstRate = 5;
+        //initial interstRate in percent times 10^18
+        baseInterstRate = 5000000000000000000;
         //initial reserve ratio in percent
         reserveRatio = 50;
         //initial LTV ratio in percent
@@ -114,8 +115,10 @@ contract nffMain{
     function paidInterest() external{
         require(msg.sender == bankOracleAddr, "Only the bank orcacle contract can call this function");
         for (uint256 i = 0; i < ethDepositorList.length; i++){
-            addressToBalances[ethDepositorList[i]] += addressToBalances[ethDepositorList[i]].mul(APY).div(10**18).div(365).div(100);
-            netProfit -= int256(addressToBalances[ethDepositorList[i]].mul(APY).div(10**18).div(365).div(100));
+            uint256 interest = addressToBalances[ethDepositorList[i]].mul(APY).div(10**18).div(365).div(100);
+            addressToBalances[ethDepositorList[i]] += interest;
+            netProfit -= int256(interest);
+            Userdeposit += interest;
         }
     }
 
@@ -139,19 +142,6 @@ contract nffMain{
         else{
             return false;
         }
-    }
-
-    function acceptLoan(uint256 nftValue, uint256 downPayment) public view returns(bool){
-        if (downPayment <= 0){
-            return false;
-        }
-        if( (nftValue - downPayment).mul(100).div(nftValue) > LoanToValue ){
-            return false;
-        }
-        else{
-            return true;
-        }
-
     }
 
     //User withdrawETH through this function
@@ -274,8 +264,9 @@ contract nffMain{
         require(checkNftBalance(token), "The contract doesnt own this NFT");
         require(!checkNftInList(token), "The NFT you selected is on others instalment loan");
         //Create the loan, msg.value = down payment
+        uint256 loanInterest = setLoanInterest(nftFloorPrice, msg.value);
         InLoan memory temp = InLoan(msg.sender, nftFloorPrice, 
-        nftFloorPrice - msg.value, block.timestamp, dueTime, 0, token);
+        nftFloorPrice - msg.value, block.timestamp, dueTime, 0, loanInterest, token); //block.timestamp = now unix time stamp, 86400 = 1 day
         //Append the loan into the array inside the map
         addressToInLoans[msg.sender].push(temp);
         //Append the sender address to the customer list if he is a new customer
@@ -312,6 +303,29 @@ contract nffMain{
                     removePaidLoan(msg.sender,token);
                 }
             }
+        }
+    }
+
+    function acceptLoan(uint256 nftValue, uint256 downPayment) public view returns(bool){
+        if (downPayment <= 0){
+            return false;
+        }
+        //Calculate the percentage of eth that this contract contribute to the loan and compare to the LoanToValue (60%) requirement
+        else if( (nftValue - downPayment).mul(100).div(nftValue) > LoanToValue ){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    function setLoanInterest(uint256 nftValue, uint256 downPayment) internal view returns(uint256){
+        //Every 10% above LoanToValue, decrease 0.2% in interest rate
+        if ( (nftValue - downPayment).mul(100).div(nftValue) >= LoanToValue){
+            return baseInterstRate;
+        }
+        else{
+            return baseInterstRate - ( LoanToValue - (nftValue - downPayment).mul(100).div(nftValue) ).mul(10**18).mul(2).div(100);
         }
     }
 
@@ -377,19 +391,19 @@ contract nffMain{
             for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
                 if(addressToInLoans[customerList[i]][j].defaultCount == 0){
                     addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate).div(10**18).div(100);
                 }
                 else if(addressToInLoans[customerList[i]][j].defaultCount == 1){
                     addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate.mul(2)).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(2)).div(10**18).div(100);
                 }
                 else if(addressToInLoans[customerList[i]][j].defaultCount == 2){
                     addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate.mul(3)).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(3)).div(10**18).div(100);
                 }
                 else if(addressToInLoans[customerList[i]][j].defaultCount == 3){
                     addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(interstRate.mul(4)).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(4)).div(10**18).div(100);
                 }
             }
         }
@@ -464,7 +478,6 @@ contract nffMain{
 
         }
     }
-
     /*__________________________________Checker_____________________________________ */
 
     //Return true if a loan is fully repaid, false otherwise
