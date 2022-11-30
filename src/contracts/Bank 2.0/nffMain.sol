@@ -4,14 +4,17 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SignedSafeMath.sol";
 
 contract nffMain{
     /*__________________________________Shared variabes______________________________________ */
-    address public oracleAddr;
+
+    address public priceOracleAddr;
+    address public bankOracleAddr;
     address public owner;
-    /*__________________________________From Orignal NFT Bank_________________________________ */
+    /*_____________________________________From NFT Bank____________________________________ */
     uint256 public minDeposit;
-    uint256 public nftFloorPrice; //temporary
+    uint256 public nftFloorPrice;
     uint256 public nftLiquidationPrice;
     uint256 public discountFactor;
     //Use to store user's eth balance
@@ -24,7 +27,14 @@ contract nffMain{
     address[] private ethDepositorList;
     //For saving supported NFT (Can be implemented by saving every data from liquidated NFT)
     address[] private supportedNftList;
-    /*__________________________________From NFT Loan________________________________________ */
+    /*__________________________________Bank Risk Management_________________________________ */
+    uint256 public reserveRatio; //To guarantee the bank have enough eth for withdraw
+    uint256 public Userdeposit; //Total users deposite value
+    uint256 public payoutRatio; //payout ratio of this contract
+    uint256 public LoanToValue; //LTV ratio that control risk of a loan
+    int256 public netProfit; //Profit that the contract made from nft loan (can be negative)
+    uint256 public APY; //APY in uint256
+    /*____________________________________From NFT Loan______________________________________ */
     /*
     * Check if a loan is due every day at 00:00, if current time > due time, the loan is defaulted
     * Future development: Implement BokkyPooBahsDateTimeLibrary https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary
@@ -32,15 +42,12 @@ contract nffMain{
     //defaultRate = number of times that the customer can pay their loan later
     uint256 public defaultRate;
     uint256 public interstRate;
-    //penatly for loan with default count > 0
-    uint256 public penaltyRate;
-    uint256 public downPayment; //to be implemented
     //The Loan structure InLoan = instalment Loan
     //The Nft token uniquely define the Loan
     struct InLoan{
         address loanOwner;
-        uint256 loanAmount;
-        uint256 outstandBalance;
+        uint256 nftValue; //How much this contract contribute to the loan
+        uint256 outstandBalance; //Outstanding Balance of the customer
         uint256 startTime;
         uint256 dueTime;
         uint256 defaultCount;
@@ -54,18 +61,15 @@ contract nffMain{
     mapping(address => InLoan[]) addressToInLoans;
     //For mapping between customers and the number of loans
     mapping(address => uint256) customAddrToNumLoans;
-    //For mapping between NFT contract address and floor price
-    mapping(address => uint256) nftToFloorPrice;
     //For tracking customers, no dups in this array
     address[] public customerList;
     //For tracking which nft is in a loan, no dups in this array
     NftToken[] public nftInLoan;
     //For storing a list of Loan to be removed can be private
     InLoan[] public loanRemoveList;
-    //For storing a list of avalible NFT
-    NftToken[] public avalibleNft;
 
     using SafeMath for uint256;
+    using SignedSafeMath for int256;
 
     constructor(){
         owner = msg.sender;
@@ -73,15 +77,17 @@ contract nffMain{
         minDeposit = 0.5 ether;
         //initial discount factor
         discountFactor = 70;
-        
-        //Below from NFT Loan
-        downPayment = 1 ether;
-        //initial defaultRate
+
+        //initial defaultRate (Max number of default)
         defaultRate = 3;
         //initial interstRate in percent
         interstRate = 5;
-        //initial penatlyRate in percent
-        penaltyRate = 5;
+        //initial reserve ratio in percent
+        reserveRatio = 50;
+        //initial LTV ratio in percent
+        LoanToValue = 60;
+        //initial Payout ratio in percent
+        payoutRatio = 90;
     }
 
     modifier onlyOwner() {
@@ -101,11 +107,51 @@ contract nffMain{
         if(isUserInList(msg.sender) == false){
             ethDepositorList.push(msg.sender);
         }
+        Userdeposit += msg.value;
     }
 
     //called by ChainLink Keepers Time-based Trigger
-    function paidInterest() private{
-        
+    function paidInterest() external{
+        require(msg.sender == bankOracleAddr, "Only the bank orcacle contract can call this function");
+        for (uint256 i = 0; i < ethDepositorList.length; i++){
+            addressToBalances[ethDepositorList[i]] += addressToBalances[ethDepositorList[i]].mul(APY).div(10**18).div(365).div(100);
+            netProfit -= int256(addressToBalances[ethDepositorList[i]].mul(APY).div(10**18).div(365).div(100));
+        }
+    }
+
+    function calAPY() external{
+        require(msg.sender == bankOracleAddr, "Only the bank orcacle contract can call this function");
+        if (netProfit <= 0){
+            APY = 0;
+        }
+        else{
+            APY = uint256(netProfit).mul(10**18).mul(payoutRatio).div(100).mul(100).div(Userdeposit);
+        }
+    }
+
+    function acceptLiquidation(uint256 liquidatePrice) public view returns(bool){
+        if (address(this).balance < liquidatePrice){
+            return false;
+        }
+        if(address(this).balance - liquidatePrice >= Userdeposit.mul(reserveRatio).div(100)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    function acceptLoan(uint256 nftValue, uint256 downPayment) public view returns(bool){
+        if (downPayment <= 0){
+            return false;
+        }
+        if( (nftValue - downPayment).mul(100).div(nftValue) > LoanToValue ){
+            return false;
+        }
+        else{
+            return true;
+        }
+
     }
 
     //User withdrawETH through this function
@@ -121,11 +167,13 @@ contract nffMain{
             }
         }
         payable(msg.sender).transfer(amount);
+        Userdeposit -= amount;
     }
 
 /*__________________________________NFT Liquidating________________________________ */
 
     function liquidateNFT(address contractAddr, uint256 tokenId) external payable{
+        require(acceptLiquidation(nftLiquidationPrice), "Sorry we do not accept anymore NFT right now");
         //First check if the NFT collection is verified on our platform
         require(supportedNft[contractAddr], "Your NFT collection is not verified");
         ERC721 Nft = ERC721(contractAddr);
@@ -135,8 +183,10 @@ contract nffMain{
         require(Nft.ownerOf(tokenId) == msg.sender, "caller must own the NFT"); //no need
         //All statisfied then call transfer
         Nft.transferFrom(msg.sender, address(this), tokenId);
-        //Set condition on amout paid later
+        //Set condition on amount paid later
         payable(msg.sender).transfer(nftLiquidationPrice);
+        //Add to NFT cost
+        netProfit -= int256(nftLiquidationPrice);
     }
 
 /*__________________________________Getter_____________________________________ */
@@ -163,8 +213,10 @@ contract nffMain{
     
     //Add a collection to the supportedNFT array (onlyOwner)
     function addSuppCollection(address contractAddr) external onlyOwner{
+        if (supportedNft[contractAddr] != true){
+            supportedNftList.push(contractAddr);
+        }
         supportedNft[contractAddr] = true;
-        supportedNftList.push(contractAddr);
     }
 
     //Set minimum deposit amount (onlyOwner)
@@ -175,13 +227,14 @@ contract nffMain{
 
     // Set the orcacle address (onlyOwner)
     // Should be called using Constructor, Deploy oracle first then this contract to get the oracle contract address
-    function setOracleAddr(address contractAddr) external onlyOwner{
-        oracleAddr = contractAddr;
+    function setOracleAddr(address priceOracle, address bankOracle) external onlyOwner{
+        priceOracleAddr = priceOracle;
+        bankOracleAddr = bankOracle;
     }
 
     //only allow the oracle contract to call this
     function setAssetPrice(uint256 amount) external{
-        require(msg.sender == oracleAddr, "Only the orcacle contract can call this function");
+        require(msg.sender == priceOracleAddr, "Only the price orcacle contract can call this function");
         nftFloorPrice = amount;
         nftLiquidationPrice = amount.mul(discountFactor).div(100);
     }
@@ -214,16 +267,15 @@ contract nffMain{
 /*__________________________________NFT Loaning_________________________________ */
     //For starting a nft instalment loan. block.timestamp gives you the current time in unix timestamp
     //Please use https://www.unixtimestamp.com/ for conversion
-    //LoanAmount set by the oracle ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    function startLoan(address nftContractAddr, uint256 loanAmount, uint256 dueTime, uint256 tokenId) external payable{
-        require(msg.value >= downPayment, "down payment requirement not met");
-        require(msg.value < loanAmount, "Please consider direct buying instead of loan");
+    function startLoan(address nftContractAddr, uint256 dueTime, uint256 tokenId) external payable{
+        require(msg.value < nftFloorPrice, "Please consider direct buying instead of loan");
+        require(acceptLoan(nftFloorPrice, msg.value), "Minimum down payment requirement not met");
         NftToken memory token = NftToken(nftContractAddr, tokenId);
         require(checkNftBalance(token), "The contract doesnt own this NFT");
         require(!checkNftInList(token), "The NFT you selected is on others instalment loan");
         //Create the loan, msg.value = down payment
-        InLoan memory temp = InLoan(msg.sender, loanAmount, 
-        loanAmount - msg.value, block.timestamp, dueTime, 0, token);
+        InLoan memory temp = InLoan(msg.sender, nftFloorPrice, 
+        nftFloorPrice - msg.value, block.timestamp, dueTime, 0, token);
         //Append the loan into the array inside the map
         addressToInLoans[msg.sender].push(temp);
         //Append the sender address to the customer list if he is a new customer
@@ -234,6 +286,8 @@ contract nffMain{
         customAddrToNumLoans[msg.sender] += 1;
         //Append the nft to the loaning list
         nftInLoan.push(token);
+        //Add to NFT Loan Profit
+        netProfit += int256(msg.value);
     }
 
     //For User to call for repaying the loan
@@ -248,6 +302,8 @@ contract nffMain{
                 require(msg.value <= addressToInLoans[msg.sender][i].outstandBalance, "You have overpaid the loan");
                 //Decrease the outstanding balance of the matching loan
                 addressToInLoans[msg.sender][i].outstandBalance -= msg.value;
+                //Add to NFT Loan Profit
+                netProfit += int256(msg.value);
                 //Check if the loan is fully paid
                 if (addressToInLoans[msg.sender][i].outstandBalance <= 0){
                     //Transfer the nft
@@ -266,6 +322,8 @@ contract nffMain{
         require(!checkNftInList(token), "The NFT you selected is on others instalment loan");
         require(msg.value == nftFloorPrice, "You pay too much or too less");
         transferNft(token,msg.sender);
+        //Add to NFT Profit
+        netProfit += int256(msg.value);
     }
 
     //Only callable by the contract to remove the paid loan from the addressToInLoans mapping InLoan[] aray
@@ -292,9 +350,9 @@ contract nffMain{
     }
 
     //Check which loan is due and remove those loan which doesn't fully paid
-    //only callable by the oracle
+    //only callable by the bank Oracle
     function callDueLoan() public{
-        // require(msg.sender == oracleAddr, "Only the orcacle contract can call this function");
+        // require(msg.sender == bankOracleAddr, "Only the orcacle contract can call this function");
         for (uint256 i=0; i < customerList.length; i++){
             for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
                 if(addressToInLoans[customerList[i]][j].dueTime < block.timestamp){
@@ -314,7 +372,7 @@ contract nffMain{
     //Change interest on every NFT based on defaultRate
     //only allow the oracle contract to call this
     function chargeInterest() public{
-        // require(msg.sender == oracleAddr, "Only the orcacle contract can call this function");
+        // require(msg.sender == bankOracleAddr, "Only the orcacle contract can call this function");
         for (uint256 i=0; i < customerList.length; i++){
             for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
                 if(addressToInLoans[customerList[i]][j].defaultCount == 0){
@@ -411,7 +469,7 @@ contract nffMain{
 
     //Return true if a loan is fully repaid, false otherwise
     //For future use just in case, no use right now
-    function checkLoanPaid(address addr, NftToken memory token) public view returns(bool){
+    function checkLoanPaid(address addr, NftToken memory token) public view returns(bool){ //internal
         for(uint256 i = 0; i<addressToInLoans[addr].length; i++){
             if(addressToInLoans[addr][i].nft.tokenId == token.tokenId &&
                addressToInLoans[addr][i].nft.nftContractAddr == token.nftContractAddr && 
@@ -423,7 +481,7 @@ contract nffMain{
     }
 
     //Check if a loan exist
-    function checkLoanExist(address addr, NftToken memory token) public view returns(bool){
+    function checkLoanExist(address addr, NftToken memory token) public view returns(bool){ //internal
         for(uint256 i = 0; i<addressToInLoans[addr].length; i++){
             if(addressToInLoans[addr][i].nft.tokenId == token.tokenId &&
                addressToInLoans[addr][i].nft.nftContractAddr == token.nftContractAddr){
@@ -477,6 +535,10 @@ contract nffMain{
     //Widthdraw All ETH for testnet purpose only
     function withdraw() public onlyOwner {
         Address.sendValue(payable(msg.sender), address(this).balance);
+    }
+
+    function AddstartUpFund() external payable onlyOwner{
+        netProfit += int256(msg.value);
     }
 
 }
