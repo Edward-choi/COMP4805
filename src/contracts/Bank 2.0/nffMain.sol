@@ -19,6 +19,7 @@ contract nffMain{
     uint256 public discountFactor;
     //Use to store user's eth balance
     mapping(address => uint256) addressToBalances;
+    mapping(address => uint256) addressToPrinciple;
     //Use to check user's address existance
     mapping(address => bool) userChecker;
     //Use to check if an NFT colelction is supported
@@ -29,7 +30,7 @@ contract nffMain{
     address[] private supportedNftList;
     /*__________________________________Bank Risk Management_________________________________ */
     uint256 public reserveRatio; //To guarantee the bank have enough eth for withdraw
-    uint256 public Userdeposit; //Total users deposite value
+    uint256 public userDeposit; //Total users deposite value
     uint256 public payoutRatio; //payout ratio of this contract
     uint256 public LoanToValue; //LTV ratio that control risk of a loan
     int256 public netProfit; //Profit that the contract made from nft loan (can be negative)
@@ -48,8 +49,12 @@ contract nffMain{
         address loanOwner;
         uint256 nftValue; //How much this contract contribute to the loan
         uint256 outstandBalance; //Outstanding Balance of the customer
+        uint256 debt;
         uint256 startTime;
         uint256 dueTime;
+        uint256 nextPayDay;
+        uint256 baseCumuRate;
+        uint256 cumuRate;
         uint256 defaultCount;
         uint256 LoanRate;
         NftToken nft;
@@ -63,7 +68,7 @@ contract nffMain{
     //For mapping between customers and the number of loans
     mapping(address => uint256) customAddrToNumLoans;
     //For tracking customers, no dups in this array
-    address[] public customerList;
+    address[] private customerList;
     //For tracking which nft is in a loan, no dups in this array
     NftToken[] public nftInLoan;
     //For storing a list of Loan to be removed can be private
@@ -78,7 +83,6 @@ contract nffMain{
         minDeposit = 0.5 ether;
         //initial discount factor
         discountFactor = 70;
-
         //initial defaultRate (Max number of default)
         defaultRate = 3;
         //initial interstRate in percent times 10^18
@@ -108,27 +112,26 @@ contract nffMain{
         if(isUserInList(msg.sender) == false){
             ethDepositorList.push(msg.sender);
         }
-        Userdeposit += msg.value;
+        userDeposit += msg.value;
     }
 
-    //called by ChainLink Keepers Time-based Trigger
-    function paidInterest() external{
-        require(msg.sender == bankOracleAddr, "Only the bank orcacle contract can call this function");
+    //Called by Oracle
+    function paidInterest() internal{
+        calAPY();
         for (uint256 i = 0; i < ethDepositorList.length; i++){
             uint256 interest = addressToBalances[ethDepositorList[i]].mul(APY).div(10**18).div(365).div(100);
             addressToBalances[ethDepositorList[i]] += interest;
             netProfit -= int256(interest);
-            Userdeposit += interest;
+            userDeposit += interest;
         }
     }
 
-    function calAPY() external{
-        require(msg.sender == bankOracleAddr, "Only the bank orcacle contract can call this function");
+    function calAPY() internal{
         if (netProfit <= 0){
             APY = 0;
         }
         else{
-            APY = uint256(netProfit).mul(10**18).mul(payoutRatio).div(100).mul(100).div(Userdeposit);
+            APY = uint256(netProfit).mul(10**18).mul(payoutRatio).div(100).mul(100).div(userDeposit);
         }
     }
 
@@ -136,7 +139,7 @@ contract nffMain{
         if (address(this).balance < liquidatePrice){
             return false;
         }
-        if(address(this).balance - liquidatePrice >= Userdeposit.mul(reserveRatio).div(100)){
+        if(address(this).balance - liquidatePrice >= userDeposit.mul(reserveRatio).div(100)){
             return true;
         }
         else{
@@ -157,7 +160,7 @@ contract nffMain{
             }
         }
         payable(msg.sender).transfer(amount);
-        Userdeposit -= amount;
+        userDeposit -= amount;
     }
 
 /*__________________________________NFT Liquidating________________________________ */
@@ -170,7 +173,7 @@ contract nffMain{
         //Second check if the user approved this contract to use the NFT token
         require(Nft.isApprovedForAll(msg.sender, address(this)), "This contract must be approved to use your NFT");
         //Third check if the user own the NFT token
-        require(Nft.ownerOf(tokenId) == msg.sender, "caller must own the NFT"); //no need
+        require(Nft.ownerOf(tokenId) == msg.sender, "caller must own the NFT");
         //All statisfied then call transfer
         Nft.transferFrom(msg.sender, address(this), tokenId);
         //Set condition on amount paid later
@@ -193,10 +196,6 @@ contract nffMain{
 
     function getsupportedNftList() public view returns(address[] memory){
         return(supportedNftList);
-    }
-
-    function getsupportedNftMap(address contractAddr) public view returns(bool){
-        return(supportedNft[contractAddr]);
     }
 
 /*__________________________________Setter_____________________________________ */
@@ -257,16 +256,32 @@ contract nffMain{
 /*__________________________________NFT Loaning_________________________________ */
     //For starting a nft instalment loan. block.timestamp gives you the current time in unix timestamp
     //Please use https://www.unixtimestamp.com/ for conversion
-    function startLoan(address nftContractAddr, uint256 dueTime, uint256 tokenId) external payable{
+    function startLoan(address nftContractAddr, uint256 dayTillDue, uint256 tokenId) external payable{
         require(msg.value < nftFloorPrice, "Please consider direct buying instead of loan");
         require(acceptLoan(nftFloorPrice, msg.value), "Minimum down payment requirement not met");
         NftToken memory token = NftToken(nftContractAddr, tokenId);
         require(checkNftBalance(token), "The contract doesnt own this NFT");
         require(!checkNftInList(token), "The NFT you selected is on others instalment loan");
+
         //Create the loan, msg.value = down payment
+        uint256 dueTime = block.timestamp + 86400*dayTillDue;
         uint256 loanInterest = setLoanInterest(nftFloorPrice, msg.value);
-        InLoan memory temp = InLoan(msg.sender, nftFloorPrice, 
-        nftFloorPrice - msg.value, block.timestamp, dueTime, 0, loanInterest, token); //block.timestamp = now unix time stamp, 86400 = 1 day
+        uint256 baseCRate = calBaseCumuRate(block.timestamp, dueTime);
+        InLoan memory temp = InLoan(
+            msg.sender, //loanOwner
+            nftFloorPrice, //nftValue
+            nftFloorPrice - msg.value, //outstanding balance
+            nftFloorPrice - msg.value, //debt
+            block.timestamp, //start time
+            dueTime, //due time
+            block.timestamp + 86400, //next pay day
+            baseCRate,
+            baseCRate,
+            0,
+            loanInterest, 
+            token
+        ); //block.timestamp = now unix time stamp, 86400 = 1 day
+
         //Append the loan into the array inside the map
         addressToInLoans[msg.sender].push(temp);
         //Append the sender address to the customer list if he is a new customer
@@ -279,6 +294,11 @@ contract nffMain{
         nftInLoan.push(token);
         //Add to NFT Loan Profit
         netProfit += int256(msg.value);
+    }
+
+    function calBaseCumuRate(uint256 start, uint256 end) internal pure returns(uint256){
+        uint256 tempp = 10**18;
+        return tempp.div((end-start).div(86400));
     }
 
     //For User to call for repaying the loan
@@ -306,7 +326,8 @@ contract nffMain{
         }
     }
 
-    function acceptLoan(uint256 nftValue, uint256 downPayment) public view returns(bool){
+    //Can be internal
+    function acceptLoan(uint256 nftValue, uint256 downPayment) internal view returns(bool){
         if (downPayment <= 0){
             return false;
         }
@@ -365,8 +386,7 @@ contract nffMain{
 
     //Check which loan is due and remove those loan which doesn't fully paid
     //only callable by the bank Oracle
-    function callDueLoan() public{
-        // require(msg.sender == bankOracleAddr, "Only the orcacle contract can call this function");
+    function callDueLoan() internal{
         for (uint256 i=0; i < customerList.length; i++){
             for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
                 if(addressToInLoans[customerList[i]][j].dueTime < block.timestamp){
@@ -374,6 +394,26 @@ contract nffMain{
                         loanRemoveList.push(addressToInLoans[customerList[i]][j]);
                     }
                     else{
+                        addressToInLoans[customerList[i]][j].defaultCount++;
+                    }
+                }
+                if(addressToInLoans[customerList[i]][j].nextPayDay < block.timestamp){
+                    //Check accumulative percentage, if doesnt fullfill, add to defaultcount
+                    if(addressToInLoans[customerList[i]][j].cumuRate.div(10**18) < 1){
+                        //Does not fullfill the instalment
+                        if( addressToInLoans[customerList[i]][j].debt - addressToInLoans[customerList[i]][j].debt.mul(addressToInLoans[customerList[i]][j].cumuRate).div(10**18) 
+                        < addressToInLoans[customerList[i]][j].outstandBalance){
+                            addressToInLoans[customerList[i]][j].defaultCount++;
+                            addressToInLoans[customerList[i]][j].nextPayDay += 86400;
+                            addressToInLoans[customerList[i]][j].cumuRate += addressToInLoans[customerList[i]][j].baseCumuRate;
+                        }
+                        else{
+                            addressToInLoans[customerList[i]][j].nextPayDay += 86400;
+                            addressToInLoans[customerList[i]][j].cumuRate += addressToInLoans[customerList[i]][j].baseCumuRate;
+                        }
+                    }
+                    else{
+                        addressToInLoans[customerList[i]][j].nextPayDay += 86400;
                         addressToInLoans[customerList[i]][j].defaultCount++;
                     }
                 }
@@ -385,27 +425,59 @@ contract nffMain{
 
     //Change interest on every NFT based on defaultRate
     //only allow the oracle contract to call this
-    function chargeInterest() public{
-        // require(msg.sender == bankOracleAddr, "Only the orcacle contract can call this function");
+    function chargeInterest() internal{
         for (uint256 i=0; i < customerList.length; i++){
             for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
+                uint256 temp;
                 if(addressToInLoans[customerList[i]][j].defaultCount == 0){
-                    addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate).div(10**18).div(100);
+                    temp = addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate).div(10**18).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance += temp;
+                    addressToInLoans[customerList[i]][j].debt += temp;
                 }
                 else if(addressToInLoans[customerList[i]][j].defaultCount == 1){
-                    addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(2)).div(10**18).div(100);
+                    temp = addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(2)).div(10**18).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance += temp;
+                    addressToInLoans[customerList[i]][j].debt += temp;
                 }
                 else if(addressToInLoans[customerList[i]][j].defaultCount == 2){
-                    addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(3)).div(10**18).div(100);
+                    temp = addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(3)).div(10**18).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance += temp;
+                    addressToInLoans[customerList[i]][j].debt += temp;
                 }
                 else if(addressToInLoans[customerList[i]][j].defaultCount == 3){
-                    addressToInLoans[customerList[i]][j].outstandBalance += 
-                    addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(4)).div(10**18).div(100);
+                    temp = addressToInLoans[customerList[i]][j].outstandBalance.mul(addressToInLoans[customerList[i]][j].LoanRate.mul(4)).div(10**18).div(100);
+                    addressToInLoans[customerList[i]][j].outstandBalance += temp;
+                    addressToInLoans[customerList[i]][j].debt += temp;
                 }
             }
+        }
+    }
+
+    //Remove all defaulted loan from all the array and mapping
+    function removeDefaultLoan(InLoan[] memory removeList) private{
+        for(uint256 i=0; i < removeList.length; i++){
+            //Search the Loan index from addressToInLoans
+            for (uint256 j=0; j < addressToInLoans[removeList[i].loanOwner].length; j++){
+                if(addressToInLoans[removeList[i].loanOwner][j].nft.nftContractAddr == removeList[i].nft.nftContractAddr && 
+                   addressToInLoans[removeList[i].loanOwner][j].nft.tokenId == removeList[i].nft.tokenId){
+                    
+                    //remove the loan from addressToInLoans
+                    addressToInLoans[removeList[i].loanOwner][j] = 
+                    addressToInLoans[removeList[i].loanOwner][addressToInLoans[removeList[i].loanOwner].length -1];
+                    addressToInLoans[removeList[i].loanOwner].pop();
+                    
+                    //remove the loan from nftInLoan list so that it will be avalible for loaning out again
+                    removeNftList(removeList[i].nft);
+                    //Decrease the customers number of loans
+                    customAddrToNumLoans[removeList[i].loanOwner] -= 1;
+
+                    if (customAddrToNumLoans[removeList[i].loanOwner] <= 0){
+                    //remove customer from the customerList if they dont have any loan
+                        removeCustomerList(removeList[i].loanOwner);
+                    }           
+                }
+            }
+
         }
     }
 
@@ -416,6 +488,7 @@ contract nffMain{
         return addressToInLoans[addr];
     }
 
+    //No need
     function getUserNumLoan(address addr) public view returns(uint256){
         return customAddrToNumLoans[addr];
     }
@@ -451,38 +524,11 @@ contract nffMain{
         defaultRate = rate;
     }
 
-    //Remove all defaulted loan from all the array and mapping
-    function removeDefaultLoan(InLoan[] memory removeList) private{
-        for(uint256 i=0; i < removeList.length; i++){
-            //Search the Loan index from addressToInLoans
-            for (uint256 j=0; j < addressToInLoans[removeList[i].loanOwner].length; j++){
-                if(addressToInLoans[removeList[i].loanOwner][j].nft.nftContractAddr == removeList[i].nft.nftContractAddr && 
-                   addressToInLoans[removeList[i].loanOwner][j].nft.tokenId == removeList[i].nft.tokenId){
-                    
-                    //remove the loan from addressToInLoans
-                    addressToInLoans[removeList[i].loanOwner][j] = 
-                    addressToInLoans[removeList[i].loanOwner][addressToInLoans[removeList[i].loanOwner].length -1];
-                    addressToInLoans[removeList[i].loanOwner].pop();
-                    
-                    //remove the loan from nftInLoan list so that it will be avalible for loaning out again
-                    removeNftList(removeList[i].nft);
-                    //Decrease the customers number of loans
-                    customAddrToNumLoans[removeList[i].loanOwner] -= 1;
-
-                    if (customAddrToNumLoans[removeList[i].loanOwner] <= 0){
-                    //remove customer from the customerList if they dont have any loan
-                        removeCustomerList(removeList[i].loanOwner);
-                    }           
-                }
-            }
-
-        }
-    }
     /*__________________________________Checker_____________________________________ */
 
     //Return true if a loan is fully repaid, false otherwise
     //For future use just in case, no use right now
-    function checkLoanPaid(address addr, NftToken memory token) public view returns(bool){ //internal
+    function checkLoanPaid(address addr, NftToken memory token) internal view returns(bool){ //internal
         for(uint256 i = 0; i<addressToInLoans[addr].length; i++){
             if(addressToInLoans[addr][i].nft.tokenId == token.tokenId &&
                addressToInLoans[addr][i].nft.nftContractAddr == token.nftContractAddr && 
@@ -494,7 +540,7 @@ contract nffMain{
     }
 
     //Check if a loan exist
-    function checkLoanExist(address addr, NftToken memory token) public view returns(bool){ //internal
+    function checkLoanExist(address addr, NftToken memory token) internal view returns(bool){ //internal
         for(uint256 i = 0; i<addressToInLoans[addr].length; i++){
             if(addressToInLoans[addr][i].nft.tokenId == token.tokenId &&
                addressToInLoans[addr][i].nft.nftContractAddr == token.nftContractAddr){
@@ -505,7 +551,7 @@ contract nffMain{
     }
 
     //Check if the nft is in the loan list
-    function checkNftInList(NftToken memory token) public view returns(bool){
+    function checkNftInList(NftToken memory token) internal view returns(bool){
         for(uint256 i = 0; i<nftInLoan.length; i++){
             //Check if the nft in the list or not
             if (nftInLoan[i].nftContractAddr == token.nftContractAddr && 
@@ -517,7 +563,7 @@ contract nffMain{
     }
 
     //Check if the this contract owns the nft
-    function checkNftBalance(NftToken memory token) public view returns(bool){
+    function checkNftBalance(NftToken memory token) internal view returns(bool){
         ERC721 Nft = ERC721(token.nftContractAddr);
         if (Nft.ownerOf(token.tokenId) == address(this)){
             return true;
@@ -528,7 +574,7 @@ contract nffMain{
     }
 
     //For degugging
-    function checkCustomerInList(address addr) public view returns(bool){
+    function checkCustomerInList(address addr) internal view returns(bool){
         for(uint256 i =0; i < customerList.length; i++){
             if(customerList[i] == addr){
                 return true;
@@ -550,8 +596,25 @@ contract nffMain{
         Address.sendValue(payable(msg.sender), address(this).balance);
     }
 
-    function AddstartUpFund() external payable onlyOwner{
+    function addstartUpFund() external payable onlyOwner{
         netProfit += int256(msg.value);
+    }
+
+    function fowardOneDay() public{
+        for (uint256 i=0; i < customerList.length; i++){
+            for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
+                addressToInLoans[customerList[i]][j].nextPayDay -= 86400; 
+            }
+        }
+    }
+
+    /*_____________________________Oracle Access___________________________________*/
+    //Called by ChainLink Keepers Time-based Trigger
+    function bankOracleControl() external{
+        require(msg.sender == bankOracleAddr, "Only the bank orcacle contract can call this function");
+        callDueLoan();
+        chargeInterest();
+        paidInterest();
     }
 
 }
