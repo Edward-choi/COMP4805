@@ -36,8 +36,8 @@ NFF Oracle Price Fetch address: 0x982208e2a56970d1FCea9A0790Fe32D4258B5E69
 Etherscan: https://goerli.etherscan.io/address/0x982208e2a56970d1FCea9A0790Fe32D4258B5E69#readContract
 
 
-ChainLink Automation Daily Price Fetch address: 
+ChainLink Automation Daily Price Fetch address: 0xb9A7158a4c4DcE644713979677835841acdCDcb8
 
-Etherscan: 
+Etherscan: https://goerli.etherscan.io/address/0xb9A7158a4c4DcE644713979677835841acdCDcb8
 
-ChainLink: 
+ChainLink: https://automation.chain.link/goerli/15983090497736984939294614892905785222682395159290379274986368127913912404911
