@@ -16,3 +16,28 @@ Buu\y NFT instantly: buyNFT(address nftContractAddr, uint256 tokenId); //subject
 Start NFT Loan: startLoan(address nftContractAddr, uint256 loanAmount, uint256 dueTime, uint256 tokenId); //loan amount: The price of the loan
 
 Repay NFT Loan: repayLoan(address nftContractAddr, uint256 tokenId);
+
+
+
+NFF Main contract address: 0x6826D0b1d84bB5FabC7CB59c2C98B3A30B7ac1cd
+
+Etherscan: https://goerli.etherscan.io/address/0x6826D0b1d84bB5FabC7CB59c2C98B3A30B7ac1cd#readContract
+
+
+ChainLink Automation Daily Loan Interest Checker:
+
+Etherscan:
+
+ChainLink:
+
+
+NFF Oracle Price Fetch address: 0x982208e2a56970d1FCea9A0790Fe32D4258B5E69
+
+Etherscan: https://goerli.etherscan.io/address/0x982208e2a56970d1FCea9A0790Fe32D4258B5E69#readContract
+
+
+ChainLink Automation Daily Price Fetch address: 0xb9A7158a4c4DcE644713979677835841acdCDcb8
+
+Etherscan: https://goerli.etherscan.io/address/0xb9A7158a4c4DcE644713979677835841acdCDcb8
+
+ChainLink: https://automation.chain.link/goerli/15983090497736984939294614892905785222682395159290379274986368127913912404911
