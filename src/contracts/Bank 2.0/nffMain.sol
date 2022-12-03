@@ -70,9 +70,9 @@ contract nffMain{
     //For tracking customers, no dups in this array
     address[] private customerList;
     //For tracking which nft is in a loan, no dups in this array
-    NftToken[] public nftInLoan;
+    NftToken[] private nftInLoan;
     //For storing a list of Loan to be removed can be private
-    InLoan[] public loanRemoveList;
+    InLoan[] private loanRemoveList;
 
     using SafeMath for uint256;
     using SignedSafeMath for int256;
@@ -256,7 +256,7 @@ contract nffMain{
 /*__________________________________NFT Loaning_________________________________ */
     //For starting a nft instalment loan. block.timestamp gives you the current time in unix timestamp
     //Please use https://www.unixtimestamp.com/ for conversion
-    function startLoan(address nftContractAddr, uint256 dayTillDue, uint256 tokenId) external payable{
+    function startLoan(address nftContractAddr, uint256 tokenId, uint256 dayTillDue) external payable{
         require(msg.value < nftFloorPrice, "Please consider direct buying instead of loan");
         require(acceptLoan(nftFloorPrice, msg.value), "Minimum down payment requirement not met");
         NftToken memory token = NftToken(nftContractAddr, tokenId);
@@ -393,26 +393,25 @@ contract nffMain{
                     if(addressToInLoans[customerList[i]][j].defaultCount >= defaultRate){
                         loanRemoveList.push(addressToInLoans[customerList[i]][j]);
                     }
-                    else{
-                        addressToInLoans[customerList[i]][j].defaultCount++;
-                    }
                 }
                 if(addressToInLoans[customerList[i]][j].nextPayDay < block.timestamp){
                     //Check accumulative percentage, if doesnt fullfill, add to defaultcount
-                    if(addressToInLoans[customerList[i]][j].cumuRate.div(10**18) < 1){
-                        //Does not fullfill the instalment
+                    if( (addressToInLoans[customerList[i]][j].cumuRate + addressToInLoans[customerList[i]][j].baseCumuRate).div(10**18) < 1){
+                        //Does not fullfill the daily instalment
                         if( addressToInLoans[customerList[i]][j].debt - addressToInLoans[customerList[i]][j].debt.mul(addressToInLoans[customerList[i]][j].cumuRate).div(10**18) 
                         < addressToInLoans[customerList[i]][j].outstandBalance){
                             addressToInLoans[customerList[i]][j].defaultCount++;
                             addressToInLoans[customerList[i]][j].nextPayDay += 86400;
                             addressToInLoans[customerList[i]][j].cumuRate += addressToInLoans[customerList[i]][j].baseCumuRate;
                         }
+                        //Fullfilled the daily instalment
                         else{
                             addressToInLoans[customerList[i]][j].nextPayDay += 86400;
                             addressToInLoans[customerList[i]][j].cumuRate += addressToInLoans[customerList[i]][j].baseCumuRate;
                         }
                     }
                     else{
+                        addressToInLoans[customerList[i]][j].cumuRate = 1000000000000000000;
                         addressToInLoans[customerList[i]][j].nextPayDay += 86400;
                         addressToInLoans[customerList[i]][j].defaultCount++;
                     }
@@ -488,9 +487,18 @@ contract nffMain{
         return addressToInLoans[addr];
     }
 
-    //No need
+    //Return the number of Loans that a user have
     function getUserNumLoan(address addr) public view returns(uint256){
         return customAddrToNumLoans[addr];
+    }
+
+    //Return all NFT that is currently in a loan
+    function getAllNftLoan() public view returns(NftToken[] memory){
+        return nftInLoan;
+    }
+
+    function getAllDefaultLoan() public view returns(InLoan[] memory){
+        return loanRemoveList;
     }
 
     /*__________________________________Setter_____________________________________ */
@@ -600,10 +608,12 @@ contract nffMain{
         netProfit += int256(msg.value);
     }
 
-    function fowardOneDay() public{
+    //Forward one day for all loans next payment day and due time, for testing the contract only
+    function fowardOneDay() external onlyOwner{
         for (uint256 i=0; i < customerList.length; i++){
             for(uint256 j=0; j < addressToInLoans[customerList[i]].length; j++){
-                addressToInLoans[customerList[i]][j].nextPayDay -= 86400; 
+                addressToInLoans[customerList[i]][j].nextPayDay -= 86400;
+                addressToInLoans[customerList[i]][j].dueTime -=86400;
             }
         }
     }
