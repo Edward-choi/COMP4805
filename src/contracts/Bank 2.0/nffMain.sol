@@ -208,6 +208,16 @@ contract nffMain{
         supportedNft[contractAddr] = true;
     }
 
+    //Remove collection from the supportedNFT array (onlyOwner)
+    function removeSuppCollection(address contractAddr) external onlyOwner{
+        for (uint256 i = 0; i<supportedNftList.length; i++){
+            if(supportedNftList[i] == contractAddr){
+                supportedNftList[i] = supportedNftList[supportedNftList.length - 1];
+                supportedNftList.pop();
+            }
+        }
+    }
+
     //Set minimum deposit amount (onlyOwner)
     // Please use https://eth-converter.com/ to see convertion rate
     function setMinDeposit(uint256 amountInWei) external onlyOwner{
