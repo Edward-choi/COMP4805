@@ -20,7 +20,7 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { parseEther } from "ethers/lib/utils";
+import { parseEther, formatEther } from "ethers/lib/utils";
 
 function ListNFTCard({ nft }) {
   const { library } = useEthers();
@@ -49,7 +49,7 @@ function ListNFTCard({ nft }) {
     setPay(false);
     const floorPrice = await bankContract.nftFloorPrice();
     const ltv = await bankContract.LoanToValue();
-    await bankContract.startLoan(nft, tokenId, dueDay, { value: floorPrice * (1 - ltv) });
+    await bankContract.startLoan(nft, tokenId, dueDay, { value: parseEther((formatEther(floorPrice) * (1 - ltv/100)).toString()) });
   }
 
   if (nft.title != null && nft.rawMetadata.image != null) {
