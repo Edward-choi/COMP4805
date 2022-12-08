@@ -8,7 +8,7 @@ import Home from './components/Home';
 import History from './components/History';
 import { Route, Routes } from 'react-router-dom';
 import { DAppProvider, Goerli } from '@usedapp/core';
-import {getDefaultProvider} from 'ethers'
+// import {getDefaultProvider} from 'ethers'
 
 function App() {
 
