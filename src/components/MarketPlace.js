@@ -1,6 +1,6 @@
 import Navbar from './NavBar';
 import Banner from './Banner';
-import MarketplacePage from './MarketPlacePage';
+import MarketplacePage from './MarketplacePage';
 
 function Marketplace() {
   return (
