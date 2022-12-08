@@ -45,11 +45,11 @@ function ListNFTCard({ nft }) {
     await bankContract.buyNFT(nft, tokenId, { value: floorPrice });
   }
 
-  async function downPayment(nft, amount, tokenId, dueDay) {
+  async function downPayment(nft, amount, dueDay, tokenId) {
     setPay(false);
     const floorPrice = await bankContract.nftFloorPrice();
     const ltv = await bankContract.LoanToValue();
-    await bankContract.startLoan(nft, tokenId, dueDay, { value: parseEther((formatEther(floorPrice) * (1 - ltv/100)).toString()) });
+    await bankContract.startLoan(nft, tokenId, dueDay, { value: parseEther((formatEther(floorPrice) * (1 - 30/100)).toString()) });
   }
 
   if (nft.title != null && nft.rawMetadata.image != null) {
