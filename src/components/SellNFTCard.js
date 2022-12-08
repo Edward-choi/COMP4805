@@ -1,6 +1,6 @@
 import React from 'react'
 import { IpfsImage } from 'react-ipfs-image'
-import { useEthers } from "@usedapp/core";
+import { useEthers, useCall } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -24,8 +24,18 @@ function SellNFTCard({ nft }) {
 	const nftAddress = ContractAddress.nft;
 	const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
 
+	const { account } = useEthers();
+	const { value } = useCall(account && nftAddress && {
+        contract: new Contract(nftAddress, nftAbi),
+        method: 'isApprovedForAll',
+        args: [account, bankAddress]
+    }) ?? {};
+    const approved = value ? value[0] : false;
+
 	async function executeTransaction(nft, bank, tokenId) {
-		await nftContract.setApprovalForAll(bank, true);
+		if (!approved){
+			await nftContract.setApprovalForAll(bank, true); //Error with not accept nft anymore
+		}
 		await bankContract.liquidateNFT(nft, tokenId);
 	}
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IpfsImage } from 'react-ipfs-image'
-import { useEthers } from "@usedapp/core";
+import { useEthers, useContractFunction } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
@@ -40,9 +40,9 @@ function ListNFTCard({ nft }) {
   const nftAddress = ContractAddress.nft;
   const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
 
-  async function executeTransaction(nft, bank, tokenId) {
-    await nftContract.setApprovalForAll(bank, true);
-    await bankContract.buyNFT(nft, tokenId);
+  async function executeTransaction(nft, tokenId) {
+    const floorPrice = await bankContract.nftFloorPrice();
+    await bankContract.buyNFT(nft, tokenId, { value: floorPrice});
   }
 
   async function downPayment(nft, amount, tokenId, dueDay) {

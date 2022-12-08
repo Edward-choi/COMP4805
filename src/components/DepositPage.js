@@ -27,7 +27,7 @@ function DepositPage() {
     const contractAddress = ContractAddress.bank;
     const contract = new Contract(contractAddress, abi);
 
-    const { send } = useContractFunction(contract, "deposit");
+    const { send } = useContractFunction(contract, "depositETH");
     
     const useStyles = makeStyles({
         input: {

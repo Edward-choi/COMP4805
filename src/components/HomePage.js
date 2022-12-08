@@ -22,7 +22,7 @@ import { formatEther } from "ethers/lib/utils";
 
 import Moment from 'react-moment';
 import axios from 'axios';
-import abi from '../contracts/Bank/abi.json';
+import abi from '../contracts/Bank2/abi.json';
 import ContractAddress from './ContractAddress.json'
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
@@ -52,6 +52,7 @@ function HomePage() {
         method: 'balanceOf',
         args: [account]
     }) ?? {};
+
     const depositBalance = value ? value[0] : 0;
 
     useEffect(() => {
@@ -136,14 +137,12 @@ function HomePage() {
                                 <Grid container rowSpacing={2}>
                                     <Grid item xs={8}>
                                         {Balance && <Box>Total value: </Box>}
-                                        Utilization rate: <br />
                                         APR: <br />
                                         {Balance && <Box>Total interest: </Box>}
                                     </Grid>
                                     <Grid item xs={4}>
                                         {Balance && <Box>${depositBalance? (parseFloat(formatEther(depositBalance)).toFixed(4) * parseFloat(EthData.c).toFixed(2)).toFixed(4) : 0}</Box>}
                                         40.23 % <br />
-                                        7.47 % <br />
                                         {Balance && <Box>0.1 ETH </Box>}
                                     </Grid>
                                 </Grid>
