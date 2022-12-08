@@ -105,7 +105,7 @@ function HomePage() {
                         </div>
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <Box sx={{ height: "31rem" }}>
-                            <List>
+                            <List key='hi3'>
                                 {nfts.map((nft, index) => {
                                     return index < 5 && <NFTList nft={nft} key={index} />
                                 })}
@@ -171,7 +171,7 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem", paddingTop: 0 }}>
-                                    <List>
+                                    <List key='hi'>
                                         <Grid container>
                                             <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Time</div>
@@ -224,7 +224,7 @@ function HomePage() {
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem", paddingTop: 0 }}>
-                                    <List>
+                                    <List key='hi2'>
                                         <Grid container>
                                             <Grid item xs={4}>
                                                 <div style={{ fontWeight: 'bolder' }}>Name</div>

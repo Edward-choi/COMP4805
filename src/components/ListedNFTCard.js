@@ -45,11 +45,12 @@ function ListNFTCard({ nft }) {
     await bankContract.buyNFT(nft, tokenId, { value: floorPrice });
   }
 
-  async function downPayment(nft, amount, dueDay, tokenId) {
+  async function downPayment(nft, dueDay, tokenId) {
     setPay(false);
     const floorPrice = await bankContract.nftFloorPrice();
     const ltv = await bankContract.LoanToValue();
-    await bankContract.startLoan(nft, tokenId, dueDay, { value: parseEther((formatEther(floorPrice) * (1 - 30/100)).toString()) });
+    var d = new Date();
+    await bankContract.startLoan(nft, tokenId, Math.round(( dueDay - d.getTime() )/86400000, 1), { value: parseEther((formatEther(floorPrice) * (1 - ltv/100)).toString()) });
   }
 
   if (nft.title != null && nft.rawMetadata.image != null) {
@@ -78,7 +79,7 @@ function ListNFTCard({ nft }) {
           </Button>
           <Button variant="outlined" style={{
             borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
-          }} onClick={() => fullPayment(nft.contract.address, bankAddress, nft.tokenId)}>
+          }} onClick={() => fullPayment(nft.contract.address, nft.tokenId)}>
             Full Payment
           </Button>
           <Dialog
@@ -132,7 +133,7 @@ function ListNFTCard({ nft }) {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setPay(false)}>Back</Button>
-              <Button onClick={() => downPayment(nft.contract.address, parseEther("1"), dueDay.$d.getTime(), nft.tokenId)} autoFocus>
+              <Button onClick={() => downPayment(nft.contract.address, dueDay.$d.getTime(), nft.tokenId)} autoFocus>
                 Confirmed
               </Button>
             </DialogActions>
