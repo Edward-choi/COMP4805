@@ -108,6 +108,7 @@ contract nffMain{
     function depositETH() external payable{
         require(msg.value >= minDeposit, "minimum deposit requirement not met");
         addressToBalances[msg.sender] += msg.value;
+        addressToPrinciple[msg.sender] += msg.value;
         userChecker[msg.sender] = true;
         if(isUserInList(msg.sender) == false){
             ethDepositorList.push(msg.sender);
@@ -159,6 +160,12 @@ contract nffMain{
                 }
             }
         }
+        if (amount > addressToPrinciple[msg.sender]){
+            addressToPrinciple[msg.sender] = 0;
+        }
+        else{
+            addressToPrinciple[msg.sender] -= amount;
+        }
         payable(msg.sender).transfer(amount);
         userDeposit -= amount;
     }
@@ -187,6 +194,10 @@ contract nffMain{
     //Check Individual balance for GUI
     function getUserBalance(address addr) public view returns(uint256){
         return addressToBalances[addr];
+    }
+
+    function getUserPrinciple(address addr) public view returns(uint256){
+        return addressToPrinciple[addr];
     }
 
     //Check all user list for debug

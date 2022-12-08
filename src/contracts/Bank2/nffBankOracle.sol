@@ -7,7 +7,7 @@ contract nffBankOracle{
     address public oracleAddr;
     address public owner;
     constructor(){
-        bankaddr = 0x6826D0b1d84bB5FabC7CB59c2C98B3A30B7ac1cd;
+        bankaddr = 0x10cB5313383CA891CD805e97bbd673fc1309Abe6;
         owner = msg.sender;
     }
 

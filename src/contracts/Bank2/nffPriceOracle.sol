@@ -5,7 +5,7 @@ import '@chainlink/contracts/src/v0.8/ChainlinkClient.sol';
 import '@chainlink/contracts/src/v0.8/ConfirmedOwner.sol';
 import "./nffMain.sol";
 
-contract nffOracle is ChainlinkClient, ConfirmedOwner {
+contract nffPriceOracle is ChainlinkClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
 
     uint256 public floorPrice;
