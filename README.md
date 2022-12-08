@@ -29,11 +29,11 @@ NFF Bank Oracle Daily Operation address: 0xdb4FA6Fd9A94d6b8cB973b72430Ea5E3FCa78
 
 Etherscan: https://goerli.etherscan.io/address/0xdb4FA6Fd9A94d6b8cB973b72430Ea5E3FCa78F37#readContract
 
-ChainLink Automation Daily Bank Operation address:
+ChainLink Automation Daily Bank Operation address: 0x302Bf688A9EE64E743532e5EA07ABD50938D87c9
 
-Etherscan:
+Etherscan: https://goerli.etherscan.io/address/0x302Bf688A9EE64E743532e5EA07ABD50938D87c9
 
-ChainLink:
+ChainLink: https://automation.chain.link/goerli/115046554451189806120906183883200446415190812507387657156356143283453985940470
 
 ___________________________________________________________________________________________________________
 
