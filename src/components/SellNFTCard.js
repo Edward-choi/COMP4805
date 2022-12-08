@@ -34,9 +34,13 @@ function SellNFTCard({ nft }) {
 
 	async function executeTransaction(nft, bank, tokenId) {
 		if (!approved){
-			await nftContract.setApprovalForAll(bank, true); //Error with not accept nft anymore
+			const Approvaltx = await nftContract.setApprovalForAll(bank, true);
+			await Approvaltx.wait();
+			await bankContract.liquidateNFT(nft, tokenId);
 		}
-		await bankContract.liquidateNFT(nft, tokenId);
+		else{
+			await bankContract.liquidateNFT(nft, tokenId);
+		}
 	}
 
 	if (nft.title != null && nft.rawMetadata.image != null) {
