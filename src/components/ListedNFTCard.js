@@ -40,14 +40,16 @@ function ListNFTCard({ nft }) {
   const nftAddress = ContractAddress.nft;
   const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
 
-  async function executeTransaction(nft, tokenId) {
+  async function fullPayment(nft, tokenId) {
     const floorPrice = await bankContract.nftFloorPrice();
-    await bankContract.buyNFT(nft, tokenId, { value: floorPrice});
+    await bankContract.buyNFT(nft, tokenId, { value: floorPrice });
   }
 
   async function downPayment(nft, amount, tokenId, dueDay) {
     setPay(false);
-    await bankContract.startLoan(nft, amount, dueDay, tokenId);
+    const floorPrice = await bankContract.nftFloorPrice();
+    const ltv = await bankContract.LoanToValue();
+    await bankContract.startLoan(nft, tokenId, dueDay, { value: floorPrice * (1 - ltv) });
   }
 
   if (nft.title != null && nft.rawMetadata.image != null) {
@@ -76,7 +78,7 @@ function ListNFTCard({ nft }) {
           </Button>
           <Button variant="outlined" style={{
             borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
-          }} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
+          }} onClick={() => fullPayment(nft.contract.address, bankAddress, nft.tokenId)}>
             Full Payment
           </Button>
           <Dialog
