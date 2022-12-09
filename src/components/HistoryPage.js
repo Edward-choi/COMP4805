@@ -21,6 +21,7 @@ import { useEthers } from '@usedapp/core';
 import { useEffect, useState } from 'react'
 import { formatEther } from 'ethers/lib/utils';
 import Moment from 'react-moment';
+import ContractAddress from './ContractAddress.json'
 
 
 const apikey = "F8BTXW9R9QHDY2IUTMNDTZKGX423D7SYGV";
@@ -90,15 +91,27 @@ TablePaginationActions.propTypes = {
 
 function HistoryPage() {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const { account } = useEthers();
   const [results, setResults] = useState([]);
+  const displayableFunctions = ['buyNFT', 'depositETH', 'liquidateNFT', 'repayLoan', 'startLoan', 'withdraw'];
 
   useEffect(() => {
+    if (account) {
       axios
-      .get(endpoint + `?module=account&action=txlist&address=${account}&apikey=${apikey}&sort=desc`)
-      .then(response => setResults(response.data.result));
-  }, [account, results]);
+        .get(endpoint + `?module=account&action=txlist&address=${account}&apikey=${apikey}&sort=desc`)
+        .then(response => {
+          console.log(response.data.result);
+          let temp = [];
+          response.data.result.forEach((req) => {
+            if (displayableFunctions.includes(req.functionName.substring(0, req.functionName.indexOf("("))) && req.to === ContractAddress.bank) {
+              temp.push(req);
+            }
+          })
+          setResults(temp)
+        });
+    }
+  }, [account]);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -116,7 +129,7 @@ function HistoryPage() {
   return (
     <TableContainer component={Paper} sx={{ width: "90%", margin: "auto", marginTop: "3rem", borderRadius: "2rem" }}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
-      <TableHead>
+        <TableHead>
           <TableRow>
             <TableCell>Txt hash</TableCell>
             <TableCell align="right">Time</TableCell>
@@ -137,7 +150,7 @@ function HistoryPage() {
                 <Moment unix format="YYYY/MM/DD HH:mm:ss">{result.timeStamp}</Moment>
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
-                {result.functionName}
+                {result.functionName.substring(0, result.functionName.indexOf("("))}
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
                 {parseFloat(formatEther(result.value)).toFixed(4)}
@@ -154,7 +167,7 @@ function HistoryPage() {
         <TableFooter>
           <TableRow>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+              rowsPerPageOptions={[10, 25, { label: 'All', value: -1 }]}
               colSpan={3}
               count={results.length}
               rowsPerPage={rowsPerPage}
