@@ -17,7 +17,7 @@ import NFTList from './NFTList.js'
 import { Network, Alchemy } from "alchemy-sdk"
 
 import { useEthers, useEtherBalance, useCall } from "@usedapp/core";
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { formatEther } from "ethers/lib/utils";
 
 import Moment from 'react-moment';
@@ -26,6 +26,7 @@ import abi from '../contracts/Bank2/abi.json';
 import ContractAddress from './ContractAddress.json'
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
+import { Context } from './Context.js';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -54,6 +55,7 @@ function HomePage() {
     }) ?? {};
 
     const depositBalance = value ? value[0] : 0;
+    const { own, setOwn } = useContext(Context)
 
     useEffect(() => {
         //Get ETH price data
@@ -113,7 +115,7 @@ function HomePage() {
                         </Box>
                         <Divider sx={{ borderBottomWidth: 5 }} />
                         <div className='bottomButtonContainer'>
-                            <Button variant="contained" component={Link} to="/viewnft" style={{
+                            <Button variant="contained" component={Link} to="/viewnft" onClick={() => setOwn(true)} style={{
                                 borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "70%"
                             }}>
                                 View My NFTs
@@ -258,9 +260,9 @@ function HomePage() {
                                     <Button variant="contained" component={Link} to="/marketplace" style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
-                                        Borrow ETH
+                                        Start Loan
                                     </Button>
-                                    <Button variant="outlined" component={Link} to="/viewnft" style={{
+                                    <Button variant="outlined" component={Link} to="/viewnft" onClick={() => setOwn(false)} style={{
                                         borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "40%"
                                     }}>
                                         My Borrows

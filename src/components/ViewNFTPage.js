@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useEthers } from "@usedapp/core";
 import { Network, Alchemy } from "alchemy-sdk"
 import Box from '@mui/material/Box';
@@ -7,12 +7,13 @@ import LoanedNFTCard from './LoanedNFTCard.js'
 import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import { Context } from './Context.js';
 
 function ViewNFTPage() {
 
     const { account } = useEthers()
     const [nfts, setNfts] = useState([])
-    const [own, setOwn] = useState(true);
+    const { own, setOwn } = useContext(Context);
 
     useEffect(() => {
         const settingsGetNft = {
