@@ -25,30 +25,30 @@ Etherscan: https://goerli.etherscan.io/address/0x6611e8755d4f8BDed142bdF32B941e3
 
 ___________________________________________________________________________________________________________
 
-NFF Main contract address: 0x10cB5313383CA891CD805e97bbd673fc1309Abe6
+NFF Main contract address: 0x2ef8611d72d0e4a8a6bef90708a6dcca526408e0
 
-Etherscan: https://goerli.etherscan.io/address/0x10cB5313383CA891CD805e97bbd673fc1309Abe6
-
-___________________________________________________________________________________________________________
-
-NFF Bank Oracle Daily Operation address: 0xC2066C017EfB0886193f8746297f4c10E92D9B4F
-
-Etherscan: https://goerli.etherscan.io/address/0xC2066C017EfB0886193f8746297f4c10E92D9B4F
-
-ChainLink Automation Daily Bank Operation address: 0xb5C83fFd6bc57B131aB3F6208C3491b558cCC8b5
-
-Etherscan: https://goerli.etherscan.io/address/0xb5C83fFd6bc57B131aB3F6208C3491b558cCC8b5
-
-ChainLink: https://automation.chain.link/goerli/38981105378964699954111120059033193880108191588161714187108518662435653711555
+Etherscan: https://goerli.etherscan.io/address/0x2ef8611d72d0e4a8a6bef90708a6dcca526408e0
 
 ___________________________________________________________________________________________________________
 
-NFF Oracle Price Fetch address: 0x00D849C2E90710fB4e54C31b7461d0d72FC40D44
+NFF Bank Oracle Daily Operation address: 0xbe564588CB90534FE40Ed68E5C968CB90B179b48
 
-Etherscan: https://goerli.etherscan.io/address/0x00D849C2E90710fB4e54C31b7461d0d72FC40D44
+Etherscan: https://goerli.etherscan.io/address/0xbe564588CB90534FE40Ed68E5C968CB90B179b48
 
-ChainLink Automation Daily Price Fetch address: 0x76125f44D093f5c1F92b68dfa5b51e32F91d1dED
+ChainLink Automation Daily Bank Operation address: 0x0746E53e4A25dA6E2cD396C09b1a0dAD9BEACDA0
 
-Etherscan: https://goerli.etherscan.io/address/0x76125f44D093f5c1F92b68dfa5b51e32F91d1dED
+Etherscan: https://goerli.etherscan.io/address/0x0746E53e4A25dA6E2cD396C09b1a0dAD9BEACDA0
 
-ChainLink: https://automation.chain.link/goerli/7610541918556476372267414711257496302206511352474255684299146653856445669912
+ChainLink: https://automation.chain.link/goerli/87494849461325112329053353542165801479140516437474795022394749357645384803621
+
+___________________________________________________________________________________________________________
+
+NFF Oracle Price Fetch address: 0x7c98d867da2a291034c55958c598be178838d2d5
+
+Etherscan: https://goerli.etherscan.io/address/0x7c98d867da2a291034c55958c598be178838d2d5
+
+ChainLink Automation Daily Price Fetch address: 0x7020CecB7F6E8fee43E3AE3435dDc10bef2541CC
+
+Etherscan: https://goerli.etherscan.io/address/0x7020CecB7F6E8fee43E3AE3435dDc10bef2541CC
+
+ChainLink: https://automation.chain.link/goerli/115621778549660629932246167353481473176322454721975905848608048378255729283531
