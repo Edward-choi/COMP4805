@@ -47,15 +47,26 @@ function HomePage() {
     const link = "https://goerli.etherscan.io/address/" + account
     const [results, setResults] = useState([])
     const contractAddress = ContractAddress.bank;
-    const ABI  = new Interface(abi);
-    const { value } = useCall(account && contractAddress && {
+    const ABI = new Interface(abi);
+    const { deposit } = useCall(account && contractAddress && {
         contract: new Contract(contractAddress, ABI),
-        method: 'balanceOf',
+        method: 'addressToBalances',
         args: [account]
     }) ?? {};
 
-    const depositBalance = value ? value[0] : 0;
+    const depositBalance = deposit ? deposit[0] : 0;
+
+    const { principle } = useCall(account && contractAddress && {
+        contract: new Contract(contractAddress, ABI),
+        method: 'addressToPrinciple',
+        args: [account]
+    }) ?? {};
+
+    const principleBalance = principle ? principle[0] : 0;
+
     const { own, setOwn } = useContext(Context)
+
+    const displayableFunctions = ['buyNFT', 'depositETH', 'liquidateNFT', 'repayLoan', 'startLoan', 'withdraw'];
 
     useEffect(() => {
         //Get ETH price data
@@ -89,10 +100,20 @@ function HomePage() {
     useEffect(() => {
         const apikey = "F8BTXW9R9QHDY2IUTMNDTZKGX423D7SYGV";
         const endpoint = "https://api-goerli.etherscan.io/api"
-        axios
-        .get(endpoint + `?module=account&action=txlist&address=${account}&apikey=${apikey}&sort=desc`)
-        .then(response => setResults(response.data.result));
-    }, [account, results]);
+        if (account) {
+            axios
+                .get(endpoint + `?module=account&action=txlist&address=${account}&apikey=${apikey}&sort=desc`)
+                .then(response => {
+                    let temp = [];
+                    response.data.result.forEach((req) => {
+                        if (displayableFunctions.includes(req.functionName.substring(0, req.functionName.indexOf("("))) && req.to === ContractAddress.bank) {
+                            temp.push(req);
+                        }
+                    })
+                    setResults(temp)
+                });
+        }
+    }, [account]);
 
     return (
         <Box className='homePage'>
@@ -130,24 +151,24 @@ function HomePage() {
                             <Item>
                                 <div >
                                     <AddCircleOutlineIcon className='homePageTitle' />
-                                    <div className='homePageFont1 homePageTitle'>My Account</div><br/>
+                                    <div className='homePageFont1 homePageTitle'>My Account</div><br />
                                     <div style={{ display: "inline-flex" }}>&nbsp;Total Balance</div>
-                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance? parseFloat(formatEther(depositBalance)).toFixed(4) : 0} ETH</div>
+                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance ? parseFloat(formatEther(depositBalance)).toFixed(4) : 0} ETH</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem" }}>
-                                <Grid container rowSpacing={2}>
-                                    <Grid item xs={8}>
-                                        {Balance && <Box>Total value: </Box>}
-                                        APR: <br />
-                                        {Balance && <Box>Total interest: </Box>}
+                                    <Grid container rowSpacing={2}>
+                                        <Grid item xs={8}>
+                                            {Balance && <Box>Total value: </Box>}
+                                            APR: <br />
+                                            {Balance && <Box>Total interest: </Box>}
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            {Balance && <Box>${depositBalance ? (parseFloat(formatEther(depositBalance)).toFixed(4) * parseFloat(EthData.c).toFixed(2)).toFixed(4) : 0}</Box>}
+                                            40.23 % <br />
+                                            {Balance && <Box>{(depositBalance && principleBalance) ? (parseFloat(formatEther(depositBalance)) - parseFloat(formatEther(principleBalance))).toFixed(4) : 0} ETH</Box>}
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={4}>
-                                        {Balance && <Box>${depositBalance? (parseFloat(formatEther(depositBalance)).toFixed(4) * parseFloat(EthData.c).toFixed(2)).toFixed(4) : 0}</Box>}
-                                        40.23 % <br />
-                                        {Balance && <Box>0.1 ETH </Box>}
-                                    </Grid>
-                                </Grid>
                                 </Box>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <div className='bottomButtonContainer'>
@@ -186,13 +207,13 @@ function HomePage() {
                                             </Grid>
                                         </Grid>
                                         {Object.values(results).map((result, index) => {
-                                            return index < 3 && account && (
+                                            return index < 5 && account && (
                                                 <Grid container rowSpacing={2}>
                                                     <Grid item xs={3}>
                                                         <Moment unix format="YYYY/MM/DD">{result.timeStamp}</Moment>
                                                     </Grid>
                                                     <Grid item xs={6}>
-                                                        {result.functionName}
+                                                        {result.functionName ? result.functionName.substring(0, result.functionName.indexOf("(")) : ""}
                                                     </Grid>
                                                     <Grid item xs={3}>
                                                         {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0} ETH
@@ -220,9 +241,9 @@ function HomePage() {
                             <Item>
                                 <div>
                                     <VerticalAlignBottomIcon className='homePageTitle' />
-                                    <div className='homePageFont1 homePageTitle'>My Borrows</div><br/>
+                                    <div className='homePageFont1 homePageTitle'>My Borrows</div><br />
                                     <div style={{ display: "inline-flex" }}>&nbsp;Total Debt</div>
-                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance? parseFloat(formatEther(depositBalance)).toFixed(4) : 0} ETH</div>
+                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance ? parseFloat(formatEther(depositBalance)).toFixed(4) : 0} ETH</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem", paddingTop: 0 }}>
@@ -285,7 +306,7 @@ function HomePage() {
                                             {Balance && <Box>ETH Balance: </Box>}
                                             Ethereum Price: <br />
                                             24h Price Change: <br />
-                                            24h Percentage Change: 
+                                            24h Percentage Change:
                                         </Grid>
                                         <Grid item xs={4}>
                                             {Balance && <Box>{parseFloat(formatEther(Balance)).toFixed(4)} Ξ</Box>}
