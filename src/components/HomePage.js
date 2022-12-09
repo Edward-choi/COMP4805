@@ -22,7 +22,7 @@ import { formatEther } from "ethers/lib/utils";
 
 import Moment from 'react-moment';
 import axios from 'axios';
-import abi from '../contracts/Bank2/abi.json';
+import abi from '../contracts/Bank/abi.json';
 import ContractAddress from './ContractAddress.json'
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
@@ -40,21 +40,20 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 function HomePage() {
-    const { account } = useEthers()
+    const { account, library } = useEthers();
     const Balance = useEtherBalance(account, { refresh: 'never' })
+    
     const [EthData, setEthData] = useState([])
     const [nfts, setNfts] = useState([])
     const link = "https://goerli.etherscan.io/address/" + account
     const [results, setResults] = useState([])
     const contractAddress = ContractAddress.bank;
+    var contract = null;
+    if (library) {
+        contract = new Contract(contractAddress, abi, library.getSigner());
+    }
     const ABI = new Interface(abi);
-    const { deposit } = useCall(account && contractAddress && {
-        contract: new Contract(contractAddress, ABI),
-        method: 'addressToBalances',
-        args: [account]
-    }) ?? {};
-
-    const depositBalance = deposit ? deposit[0] : 0;
+    const [depositBalance, setDepositBalance] = useState(0)
 
     const { principle } = useCall(account && contractAddress && {
         contract: new Contract(contractAddress, ABI),
@@ -112,6 +111,16 @@ function HomePage() {
                     })
                     setResults(temp)
                 });
+        }
+    }, [account]);
+
+    useEffect( () => {
+        if (contract) {
+            async function getBalance() {
+                const balance = await contract.getUserBalance(account);
+                setDepositBalance(balance);
+            }
+            getBalance();
         }
     }, [account]);
 

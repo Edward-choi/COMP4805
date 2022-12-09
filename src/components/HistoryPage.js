@@ -101,7 +101,6 @@ function HistoryPage() {
       axios
         .get(endpoint + `?module=account&action=txlist&address=${account}&apikey=${apikey}&sort=desc`)
         .then(response => {
-          console.log(response.data.result);
           let temp = [];
           response.data.result.forEach((req) => {
             if (displayableFunctions.includes(req.functionName.substring(0, req.functionName.indexOf("("))) && req.to === ContractAddress.bank) {

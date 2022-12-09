@@ -34,11 +34,13 @@ function ListNFTCard({ nft }) {
 
   const [pay, setPay] = useState(false);
   const [dueDay, setDueDay] = useState(dayjs());
+  const [price, setPrice] = useState(0);
 
   const bankAddress = ContractAddress.bank;
   const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
   const nftAddress = ContractAddress.nft;
   const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
+
 
   async function fullPayment(nft, tokenId) {
     const floorPrice = await bankContract.nftFloorPrice();
@@ -48,6 +50,8 @@ function ListNFTCard({ nft }) {
   async function downPayment(nft, dueDay, tokenId) {
     setPay(false);
     const floorPrice = await bankContract.nftFloorPrice();
+    setPrice(formatEther(floorPrice))
+
     const ltv = await bankContract.LoanToValue();
     var d = new Date();
     await bankContract.startLoan(nft, tokenId, Math.round(( dueDay - d.getTime() )/86400000, 1), { value: parseEther((formatEther(floorPrice) * (1 - ltv/100)).toString()) });
@@ -112,7 +116,7 @@ function ListNFTCard({ nft }) {
                     <Grid item md={5} >
                       <DialogContentText id="alert-dialog-description">
                         {nft.title}<br></br>
-                        10 ETH<br></br>
+                        {price} ETH<br></br>
                         6 ETH<br></br>
                         3%<br></br>
                       </DialogContentText>

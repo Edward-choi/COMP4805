@@ -5,7 +5,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
-import { useEthers, useContractFunction, useCall } from "@usedapp/core";
+import { useEthers, useContractFunction, useCall, useEtherBalance } from "@usedapp/core";
 import { formatEther, parseEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,6 +17,8 @@ import ContractAddress from './ContractAddress.json'
 
 function WithdrawPage() {
     const { account } = useEthers();
+    const Balance = useEtherBalance(account)
+    const balance = Balance ? parseFloat(formatEther(Balance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [withDrawValue, setWithdrawValue] = useState(0);
     const withdrawInput = withDrawValue === 0 || withDrawValue ? withDrawValue : '';
@@ -30,7 +32,7 @@ function WithdrawPage() {
     const { send } = useContractFunction(ercContract, "withdraw");
     const { value } = useCall(account && contractAddress && {
         contract: new Contract(contractAddress, ABI),
-        method: 'balanceOf',
+        method: 'getUserBalance',
         args: [account]
     }) ?? {};
     const depositBalance = value ? value[0] : 0;
@@ -86,7 +88,7 @@ function WithdrawPage() {
                     <Grid item xs={11}>
                         <Box textAlign="left">
                             <div className='depositFont1' style={{ marginBottom: "10px" }}>Withdraw ETH</div>
-                            <div className='depositFont2'>Available ERC20 Token in Wallet: {depositBalance? parseFloat(formatEther(depositBalance)).toFixed(4) : 0}</div>
+                            <div className='depositFont2'>Available ETH in Wallet: {balance}</div>
                         </Box>
                         </Grid>
                         <img src={eth} alt="" style={{ height: 45, width: 45, margin: "auto" }} />

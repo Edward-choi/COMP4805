@@ -5,7 +5,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Divider from '@mui/material/Divider';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
-import { useEthers, useEtherBalance} from "@usedapp/core";
+import { useEthers, useEtherBalance } from "@usedapp/core";
 import { formatEther, parseEther } from "ethers/lib/utils";
 import eth from '../images/eth.png';
 import { makeStyles } from '@material-ui/core/styles';
