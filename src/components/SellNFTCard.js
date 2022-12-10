@@ -33,13 +33,40 @@ function SellNFTCard({ nft }) {
     const approved = value ? value[0] : false;
 
 	async function executeTransaction(nft, bank, tokenId) {
-		if (!approved){
-			const Approvaltx = await nftContract.setApprovalForAll(bank, true);
-			await Approvaltx.wait();
-			await bankContract.liquidateNFT(nft, tokenId);
+		try{
+			if (!approved){
+				const tx = await nftContract.setApprovalForAll(bank, true);
+				await tx.wait();
+				try{
+					const tx = await bankContract.liquidateNFT(nft, tokenId);
+					await tx.wait();
+					alert("You have successfully sold your NFT");
+				}catch(err){
+					if(err.message === "MetaMask Tx Signature: User denied transaction signature."){
+						alert("Please sign the message on Metamask")
+					}
+					else{
+						alert("Your NFT is not supported or We do not accept anymore NFT now");
+					}
+				}
+			}
+			else{
+				try{
+					const tx = await bankContract.liquidateNFT(nft, tokenId);
+					await tx.wait();
+					alert("You have successfully sold your NFT");
+				}catch(err){
+					if(err.message === "MetaMask Tx Signature: User denied transaction signature."){
+						alert("Please sign the message on Metamask");
+					}
+					else{
+						alert("Your NFT is not supported or We do not accept anymore NFT now");
+					}
+				}
+			}
 		}
-		else{
-			await bankContract.liquidateNFT(nft, tokenId);
+		catch(err){
+			alert("Please sign the message on Metamask");
 		}
 	}
 
