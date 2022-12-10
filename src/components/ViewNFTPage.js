@@ -8,12 +8,22 @@ import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { Context } from './Context.js';
+import ContractAddress from './ContractAddress.json'
+import abi from '../contracts/Bank/abi.json';
+import { Contract } from '@ethersproject/contracts';
 
 function ViewNFTPage() {
-
-    const { account } = useEthers()
+    const { account, library } = useEthers();
     const [nfts, setNfts] = useState([])
+    const [mortgage, setMortgage] = useState([])
+    const [mortNFTs, setMortNFTs] = useState([])
     const { own, setOwn } = useContext(Context);
+
+    const contractAddress = ContractAddress.bank;
+    var contract = null;
+    if (library) {
+        contract = new Contract(contractAddress, abi, library.getSigner());
+    }
 
     useEffect(() => {
         const settingsGetNft = {
@@ -33,6 +43,42 @@ function ViewNFTPage() {
         }
         getNftData()
     }, [account])
+
+    useEffect( () => {
+        if (contract && account) {
+            async function getMortgage() {
+                const mortgages = await contract.getAllUserLoan(account);
+                setMortgage(mortgages);
+            }
+            getMortgage();
+        }
+    }, [account]);
+
+    useEffect(() => {
+        const settings = {
+            apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
+            network: Network.ETH_GOERLI, // Replace with your network.
+        };
+        async function getNFTs(address, tokenId, i) {
+            if(account && mortgage){
+                const alchemy = new Alchemy(settings);
+                alchemy.nft.getNftMetadata(address, tokenId).then(function (response) {
+                    const name = response.rawMetadata.name;
+                    const image = response.rawMetadata.image;
+                    const newObj = Object.assign({name: name, image: image}, mortgage[i]);
+                    mortNFTs.push(newObj)
+                    setMortNFTs(mortNFTs);
+                    console.log(mortNFTs);
+                }).catch(function (error) {
+                    console.error(error);
+                });
+            }
+        }
+        for (var i = 0; i < mortgage.length; i ++) {
+            getNFTs(mortgage[i].nft.nftContractAddr.toString(), mortgage[i].nft.tokenId.toString(), i)
+        }
+        console.log(mortgage.length);
+    }, [account, mortgage])
 
     return (
         <Box justifyContent="center" alignItems="center" textAlign="center">
@@ -59,7 +105,7 @@ function ViewNFTPage() {
                         </Grid>
                     })
                     :
-                    nfts.map((nft, index) => {
+                    mortNFTs.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
                             <LoanedNFTCard nft={nft} key={index} />
                         </Grid>

@@ -55,6 +55,7 @@ function HomePage() {
     const ABI = new Interface(abi);
     const [depositBalance, setDepositBalance] = useState(0);
     const [userPrinciple, setUserPrinciple] = useState(0);
+    const [APY, setAPY] = useState(0);
 
     //Fixed on 12/10/2022 11pm
     // const { principle } = useCall(account && contractAddress && {
@@ -140,6 +141,17 @@ function HomePage() {
             }
             getBalance();
             getPrinciple();
+        }
+    }, [account]);
+
+    useEffect( () => {
+        if (contract && account) {
+            async function getAPY() {
+                const apy = await contract.APY();
+                setAPY(apy);
+                console.log(apy);
+            }
+            getAPY();
         }
     }, [account]);
 

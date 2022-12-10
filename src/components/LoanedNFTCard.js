@@ -41,19 +41,19 @@ function LoanedNFTCard({ nft }) {
 		setRepay(false);
 	}
 
-	if (nft.title != null && nft.rawMetadata.image != null) {
+	if (nft.image != null) {
 		return (
 			<div>
 				<Item>
 					{
-						nft.rawMetadata.image.startsWith("https") ?
-							<img src={nft.rawMetadata.image} alt="" className="NFTImg"
+						nft.image.startsWith("https") ?
+							<img src={nft.image} alt="" className="NFTImg"
 								onError={({ currentTarget }) => {
 									currentTarget.onerror = null;
 									currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'
 								}} />
 							:
-							<IpfsImage hash={nft.rawMetadata.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="NFTImg"
+							<IpfsImage hash={nft.image} gatewayUrl='https://cloudflare-ipfs.com/ipfs' className="NFTImg"
 								onError={({ currentTarget }) => {
 									currentTarget.onerror = null;
 									currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'
@@ -79,7 +79,7 @@ function LoanedNFTCard({ nft }) {
 						<DialogContent id="alert-dialog-description">
 							<Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 								<Grid item md={5} xs={12}>
-									<img src={nft.rawMetadata.image} alt="" className="NFTImg"
+									<img src={nft.image} alt="" className="NFTImg"
 										onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
 								</Grid>
 								<Grid item md={7} xs={12}>
