@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Collapse from '@material-ui/core/Collapse';
@@ -21,6 +21,7 @@ function DepositPage() {
     const balance = Balance ? parseFloat(formatEther(Balance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
     const [depositValue, setDepositValue] = useState(0);
+    const [APY, setAPY] = useState(0);
     const depositInput = depositValue === 0 || depositValue ? depositValue : '';
     const handleToggle = () => {
         setSlideIn(!slideIn);
@@ -42,6 +43,14 @@ function DepositPage() {
             }
         }
     }
+
+    useEffect(() => {
+        async function getAPY() {
+            const apy = await bankContract.APY();
+            setAPY(apy);
+          }
+        //   getAPY();
+    }, [])
     
     const useStyles = makeStyles({
         input: {
@@ -130,10 +139,10 @@ function DepositPage() {
                             <Grid item xs={4}>
                                 <Box textAlign="right" marginRight="5%">
                                     <Box className='depositFont2' marginBottom="5%">
-                                        Deposit APR
+                                        Deposit APY
                                     </Box>
                                     <Box fontWeight="bold">
-                                        7.47 %
+                                        {APY} %
                                     </Box>
                                 </Box>
                             </Grid>

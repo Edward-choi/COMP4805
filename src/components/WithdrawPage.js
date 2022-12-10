@@ -88,7 +88,7 @@ function WithdrawPage() {
                     <Grid item xs={11}>
                         <Box textAlign="left">
                             <div className='depositFont1' style={{ marginBottom: "10px" }}>Withdraw ETH</div>
-                            <div className='depositFont2'>Available ETH in Wallet: {balance}</div>
+                            <div className='depositFont2'>Your deposit balance: {depositBalance? parseFloat(formatEther(depositBalance)).toFixed(4) : 0}</div>
                         </Box>
                         </Grid>
                         <img src={eth} alt="" style={{ height: 45, width: 45, margin: "auto" }} />
@@ -97,7 +97,7 @@ function WithdrawPage() {
                 </Grid>
                 <Divider sx={{ borderBottomWidth: 5, width: "50%", borderBlockColor: "lightgray", margin: "auto" }} />
 
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Collapse in={slideIn} timeout={500} >
                         <Box className='depositContainer2' display="inline-flex">
                             <Grid item xs={4}>
@@ -133,7 +133,7 @@ function WithdrawPage() {
                         </Box>
                         <Divider sx={{ borderBottomWidth: 5, width: "50%", borderBlockColor: "lightgray", margin: "auto" }} />
                     </Collapse>
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12}>
                     <Box className='depositContainer3' display="inline-flex">

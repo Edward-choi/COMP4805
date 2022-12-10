@@ -122,6 +122,17 @@ function HomePage() {
             async function getBalance() {
                 const balance = await contract.getUserBalance(account);
                 setDepositBalance(balance);
+                console.log(balance);
+            }
+            getBalance();
+        }
+    }, [account]);
+
+    useEffect( () => {
+        if (contract) {
+            async function getBalance() {
+                const balance = await contract.getUserPrinciple(account);
+                setUserPrinciple(balance);
             }
             async function getPrinciple() {
                 const p = await contract.getUserPrinciple(account);
