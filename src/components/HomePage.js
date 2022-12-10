@@ -53,15 +53,16 @@ function HomePage() {
         contract = new Contract(contractAddress, abi, library.getSigner());
     }
     const ABI = new Interface(abi);
-    const [depositBalance, setDepositBalance] = useState(0)
+    const [depositBalance, setDepositBalance] = useState(0);
+    const [userPrinciple, setUserPrinciple] = useState(0);
 
-    const { principle } = useCall(account && contractAddress && {
-        contract: new Contract(contractAddress, ABI),
-        method: 'addressToPrinciple',
-        args: [account]
-    }) ?? {};
-
-    const principleBalance = principle ? principle[0] : 0;
+    //Fixed on 12/10/2022 11pm
+    // const { principle } = useCall(account && contractAddress && {
+    //     contract: new Contract(contractAddress, ABI),
+    //     method: 'getUserPrinciple',
+    //     args: [account]
+    // }) ?? {};
+    // const principleBalance = principle ? principle[0] : 0;
 
     const { own, setOwn } = useContext(Context)
 
@@ -84,14 +85,16 @@ function HomePage() {
             network: Network.ETH_GOERLI, // Replace with your network.
         };
         const getNftData = () => {
-            const alchemy = new Alchemy(settings);
-            alchemy.nft.getNftsForOwner(account).then(function (response) {
-                const data = response.ownedNfts
-                setNfts(data)
-                // debugger
-            }).catch(function (error) {
-                console.error(error);
-            });
+            if(account){
+                const alchemy = new Alchemy(settings);
+                alchemy.nft.getNftsForOwner(account).then(function (response) {
+                    const data = response.ownedNfts
+                    setNfts(data)
+                    // debugger
+                }).catch(function (error) {
+                    console.error(error);
+                });
+            }
         }
         getNftData()
     }, [account])
@@ -115,12 +118,17 @@ function HomePage() {
     }, [account]);
 
     useEffect( () => {
-        if (contract) {
+        if (contract && account) {
             async function getBalance() {
                 const balance = await contract.getUserBalance(account);
                 setDepositBalance(balance);
             }
+            async function getPrinciple() {
+                const p = await contract.getUserPrinciple(account);
+                setUserPrinciple(p);
+            }
             getBalance();
+            getPrinciple();
         }
     }, [account]);
 
@@ -175,7 +183,7 @@ function HomePage() {
                                         <Grid item xs={4}>
                                             {Balance && <Box>${depositBalance ? (parseFloat(formatEther(depositBalance)).toFixed(4) * parseFloat(EthData.c).toFixed(2)).toFixed(4) : 0}</Box>}
                                             40.23 % <br />
-                                            {Balance && <Box>{(depositBalance && principleBalance) ? (parseFloat(formatEther(depositBalance)) - parseFloat(formatEther(principleBalance))).toFixed(4) : 0} ETH</Box>}
+                                            {Balance && <Box>{(depositBalance && userPrinciple) ? (parseFloat(formatEther(depositBalance)) - parseFloat(formatEther(userPrinciple))).toFixed(4) : 0} ETH</Box>}
                                         </Grid>
                                     </Grid>
                                 </Box>
