@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { IpfsImage } from 'react-ipfs-image'
 import { useEthers } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
@@ -16,9 +16,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { parseEther } from "ethers/lib/utils";
+import abi from '../contracts/Bank/abi.json';
+import { formatEther } from "ethers/lib/utils";
 
 function LoanedNFTCard({ nft }) {
-	const { library } = useEthers();
+	var time = new Date(parseInt(nft.dueTime.toString() + "000")).toLocaleDateString("en-US")
+	const { account, library } = useEthers();
 	const Item = styled(Paper)(({ theme }) => ({
 		backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 		...theme.typography.body2,
@@ -30,6 +33,11 @@ function LoanedNFTCard({ nft }) {
 	const bankAddress = ContractAddress.bank;
 	const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
 	const [repay, setRepay] = useState(false);
+	const [price, setPrice] = useState(0);
+	var contract = null;
+    if (library) {
+        contract = new Contract(bankContract, abi, library.getSigner());
+    }
 
 	
 	const [loanAmount, setLoanAmount] = useState('');
@@ -41,7 +49,18 @@ function LoanedNFTCard({ nft }) {
 		setRepay(false);
 	}
 
-	if (nft.image != null) {
+	useEffect( () => {
+        if (contract && account) {
+            async function getPrice() {
+				const floorPrice = await bankContract.nftFloorPrice();
+                setPrice(formatEther(floorPrice));
+                console.log(floorPrice);
+            }
+            getPrice();
+        }
+    }, [account]);
+
+	if (nft.name != null && nft.image != null) {
 		return (
 			<div>
 				<Item>
@@ -59,7 +78,7 @@ function LoanedNFTCard({ nft }) {
 									currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'
 								}} />
 					}
-					{nft.title}<br />
+					{nft.name}<br />
 					<Button variant="contained" style={{
 						borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%"
 					}} onClick={() => setRepay(true)}>
@@ -94,10 +113,10 @@ function LoanedNFTCard({ nft }) {
 										</Grid>
 										<Grid item md={5} >
 											<DialogContentText id="alert-dialog-description">
-												{nft.title}<br></br>
-												10 ETH<br></br>
-												2 ETH<br></br>
-												31/12/2022<br></br>
+												{nft.name}<br></br>
+												{price} ETH<br></br>
+												{formatEther(nft.outstandBalance)} ETH<br></br>
+												{time}<br></br>
 											</DialogContentText>
 										</Grid>
 									</Grid>
