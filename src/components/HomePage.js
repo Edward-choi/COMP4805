@@ -58,7 +58,7 @@ function HomePage() {
     const [APY, setAPY] = useState(0);
     const [mortgage, setMortgage] = useState([])
     const [mortNFTs, setMortNFTs] = useState([])
-    const [price, setPrice] = useState([])
+    // const [price, setPrice] = useState(0)
     var [totalDebt, setTotalDebt] = useState(0)
 
     //Fixed on 12/10/2022 11pm
@@ -198,15 +198,15 @@ function HomePage() {
         console.log(mortgage.length);
     }, [account, mortgage])
 
-    useEffect(() => {
-        if (contract && account) {
-            async function getPrice() {
-                const floorPrice = await contract.nftFloorPrice();
-                setPrice(formatEther(floorPrice));
-            }
-            getPrice();
-        }
-    }, [account]);
+    // useEffect(() => {
+    //     if (contract && account) {
+    //         async function getPrice() {
+    //             const floorPrice = await contract.nftFloorPrice();
+    //             setPrice(formatEther(floorPrice));
+    //         }
+    //         getPrice();
+    //     }
+    // }, [account]);
 
     return (
         <Box className='homePage'>
@@ -346,13 +346,13 @@ function HomePage() {
                                                 <div style={{ fontWeight: 'bolder' }}>Name</div>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <div style={{ fontWeight: 'bolder' }}>Price</div>
-                                            </Grid>
-                                            <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Debt</div>
                                             </Grid>
-                                            <Grid item xs={3}>
+                                            <Grid item xs={4}>
                                                 <div style={{ fontWeight: 'bolder' }}>Next payment</div>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <div style={{ fontWeight: 'bolder' }}>Default</div>
                                             </Grid>
                                         </Grid>
                                         {Object.values(mortNFTs).map((nft, index) => {
@@ -362,13 +362,13 @@ function HomePage() {
                                                         {nft.name}
                                                     </Grid>
                                                     <Grid item xs={3}>
-                                                        {price ? parseFloat(price).toFixed(4) : 0} ETH
-                                                    </Grid>
-                                                    <Grid item xs={3}>
                                                         {nft.outstandBalance ? parseFloat(formatEther(nft.outstandBalance)).toFixed(4) : 0} ETH
                                                     </Grid>
-                                                    <Grid item xs={3}>
+                                                    <Grid item xs={4}>
                                                         {new Date(parseInt(nft.nextPayDay.toString() + "000")).toLocaleDateString("en-US")}
+                                                    </Grid>
+                                                    <Grid item xs={2}>
+                                                        {nft.defaultCount.toString()}
                                                     </Grid>
                                                 </Grid>
                                             );

@@ -4,10 +4,20 @@ import Box from '@mui/material/Box';
 import ListedNFTCard from './ListedNFTCard.js'
 import Grid from '@mui/material/Grid';
 import ContractAddress from './ContractAddress.json'
+import { Contract } from '@ethersproject/contracts';
+import { useEthers } from "@usedapp/core";
+import abi from '../contracts/Bank/abi.json';
 
 function MarketplacePage() {
+    const {library } = useEthers();
     const contractAddress = ContractAddress.bank;
     const [nfts, setNfts] = useState([])
+    var [freeNFTs, setFreeNFTs] = useState([])
+    const [mortgage, setMortgage] = useState([])
+    var contract = null;
+    if (library) {
+        contract = new Contract(contractAddress, abi, library.getSigner());
+    }
 
     useEffect(() => {
         const settingsGetNft = {
@@ -29,12 +39,39 @@ function MarketplacePage() {
         getNftData()
     }, [contractAddress])
 
+    useEffect( () => {
+        if (contract) {
+            async function getMortgage() {
+                console.log(nfts.length);
+                const mortgages = await contract.getAllNftLoan();
+                setMortgage(mortgages);
+                console.log(nfts);
+                for (var i = nfts.length - 1; i >= 0; --i) {
+                    var isFree = true;
+                    for (var j = 0; j < mortgage.length; j ++) {
+                        console.log(nfts[i].contract.address, mortgages[j].nftContractAddr.toString(), nfts[i].contract.address == mortgages[j].nftContractAddr.toString().toLowerCase());
+                        if (nfts[i].contract.address == mortgages[j].nftContractAddr.toString().toLowerCase() && nfts[i].tokenId == mortgages[j].tokenId.toString()) {
+                            isFree = false;
+                        }
+                    }
+                    if (isFree) {
+                        freeNFTs.push(nfts[i])
+                        setFreeNFTs(freeNFTs);
+                    }
+                    console.log(freeNFTs);
+                }
+
+            }
+            getMortgage();
+        }
+    }, [nfts, freeNFTs]);
+
     return (
         <Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
 
             <Box className='marketplaceContainer' display="inline-flex">
                 <Grid container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    {nfts.map((nft, index) => {
+                    {freeNFTs.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
                             <ListedNFTCard nft={nft} key={index} />
                         </Grid>
