@@ -42,7 +42,7 @@ const Item = styled(Paper)(({ theme }) => ({
 function HomePage() {
     const { account, library } = useEthers();
     const Balance = useEtherBalance(account, { refresh: 'never' })
-    
+
     const [EthData, setEthData] = useState([])
     const [nfts, setNfts] = useState([])
     const link = "https://goerli.etherscan.io/address/" + account
@@ -56,6 +56,10 @@ function HomePage() {
     const [depositBalance, setDepositBalance] = useState(0);
     const [userPrinciple, setUserPrinciple] = useState(0);
     const [APY, setAPY] = useState(0);
+    const [mortgage, setMortgage] = useState([])
+    const [mortNFTs, setMortNFTs] = useState([])
+    const [price, setPrice] = useState([])
+    var [totalDebt, setTotalDebt] = useState(0)
 
     //Fixed on 12/10/2022 11pm
     // const { principle } = useCall(account && contractAddress && {
@@ -86,7 +90,7 @@ function HomePage() {
             network: Network.ETH_GOERLI, // Replace with your network.
         };
         const getNftData = () => {
-            if(account){
+            if (account) {
                 const alchemy = new Alchemy(settings);
                 alchemy.nft.getNftsForOwner(account).then(function (response) {
                     const data = response.ownedNfts
@@ -118,7 +122,7 @@ function HomePage() {
         }
     }, [account]);
 
-    useEffect( () => {
+    useEffect(() => {
         if (contract && account) {
             async function getBalance() {
                 const balance = await contract.getUserBalance(account);
@@ -129,7 +133,7 @@ function HomePage() {
         }
     }, [account]);
 
-    useEffect( () => {
+    useEffect(() => {
         if (contract) {
             async function getBalance() {
                 const balance = await contract.getUserPrinciple(account);
@@ -144,7 +148,7 @@ function HomePage() {
         }
     }, [account]);
 
-    useEffect( () => {
+    useEffect(() => {
         if (contract && account) {
             async function getAPY() {
                 const apy = await contract.APY();
@@ -152,6 +156,55 @@ function HomePage() {
                 console.log(apy);
             }
             getAPY();
+        }
+    }, [account]);
+
+    useEffect(() => {
+        if (contract && account) {
+            async function getMortgage() {
+                const mortgages = await contract.getAllUserLoan(account);
+                setMortgage(mortgages);
+            }
+            getMortgage();
+        }
+    }, [account]);
+
+    useEffect(() => {
+        const settings = {
+            apiKey: "6RB8WVyUkqB6YjCiiKX57HqZL7RRiVYL", // Replace with your Alchemy API Key.
+            network: Network.ETH_GOERLI, // Replace with your network.
+        };
+        async function getNFTs(address, tokenId, i) {
+            if (account && mortgage) {
+                const alchemy = new Alchemy(settings);
+                alchemy.nft.getNftMetadata(address, tokenId).then(function (response) {
+                    const name = response.rawMetadata.name;
+                    const image = response.rawMetadata.image;
+                    const newObj = Object.assign({ name: name, image: image }, mortgage[i]);
+                    mortNFTs.push(newObj)
+                    totalDebt += parseFloat(formatEther(newObj.outstandBalance))
+                    console.log(totalDebt);
+                    setTotalDebt(totalDebt);
+                    setMortNFTs(mortNFTs);
+                    console.log(mortNFTs);
+                }).catch(function (error) {
+                    console.error(error);
+                });
+            }
+        }
+        for (var i = 0; i < mortgage.length; i++) {
+            getNFTs(mortgage[i].nft.nftContractAddr.toString(), mortgage[i].nft.tokenId.toString(), i)
+        }
+        console.log(mortgage.length);
+    }, [account, mortgage])
+
+    useEffect(() => {
+        if (contract && account) {
+            async function getPrice() {
+                const floorPrice = await contract.nftFloorPrice();
+                setPrice(formatEther(floorPrice));
+            }
+            getPrice();
         }
     }, [account]);
 
@@ -283,33 +336,39 @@ function HomePage() {
                                     <VerticalAlignBottomIcon className='homePageTitle' />
                                     <div className='homePageFont1 homePageTitle'>My Borrows</div><br />
                                     <div style={{ display: "inline-flex" }}>&nbsp;Total Debt</div>
-                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance ? parseFloat(formatEther(depositBalance)).toFixed(4) : 0} ETH</div>
+                                    <div style={{ display: "inline-flex", float: "right" }}>{depositBalance ? totalDebt.toFixed(4) : 0} ETH</div>
                                 </div>
                                 <Divider sx={{ borderBottomWidth: 5 }} />
                                 <Box sx={{ height: "10rem", padding: "1rem", paddingTop: 0 }}>
                                     <List key='hi2'>
                                         <Grid container>
-                                            <Grid item xs={4}>
+                                            <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Name</div>
                                             </Grid>
-                                            <Grid item xs={4}>
+                                            <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Price</div>
                                             </Grid>
-                                            <Grid item xs={4}>
-                                                <div style={{ fontWeight: 'bolder' }}>Outstanding loan</div>
+                                            <Grid item xs={3}>
+                                                <div style={{ fontWeight: 'bolder' }}>Debt</div>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <div style={{ fontWeight: 'bolder' }}>Next payment</div>
                                             </Grid>
                                         </Grid>
-                                        {Object.values(results).map((result, index) => {
+                                        {Object.values(mortNFTs).map((nft, index) => {
                                             return index < 5 && account && (
                                                 <Grid container rowSpacing={2}>
-                                                    <Grid item xs={4}>
-                                                        COMP4805
+                                                    <Grid item xs={3}>
+                                                        {nft.name}
                                                     </Grid>
-                                                    <Grid item xs={4}>
-                                                        {result.value ? parseFloat(formatEther(result.value)).toFixed(4) + 1 : 0} ETH
+                                                    <Grid item xs={3}>
+                                                        {price ? parseFloat(price).toFixed(4) : 0} ETH
                                                     </Grid>
-                                                    <Grid item xs={4}>
-                                                        {result.value ? parseFloat(formatEther(result.value)).toFixed(4) : 0} ETH
+                                                    <Grid item xs={3}>
+                                                        {nft.outstandBalance ? parseFloat(formatEther(nft.outstandBalance)).toFixed(4) : 0} ETH
+                                                    </Grid>
+                                                    <Grid item xs={3}>
+                                                        {new Date(parseInt(nft.nextPayDay.toString() + "000")).toLocaleDateString("en-US")}
                                                     </Grid>
                                                 </Grid>
                                             );
