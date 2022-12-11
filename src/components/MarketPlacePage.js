@@ -46,9 +46,9 @@ function MarketplacePage() {
                 const mortgages = await contract.getAllNftLoan();
                 setMortgage(mortgages);
                 console.log(nfts);
-                for (var i = nfts.length - 1; i >= 0; --i) {
+                for (var i = 0; i < nfts.length; i++) {
                     var isFree = true;
-                    for (var j = 0; j < mortgage.length; j ++) {
+                    for (var j = 0; j < mortgages.length; j ++) {
                         console.log(nfts[i].contract.address, mortgages[j].nftContractAddr.toString(), nfts[i].contract.address == mortgages[j].nftContractAddr.toString().toLowerCase());
                         if (nfts[i].contract.address == mortgages[j].nftContractAddr.toString().toLowerCase() && nfts[i].tokenId == mortgages[j].tokenId.toString()) {
                             isFree = false;
