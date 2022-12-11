@@ -67,6 +67,7 @@ function ListNFTCard({ nft }) {
 			getPrice();
 		}
 	}, [account]);
+	
 
 	if (nft.title != null && nft.rawMetadata.image != null) {
 		return (
