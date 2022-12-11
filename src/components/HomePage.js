@@ -134,7 +134,7 @@ function HomePage() {
     }, [account]);
 
     useEffect(() => {
-        if (contract) {
+        if (contract && account) {
             async function getBalance() {
                 const balance = await contract.getUserPrinciple(account);
                 setUserPrinciple(balance);
@@ -175,7 +175,7 @@ function HomePage() {
             network: Network.ETH_GOERLI, // Replace with your network.
         };
         async function getNFTs(address, tokenId, i) {
-            if (account && mortgage) {
+            if (account && mortgage && account) {
                 const alchemy = new Alchemy(settings);
                 alchemy.nft.getNftMetadata(address, tokenId).then(function (response) {
                     const name = response.rawMetadata.name;
