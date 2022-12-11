@@ -22,6 +22,7 @@ function DepositPage() {
     const [slideIn, setSlideIn] = useState(true);
     const [depositValue, setDepositValue] = useState(0);
     const [APY, setAPY] = useState(0);
+    const [MinDeposit, setMinD] = useState(0);
     const depositInput = depositValue === 0 || depositValue ? depositValue : '';
     const handleToggle = () => {
         setSlideIn(!slideIn);
@@ -45,12 +46,26 @@ function DepositPage() {
     }
 
     useEffect(() => {
-        async function getAPY() {
-            const apy = await bankContract.APY();
-            setAPY(apy);
-          }
-        //   getAPY();
-    }, [])
+        if (bankContract && account) {
+            async function getAPY() {
+                const apy = await bankContract.APY();
+                // console.log("apy: ",parseFloat(formatEther(apy)));
+                setAPY(parseFloat(formatEther(apy)));
+            }
+            getAPY();
+        }
+    }, [account]);
+
+    useEffect(() => {
+        if (bankContract && account) {
+            async function getMinD() {
+                const minD = await bankContract.minDeposit();
+                // console.log("apy: ",parseFloat(formatEther(minD)));
+                setMinD(parseFloat(formatEther(minD)));
+            }
+            getMinD();
+        }
+    }, [account]);
     
     const useStyles = makeStyles({
         input: {
@@ -122,7 +137,7 @@ function DepositPage() {
                                         Minimum Deposit
                                     </Box>
                                     <Box fontWeight="bold">
-                                        0.05 ETH
+                                        {MinDeposit} ETH
                                     </Box>
                                 </Box>
                             </Grid>
@@ -142,7 +157,7 @@ function DepositPage() {
                                         Deposit APY
                                     </Box>
                                     <Box fontWeight="bold">
-                                        {APY} %
+                                        {APY.toFixed(2)} %
                                     </Box>
                                 </Box>
                             </Grid>

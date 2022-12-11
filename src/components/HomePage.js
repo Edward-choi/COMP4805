@@ -152,8 +152,8 @@ function HomePage() {
         if (contract && account) {
             async function getAPY() {
                 const apy = await contract.APY();
-                setAPY(apy);
-                console.log(apy);
+                console.log("apy: ",parseFloat(formatEther(apy)));
+                setAPY(parseFloat(formatEther(apy)));
             }
             getAPY();
         }
@@ -258,7 +258,7 @@ function HomePage() {
                                         </Grid>
                                         <Grid item xs={4}>
                                             {Balance && <Box>${depositBalance ? (parseFloat(formatEther(depositBalance)).toFixed(4) * parseFloat(EthData.c).toFixed(2)).toFixed(4) : 0}</Box>}
-                                            40.23 % <br />
+                                            {APY && <Box>{APY ? APY.toFixed(2).toString() + " %" : "Please Connect Your Wallet"}</Box>}
                                             {Balance && <Box>{(depositBalance && userPrinciple) ? (parseFloat(formatEther(depositBalance)) - parseFloat(formatEther(userPrinciple))).toFixed(4) : 0} ETH</Box>}
                                         </Grid>
                                     </Grid>
