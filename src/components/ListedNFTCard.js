@@ -22,7 +22,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { parseEther, formatEther } from "ethers/lib/utils";
 
-function ListNFTCard({ nft }) {
+function ListNFTCard({ nft , irate}) {
 	const { account, library } = useEthers();
 	const Item = styled(Paper)(({ theme }) => ({
 		backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -35,6 +35,8 @@ function ListNFTCard({ nft }) {
 	const [pay, setPay] = useState(false);
 	const [dueDay, setDueDay] = useState(dayjs());
 	const [price, setPrice] = useState(0);
+	const [LTV, setLTV] = useState(0);
+	const [payment, setPayment] = useState(0);
 
 	const bankAddress = ContractAddress.bank;
 	const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
@@ -53,8 +55,21 @@ function ListNFTCard({ nft }) {
 		setPrice(formatEther(floorPrice))
 
 		const ltv = await bankContract.LoanToValue();
+		// setLTV(formatEther(ltv)*(10**18));
 		var d = new Date();
-		await bankContract.startLoan(nft, tokenId, Math.round((dueDay - d.getTime()) / 86400000, 1), { value: parseEther((formatEther(floorPrice) * (1 - ltv / 100)).toString()) });
+		try{
+			console.log("Payment: ", payment)
+			const tx = await bankContract.startLoan(nft, tokenId, Math.round((dueDay - d.getTime()) / 86400000, 1), { value: parseEther((formatEther(floorPrice) * (1 - ltv / 100)).toString()) });
+			await tx.wait();
+			alert("NFT Loan Accepted !");
+		}catch(err){
+			if(err.message === "MetaMask Tx Signature: User denied transaction signature."){
+				alert("Please sign the message on Metamask")
+			}
+			else{
+				alert("Please select an appropriate date and fullfill the minimum deposit");
+			}
+		}
 	}
 
 	useEffect(() => {
@@ -62,12 +77,21 @@ function ListNFTCard({ nft }) {
 			async function getPrice() {
 				const floorPrice = await bankContract.nftFloorPrice();
 				setPrice(formatEther(floorPrice));
-				console.log(floorPrice);
+				// console.log(floorPrice);
 			}
 			getPrice();
 		}
 	}, [account]);
-	
+
+	useEffect(() => {
+		if (bankContract) {
+			async function getLTV() {
+				const ltv = await bankContract.LoanToValue();
+				setLTV(formatEther(ltv)*(10**18));
+			}
+			getLTV();
+		}
+	}, [bankContract]);
 
 	if (nft.title != null && nft.rawMetadata.image != null) {
 		return (
@@ -129,8 +153,8 @@ function ListNFTCard({ nft }) {
 											<DialogContentText id="alert-dialog-description">
 												{nft.title}<br></br>
 												{price} ETH<br></br>
-												{price * 0.4} ETH<br></br>
-												3%<br></br>
+												{price * (1-LTV/100)} ETH<br></br>
+												{irate}%<br></br>
 											</DialogContentText>
 										</Grid>
 									</Grid>
@@ -144,6 +168,12 @@ function ListNFTCard({ nft }) {
 											/>
 										</LocalizationProvider>
 									</Box>
+									{/* <Box marginTop={2}>
+										<TextField id="Down Payment Amount" label="ETH" variant="outlined" 
+											inputProps={{ inputMode: 'numeric'}}
+											onChangeText={ e => setPayment(e)}
+										/>
+									</Box> */}
 								</Grid>
 							</Grid>
 						</DialogContent>

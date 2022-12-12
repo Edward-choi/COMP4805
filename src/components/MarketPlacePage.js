@@ -7,6 +7,7 @@ import ContractAddress from './ContractAddress.json'
 import { Contract } from '@ethersproject/contracts';
 import { useEthers } from "@usedapp/core";
 import abi from '../contracts/Bank/abi.json';
+import { formatEther, parseEther } from "ethers/lib/utils";
 
 function MarketplacePage() {
     const {library } = useEthers();
@@ -14,6 +15,7 @@ function MarketplacePage() {
     const [nfts, setNfts] = useState([])
     var [freeNFTs, setFreeNFTs] = useState([])
     const [mortgage, setMortgage] = useState([])
+    const [interest, setInterest] = useState(0)
     var contract = null;
     if (library) {
         contract = new Contract(contractAddress, abi, library.getSigner());
@@ -66,6 +68,16 @@ function MarketplacePage() {
         }
     }, [nfts, freeNFTs]);
 
+    useEffect( () => {
+        if (contract) {
+            async function getInterest() {
+                const irate = await contract.baseInterstRate();
+                setInterest(parseFloat(formatEther(irate)));
+            }
+            getInterest();
+        }
+    }, [contract]);
+
     return (
         <Box display="flex" justifyContent="center" alignItems="center" textAlign="center">
 
@@ -73,7 +85,7 @@ function MarketplacePage() {
                 <Grid container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     {freeNFTs.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
-                            <ListedNFTCard nft={nft} key={index} />
+                            <ListedNFTCard nft={nft} key={index} irate={interest}/>
                         </Grid>
                     })}
                     {/* </div> */}
