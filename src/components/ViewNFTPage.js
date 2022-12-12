@@ -11,12 +11,14 @@ import { Context } from './Context.js';
 import ContractAddress from './ContractAddress.json'
 import abi from '../contracts/Bank/abi.json';
 import { Contract } from '@ethersproject/contracts';
+import { formatEther } from "ethers/lib/utils";
 
 function ViewNFTPage() {
     const { account, library } = useEthers();
     const [nfts, setNfts] = useState([])
     const [mortgage, setMortgage] = useState([])
     const [mortNFTs, setMortNFTs] = useState([])
+    const [nftPrice, setNftPrice] = useState(0)
     const { own, setOwn } = useContext(Context);
 
     const contractAddress = ContractAddress.bank;
@@ -53,6 +55,16 @@ function ViewNFTPage() {
             getMortgage();
         }
     }, [account]);
+
+    useEffect( () => {
+        if (contract) {
+            async function getAssetPrice() {
+                const assetPrice = await contract.nftLiquidationPrice();
+                setNftPrice(parseFloat(formatEther(assetPrice)));
+            }
+            getAssetPrice();
+        }
+    }, [contract]);
 
     useEffect(() => {
         const settings = {
@@ -101,7 +113,7 @@ function ViewNFTPage() {
                     {own ?
                     nfts.map((nft, index) => {
                         return <Grid item md={3} xs={12}>
-                            <SellNFTCard nft={nft} key={index} />
+                            <SellNFTCard nft={nft} key={index} price={nftPrice}/>
                         </Grid>
                     })
                     :

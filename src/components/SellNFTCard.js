@@ -9,7 +9,7 @@ import bankAbi from '../contracts/Bank/abi.json';
 import nftAbi from '../contracts/NFT/abi.json';
 import { Contract } from '@ethersproject/contracts';
 
-function SellNFTCard({ nft }) {
+function SellNFTCard({ nft, price }) {
 	const { library } = useEthers();
 	const Item = styled(Paper)(({ theme }) => ({
 		backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -84,7 +84,10 @@ function SellNFTCard({ nft }) {
 							onError={({ currentTarget }) => { currentTarget.onerror = null; 
 							currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png' }} />
 					}
+					<div style={{ fontWeight: 'bold' }}>
 					{nft.title}<br />
+					Sell Price: {price.toFixed(3)} ETH<br />
+					</div>
 					<Button variant="contained" style={{
 						borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%"
 					}} onClick={() => executeTransaction(nft.contract.address, bankAddress, nft.tokenId)}>
