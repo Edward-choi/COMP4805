@@ -186,7 +186,7 @@ function HomePage() {
                     console.log(totalDebt);
                     setTotalDebt(totalDebt);
                     setMortNFTs(mortNFTs);
-                    console.log(mortNFTs);
+                    console.log('Mortage NFT: ',mortNFTs);
                 }).catch(function (error) {
                     console.error(error);
                 });
@@ -342,33 +342,39 @@ function HomePage() {
                                 <Box sx={{ height: "10rem", padding: "1rem", paddingTop: 0 }}>
                                     <List key='hi2'>
                                         <Grid container>
-                                            <Grid item xs={3}>
+                                            <Grid item xs={2}>
                                                 <div style={{ fontWeight: 'bolder' }}>Name</div>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                <div style={{ fontWeight: 'bolder' }}>Debt</div>
+                                                <div style={{ fontWeight: 'bolder'}} >Debt</div>
                                             </Grid>
-                                            <Grid item xs={4}>
+                                            <Grid item xs={3}>
                                                 <div style={{ fontWeight: 'bolder' }}>Next payment</div>
                                             </Grid>
                                             <Grid item xs={2}>
                                                 <div style={{ fontWeight: 'bolder' }}>Default</div>
                                             </Grid>
+                                            <Grid item xs={2}>
+                                                <div style={{ fontWeight: 'bolder' }}>Interest Rate</div>
+                                            </Grid>
                                         </Grid>
                                         {Object.values(mortNFTs).map((nft, index) => {
                                             return index < 5 && account && (
                                                 <Grid container rowSpacing={2}>
-                                                    <Grid item xs={3}>
+                                                    <Grid item xs={2}>
                                                         {nft.name}
                                                     </Grid>
                                                     <Grid item xs={3}>
                                                         {nft.outstandBalance ? parseFloat(formatEther(nft.outstandBalance)).toFixed(4) : 0} ETH
                                                     </Grid>
-                                                    <Grid item xs={4}>
+                                                    <Grid item xs={3}>
                                                         {new Date(parseInt(nft.nextPayDay.toString() + "000")).toLocaleDateString("en-US")}
                                                     </Grid>
-                                                    <Grid item xs={2}>
+                                                    <Grid item xs={2} style={{paddingLeft: 20}}>
                                                         {nft.defaultCount.toString()}
+                                                    </Grid>
+                                                    <Grid item xs={2} style={{paddingLeft: 30}}>
+                                                        {nft.LoanRate ? parseFloat(formatEther(nft.LoanRate)).toFixed(2).toString() + "%" : "0%"}
                                                     </Grid>
                                                 </Grid>
                                             );
