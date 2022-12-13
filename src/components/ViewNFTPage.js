@@ -80,7 +80,7 @@ function ViewNFTPage() {
                     const newObj = Object.assign({name: name, image: image}, mortgage[i]);
                     mortNFTs.push(newObj)
                     setMortNFTs(mortNFTs);
-                    console.log(mortNFTs);
+                    console.log("mortage NFT:", mortNFTs);
                 }).catch(function (error) {
                     console.error(error);
                 });
@@ -118,6 +118,7 @@ function ViewNFTPage() {
                     })
                     :
                     mortNFTs.map((nft, index) => {
+                        console.log("hi",nft)
                         return <Grid item md={3} xs={12}>
                             <LoanedNFTCard nft={nft} key={index} />
                         </Grid>

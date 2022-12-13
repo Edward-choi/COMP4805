@@ -86,7 +86,7 @@ function SellNFTCard({ nft, price }) {
 					}
 					<div style={{ fontWeight: 'bold' }}>
 					{nft.title}<br />
-					Sell Price: {price.toFixed(3)} ETH<br />
+					Sell Price: {price.toFixed(4)} ETH<br />
 					</div>
 					<Button variant="contained" style={{
 						borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%"

@@ -153,7 +153,7 @@ function ListNFTCard({ nft , irate}) {
 											<DialogContentText id="alert-dialog-description">
 												{nft.title}<br></br>
 												{price} ETH<br></br>
-												{price * (1-LTV/100)} ETH<br></br>
+												{(price * (1-LTV/100)).toFixed(3)} ETH<br></br>
 												{irate}%<br></br>
 											</DialogContentText>
 										</Grid>

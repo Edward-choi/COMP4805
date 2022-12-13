@@ -45,7 +45,20 @@ function LoanedNFTCard({ nft }) {
 		setLoanAmount(event.target.value);
 	};
 	async function executeTransaction(nft, tokenId) {
-		await bankContract.repayLoan(nft, tokenId, {value: parseEther(loanAmount.toString())});
+		// console.log("nftaddr:", nft)
+		// console.log("tokenId:", formatEther(tokenId)*(10**18))
+		try{
+			const tx = await bankContract.repayLoan(nft, formatEther(tokenId)*(10**18), {value: parseEther(loanAmount.toString())});
+			await tx.wait();
+			alert("Transaction comfirmed")
+		}catch(err){
+			if(err.message === "MetaMask Tx Signature: User denied transaction signature."){
+				alert("Please sign the message on Metamask");
+			}
+			else{
+				alert("You have overpaid your loan");
+			}
+		}
 		setRepay(false);
 	}
 
@@ -54,7 +67,7 @@ function LoanedNFTCard({ nft }) {
             async function getPrice() {
 				const floorPrice = await bankContract.nftFloorPrice();
                 setPrice(formatEther(floorPrice));
-                console.log(floorPrice);
+                // console.log(floorPrice);
             }
             getPrice();
         }
@@ -115,7 +128,7 @@ function LoanedNFTCard({ nft }) {
 											<DialogContentText id="alert-dialog-description">
 												{nft.name}<br></br>
 												{price} ETH<br></br>
-												{formatEther(nft.outstandBalance)} ETH<br></br>
+												{(parseFloat(formatEther(nft.outstandBalance))).toFixed(4)} ETH<br></br>
 												{time}<br></br>
 											</DialogContentText>
 										</Grid>
@@ -138,7 +151,7 @@ function LoanedNFTCard({ nft }) {
 						</DialogContent>
 						<DialogActions>
 							<Button onClick={() => setRepay(false)}>Back</Button>
-							<Button onClick={() => executeTransaction(nft.contract.address, nft.tokenId)} autoFocus>
+							<Button onClick={() => executeTransaction(nft.nft[0], nft.nft[1])} autoFocus>
 								Confirmed
 							</Button>
 						</DialogActions>
