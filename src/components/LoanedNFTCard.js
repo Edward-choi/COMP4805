@@ -41,14 +41,16 @@ function LoanedNFTCard({ nft }) {
 
 	
 	const [loanAmount, setLoanAmount] = useState('');
+	var repayment = 0;
 	const handleLoanInputChange = event => {
-		setLoanAmount(event.target.value);
+		repayment = event.target.value;
 	};
 	async function executeTransaction(nft, tokenId) {
 		// console.log("nftaddr:", nft)
 		// console.log("tokenId:", formatEther(tokenId)*(10**18))
 		try{
-			const tx = await bankContract.repayLoan(nft, formatEther(tokenId)*(10**18), {value: parseEther(loanAmount.toString())});
+			setLoanAmount(repayment);
+			const tx = await bankContract.repayLoan(nft, formatEther(tokenId)*(10**18), {value: parseEther(repayment.toString())});
 			await tx.wait();
 			alert("Transaction comfirmed")
 		}catch(err){
@@ -139,7 +141,7 @@ function LoanedNFTCard({ nft }) {
 											id="outlined-number"
 											label="Repayment"
 											type="number"
-											value= {loanAmount}
+											// value= {loanAmount}
             								onChange= {handleLoanInputChange}
 											InputLabelProps={{
 												shrink: true,
