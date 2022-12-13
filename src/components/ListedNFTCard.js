@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IpfsImage } from 'react-ipfs-image'
-import { useEthers, useContractFunction } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
@@ -36,13 +36,12 @@ function ListNFTCard({ nft , irate}) {
 	const [dueDay, setDueDay] = useState(dayjs());
 	const [price, setPrice] = useState(0);
 	const [LTV, setLTV] = useState(0);
-	const [payment, setPayment] = useState(0);
-
 	const bankAddress = ContractAddress.bank;
 	const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
 	const nftAddress = ContractAddress.nft;
 	const nftContract = new Contract(nftAddress, nftAbi, library.getSigner());
-
+	var deposit = 0;
+	var varInterest = 0;
 
 	async function fullPayment(nft, tokenId) {
 		const floorPrice = await bankContract.nftFloorPrice();
@@ -52,19 +51,18 @@ function ListNFTCard({ nft , irate}) {
 	async function downPayment(nft, dueDay, tokenId) {
 		setPay(false);
 		const floorPrice = await bankContract.nftFloorPrice();
-		setPrice(formatEther(floorPrice))
-
-		const ltv = await bankContract.LoanToValue();
-		// setLTV(formatEther(ltv)*(10**18));
+		setPrice(formatEther(floorPrice));
 		var d = new Date();
 		try{
-			console.log("Payment: ", payment)
-			const tx = await bankContract.startLoan(nft, tokenId, Math.round((dueDay - d.getTime()) / 86400000, 1), { value: parseEther((formatEther(floorPrice) * (1 - ltv / 100)).toString()) });
+			const tx = await bankContract.startLoan(nft, tokenId, Math.round((dueDay - d.getTime()) / 86400000, 1), { value: parseEther((deposit).toString()) });
 			await tx.wait();
 			alert("NFT Loan Accepted !");
 		}catch(err){
 			if(err.message === "MetaMask Tx Signature: User denied transaction signature."){
 				alert("Please sign the message on Metamask")
+			}
+			else if (deposit >= price){
+				alert("Please consider direct buying instead of loan")
 			}
 			else{
 				alert("Please select an appropriate date and fullfill the minimum deposit");
@@ -93,6 +91,19 @@ function ListNFTCard({ nft , irate}) {
 		}
 	}, [bankContract]);
 
+	const handleInputChange = event => {
+		deposit = event.target.value;
+		if (deposit < price && deposit >= price*(1-LTV/100)){
+			varInterest = (irate - ( LTV - ((price - deposit)*100/price))*2/100).toFixed(2)
+			document.getElementById("irate").innerHTML = varInterest.toString() + "%";
+		}
+		else{
+			varInterest = 5
+			document.getElementById("irate").innerHTML = varInterest.toString() + "%";
+		}
+		console.log(varInterest)
+	};
+
 	if (nft.title != null && nft.rawMetadata.image != null) {
 		return (
 			<div>
@@ -111,7 +122,10 @@ function ListNFTCard({ nft , irate}) {
 									currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/2/24/NFT_Icon.png'
 								}} />
 					}
+					<div style={{ fontWeight: 'bold' }}>
 					{nft.title}<br />
+					Price: {parseFloat(price).toFixed(2)} ETH<br />
+					</div>
 					<Button variant="contained" style={{
 						borderRadius: 10, padding: "9px 5px", fontSize: "9px", margin: "12px 5px 10px 5px", width: "45%"
 					}} onClick={() => setPay(true)}>
@@ -154,7 +168,7 @@ function ListNFTCard({ nft , irate}) {
 												{nft.title}<br></br>
 												{price} ETH<br></br>
 												{(price * (1-LTV/100)).toFixed(3)} ETH<br></br>
-												{irate}%<br></br>
+												<div id="irate">5%<br></br></div>
 											</DialogContentText>
 										</Grid>
 									</Grid>
@@ -168,12 +182,22 @@ function ListNFTCard({ nft , irate}) {
 											/>
 										</LocalizationProvider>
 									</Box>
-									{/* <Box marginTop={2}>
+									<Box marginTop={2}>
 										<TextField id="Down Payment Amount" label="ETH" variant="outlined" 
-											inputProps={{ inputMode: 'numeric'}}
-											onChangeText={ e => setPayment(e)}
+											type="number"
+											onChange={handleInputChange}
+											InputLabelProps={{
+												shrink: true,
+											}}
+											inputProps={{
+												style: {
+												  height: 60,
+												  paddingTop: 0,
+												  paddingBottom: 0
+												},
+											  }}
 										/>
-									</Box> */}
+									</Box>
 								</Grid>
 							</Grid>
 						</DialogContent>
