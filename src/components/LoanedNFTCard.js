@@ -39,17 +39,20 @@ function LoanedNFTCard({ nft }) {
         contract = new Contract(bankContract, abi, library.getSigner());
     }
 
-	
-	const [loanAmount, setLoanAmount] = useState('');
+	// const [loanAmount, setLoanAmount] = useState('');
 	var repayment = 0;
 	const handleLoanInputChange = event => {
 		repayment = event.target.value;
 	};
+
+	function setMax() {
+		document.getElementById("outlined-number").value = parseFloat(formatEther(nft.outstandBalance));
+		repayment = parseFloat(formatEther(nft.outstandBalance));
+	}
 	async function executeTransaction(nft, tokenId) {
 		// console.log("nftaddr:", nft)
 		// console.log("tokenId:", formatEther(tokenId)*(10**18))
 		try{
-			setLoanAmount(repayment);
 			const tx = await bankContract.repayLoan(nft, formatEther(tokenId)*(10**18), {value: parseEther(repayment.toString())});
 			await tx.wait();
 			alert("Transaction comfirmed")
@@ -146,7 +149,15 @@ function LoanedNFTCard({ nft }) {
 											InputLabelProps={{
 												shrink: true,
 											}}
+											inputProps={{
+												style: {
+												  height: 60,
+												  paddingTop: 0,
+												  paddingBottom: 0
+												},
+											  }}
 										/>
+										<Button style={{ height: 60 }} onClick={() => setMax() }>Max</Button>
 									</Box>
 								</Grid>
 							</Grid>
