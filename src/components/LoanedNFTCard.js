@@ -49,6 +49,24 @@ function LoanedNFTCard({ nft }) {
 		document.getElementById("outlined-number").value = parseFloat(formatEther(nft.outstandBalance));
 		repayment = parseFloat(formatEther(nft.outstandBalance));
 	}
+
+	function calNextMinPay(){
+		const debt = parseFloat(formatEther(nft.debt));
+		const ob = parseFloat(formatEther(nft.outstandBalance));
+		const baseCuRate = parseFloat(formatEther(nft.baseCumuRate));
+		const cuRate = parseFloat(formatEther(nft.cumuRate));
+		console.log(debt,ob,baseCuRate,cuRate)
+		if (baseCuRate + cuRate > 1){
+			return ob.toFixed(3);
+		}
+		else if(debt*(baseCuRate + cuRate) - ob <= 0 ){
+			return 0;
+		}
+		else{
+			return (debt*(baseCuRate + cuRate) - ob).toFixed(4);
+		}
+	}
+
 	async function executeTransaction(nft, tokenId) {
 		// console.log("nftaddr:", nft)
 		// console.log("tokenId:", formatEther(tokenId)*(10**18))
@@ -66,6 +84,17 @@ function LoanedNFTCard({ nft }) {
 		}
 		setRepay(false);
 	}
+
+	useEffect( () => {
+        if (contract && account) {
+            async function getPrice() {
+				const floorPrice = await bankContract.nftFloorPrice();
+                setPrice(formatEther(floorPrice));
+                // console.log(floorPrice);
+            }
+            getPrice();
+        }
+    }, [account]);
 
 	useEffect( () => {
         if (contract && account) {
@@ -127,6 +156,7 @@ function LoanedNFTCard({ nft }) {
 												Floor price:<br></br>
 												Outstanding payment:<br></br>
 												Due date:<br></br>
+												Next Min Payment:<br></br>
 											</DialogContentText>
 										</Grid>
 										<Grid item md={5} >
@@ -135,6 +165,7 @@ function LoanedNFTCard({ nft }) {
 												{price} ETH<br></br>
 												{(parseFloat(formatEther(nft.outstandBalance))).toFixed(4)} ETH<br></br>
 												{time}<br></br>
+												{calNextMinPay()} ETH<br></br>
 											</DialogContentText>
 										</Grid>
 									</Grid>
