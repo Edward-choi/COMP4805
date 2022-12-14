@@ -14,9 +14,11 @@ import abi from '../contracts/Bank/abi.json';
 import { Contract } from '@ethersproject/contracts';
 import { Interface } from '@ethersproject/abi';
 import ContractAddress from './ContractAddress.json'
+import bankAbi from '../contracts/Bank/abi.json';
 
 function WithdrawPage() {
     const { account } = useEthers();
+    const { library } = useEthers();
     const Balance = useEtherBalance(account)
     const balance = Balance ? parseFloat(formatEther(Balance)).toFixed(4) : "";
     const [slideIn, setSlideIn] = useState(true);
@@ -28,13 +30,32 @@ function WithdrawPage() {
     const contractAddress = ContractAddress.bank;
     const ABI  = new Interface(abi);
 
+    const bankAddress = ContractAddress.bank;
+    const bankContract = new Contract(bankAddress, bankAbi, library.getSigner());
+
     const ercContract = new Contract(contractAddress, abi);
-    const { send } = useContractFunction(ercContract, "withdraw");
     const { value } = useCall(account && contractAddress && {
         contract: new Contract(contractAddress, ABI),
         method: 'getUserBalance',
         args: [account]
     }) ?? {};
+
+    async function EthWidthDraw(){
+        try{
+            const withdrawTx = await bankContract.withdrawETH(parseEther(withDrawValue.toString()));
+            await withdrawTx.wait();
+            alert("A withdraw of " + withDrawValue + " ETH is completed");
+        } catch(err){
+            if(err.message === "MetaMask Tx Signature: User denied transaction signature."){
+                alert("Please sign the metamask wallet message");
+            }
+            else{
+                alert(err.message);
+                alert("Please enter a correct withdraw amount");
+            }
+        }
+    }
+
     const depositBalance = value ? value[0] : 0;
     const useStyles = makeStyles({
         input: {
@@ -185,7 +206,7 @@ function WithdrawPage() {
                             </Box>
                             <Button variant="contained" style={{
                                 borderRadius: 20, padding: "12px 24px", fontSize: "18px", margin: "35px 10px 20px 10px", width: "90%"
-                            }} onClick={() => send(parseEther(withDrawValue.toString()))}>
+                            }} onClick={() => EthWidthDraw()}>
                                 Withdraw
                             </Button>
                         </Box>
