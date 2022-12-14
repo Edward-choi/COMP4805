@@ -47,7 +47,8 @@ function LoanedNFTCard({ nft }) {
 
 	function setMax() {
 		document.getElementById("outlined-number").value = parseFloat(formatEther(nft.outstandBalance));
-		repayment = parseFloat(formatEther(nft.outstandBalance));
+		repayment = (formatEther(nft.outstandBalance));
+		console.log(formatEther(nft.outstandBalance));
 	}
 
 	function calNextMinPay(){

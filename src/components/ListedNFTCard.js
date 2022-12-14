@@ -44,8 +44,19 @@ function ListNFTCard({ nft , irate}) {
 	var varInterest = 0;
 
 	async function fullPayment(nft, tokenId) {
-		const floorPrice = await bankContract.nftFloorPrice();
-		await bankContract.buyNFT(nft, tokenId, { value: floorPrice });
+		try{
+			const floorPrice = await bankContract.nftFloorPrice();
+			const tx = await bankContract.buyNFT(nft, tokenId, { value: floorPrice });
+			await tx.wait();
+			alert("Congrates you now own this NFT");
+		}catch(err){
+			if(err.message === "MetaMask Tx Signature: User denied transaction signature."){
+				alert("Please sign the message on Metamask")
+			}
+			else{
+				alert("Please pay the correct amount of ETH");
+			}
+		}
 	}
 
 	async function downPayment(nft, dueDay, tokenId) {

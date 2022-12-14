@@ -50,7 +50,6 @@ function WithdrawPage() {
                 alert("Please sign the metamask wallet message");
             }
             else{
-                alert(err.message);
                 alert("Please enter a correct withdraw amount");
             }
         }
