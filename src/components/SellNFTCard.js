@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IpfsImage } from 'react-ipfs-image'
 import { useEthers, useCall } from "@usedapp/core";
 import Paper from '@mui/material/Paper';
@@ -86,7 +86,7 @@ function SellNFTCard({ nft, price }) {
 					}
 					<div style={{ fontWeight: 'bold' }}>
 					{nft.title}<br />
-					Sell Price: {price.toFixed(4)} ETH<br />
+					{nft.contract.address.toLowerCase() === nftAddress.toLowerCase() ? <div>Sell Price: {price.toFixed(4)} ETH<br /></div> : <div>Sell Price: Unverified<br /></div>}
 					</div>
 					<Button variant="contained" style={{
 						borderRadius: 10, padding: "9px 18px", fontSize: "12px", margin: "12px 15px 10px 15px", width: "80%"
